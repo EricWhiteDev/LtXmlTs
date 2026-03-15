@@ -1,0 +1,20 @@
+Make a simple TypeScript module named LtXmlTs:
+  - The module should be able to be consumed in a browser app, or in a nodejs app.
+  - Name the module LtXmlTs
+  - The module should have one public class named XObject
+  - The XObject class should have a private array of objects named #annotations, which will be used by the addAnnotation method and by the annotation method. The elements in the array should be the any type.
+  - The class XObject should have a public method, addAnnotation. This method should take one argument, obj, which is of type any. The addAnnotation method adds the obj to the #annotations list of objects.
+  - The class XObject should have a public method, annotation, which has a type parameter, and take no arguments. This method looks through the #annotations array for an object of the specified type, and if it is there, returns the object. If it is not in the #annotations array, then annotation returns null.
+
+Create a sibling module to LtXmlTs that includes a Vitest unit test.
+  - The name of this module is LtXmlTs.test
+  - Create a unit test
+  - In the unit test, declare a class named Dummy that you will use to test annotations in the XObject class. This class should have one public field named description, which we can use to determine whether the object returned by the annotation method is the same object that was passed to the addAnnotation method.
+  - In the unit test, call the constructor for XObject, creating an instance of it named myXObject.
+  - In the unit test, then call addAnnotation for the newly created XObject object, passing the newly created Dummy object. Because addAnnotation takes an any type as its argument, it is ok to call addAnnotation passing the Dummy object.
+  - Note that the XObject class should not be aware of the Dummy class, which is just a temporary class in the unit test module.
+  - In the unit test, call the annotation method with the type parameter of Dummy. Validate that the annotation method returns the same object that was previously set using the addAnnotation method.
+
+After creating these two modules, run the unit tests and validate that the XObject.addAnnotation and XObject.annotation methods work as described.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

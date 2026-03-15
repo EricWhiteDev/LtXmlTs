@@ -1,0 +1,10 @@
+Enhance the XObject class as follows:
+  - The class XObject should have a public method, annotations, which has the same signature as annotation. This method looks through the #annotations array for any objects of the specified type, and returns an array of those objects. If there are no instances in the #annotations array, then annotations returns an empty array.
+
+Enhance the LtXmlTs.test as follows:
+  - Add unit tests to test the new annotations method.
+  - Use a class similar to the Dummy class that is defined in the unit test for the annotation and addAnnotation methods.
+
+After making these changes, run the unit tests and validate that the XObject.annotations method works as described.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
