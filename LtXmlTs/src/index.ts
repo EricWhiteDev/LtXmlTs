@@ -42,6 +42,10 @@ export class XObject {
 
 export abstract class XNode extends XObject {}
 
+export abstract class XContainer extends XNode {
+  protected nodesArray: XNode[] = [];
+}
+
 class XNameCacheEntry {
   name: XName;
 
