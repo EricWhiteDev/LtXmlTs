@@ -1,0 +1,17 @@
+Add a new class to the LtXmlTs module.
+  - The name of the class is XDeclaration.
+  - It has no base class.
+  - It declares three readonly fields:
+    - version, which is a string.
+    - encoding, which is a string.
+    - standalone, which is a string.
+  - It has two overloads of its constructor.
+    - The first overload takes three arguments:
+      - version, which is a string
+      - encoding, which is a string
+      - standalone, which is a string
+      This overload sets the version, encoding, and standalone to the values passed in as arguments.
+    - The second overload is a copy constructor. It takes one argument, other, which is an XDeclaration object.
+      This overload sets the version, encoding, and standalone to the values of the fields in the other XDeclaration object.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

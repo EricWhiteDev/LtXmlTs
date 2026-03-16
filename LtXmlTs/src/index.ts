@@ -97,6 +97,26 @@ export class XElement extends XContainer {
   }
 }
 
+export class XDeclaration {
+  public readonly version: string;
+  public readonly encoding: string;
+  public readonly standalone: string;
+
+  constructor(version: string, encoding: string, standalone: string);
+  constructor(other: XDeclaration);
+  constructor(versionOrOther: string | XDeclaration, encoding?: string, standalone?: string) {
+    if (typeof versionOrOther === 'string') {
+      this.version = versionOrOther;
+      this.encoding = encoding!;
+      this.standalone = standalone!;
+    } else {
+      this.version = versionOrOther.version;
+      this.encoding = versionOrOther.encoding;
+      this.standalone = versionOrOther.standalone;
+    }
+  }
+}
+
 class XNameCacheEntry {
   name: XName;
 
