@@ -117,6 +117,28 @@ describe('XNamespace.toString', () => {
   });
 });
 
+describe('XNamespace.none', () => {
+  it('has uri equal to empty string', () => {
+    expect(XNamespace.none.uri).toBe('');
+  });
+
+  it('has preferredPrefix of null', () => {
+    expect(XNamespace.none.preferredPrefix).toBeNull();
+  });
+
+  it('accessed twice is the same object reference', () => {
+    expect(XNamespace.none).toBe(XNamespace.none);
+  });
+
+  it('is the same object reference as XNamespace.getNone()', () => {
+    expect(XNamespace.none).toBe(XNamespace.getNone());
+  });
+
+  it("is the same object reference as new XNamespace('')", () => {
+    expect(XNamespace.none).toBe(new XNamespace(''));
+  });
+});
+
 describe('XNamespace.getNone', () => {
   it('returns an XNamespace with uri equal to empty string', () => {
     const ns = XNamespace.getNone();
@@ -150,5 +172,89 @@ describe('XNamespace.getNone', () => {
     const none = XNamespace.getNone();
     const other = new XNamespace('urn:test:getnone:nonempty');
     expect(none).not.toBe(other);
+  });
+});
+
+describe('XNamespace.getXml', () => {
+  it('returns an XNamespace with the correct XML namespace URI', () => {
+    expect(XNamespace.getXml().uri).toBe('http://www.w3.org/XML/1998/namespace');
+  });
+
+  it("returns an XNamespace with preferredPrefix 'xml'", () => {
+    expect(XNamespace.getXml().preferredPrefix).toBe('xml');
+  });
+
+  it('calling getXml() twice returns the same object reference', () => {
+    expect(XNamespace.getXml()).toBe(XNamespace.getXml());
+  });
+
+  it('getXml() result is the same object reference as XNamespace.xml', () => {
+    expect(XNamespace.getXml()).toBe(XNamespace.xml);
+  });
+
+  it("getXmlns() resets preferredPrefix to 'xml' after user code changed it", () => {
+    new XNamespace('http://www.w3.org/XML/1998/namespace', 'other');
+    const ns = XNamespace.getXml();
+    expect(ns.preferredPrefix).toBe('xml');
+  });
+});
+
+describe('XNamespace.xml', () => {
+  it('has the correct XML namespace URI', () => {
+    expect(XNamespace.xml.uri).toBe('http://www.w3.org/XML/1998/namespace');
+  });
+
+  it("has preferredPrefix 'xml'", () => {
+    expect(XNamespace.xml.preferredPrefix).toBe('xml');
+  });
+
+  it('is the same object reference as XNamespace.getXml()', () => {
+    expect(XNamespace.xml).toBe(XNamespace.getXml());
+  });
+});
+
+describe('XNamespace.getXmlns', () => {
+  it('returns an XNamespace with the correct xmlns URI', () => {
+    expect(XNamespace.getXmlns().uri).toBe('http://www.w3.org/2000/xmlns/');
+  });
+
+  it("returns an XNamespace with preferredPrefix 'xmlns'", () => {
+    expect(XNamespace.getXmlns().preferredPrefix).toBe('xmlns');
+  });
+
+  it('calling getXmlns() twice returns the same object reference', () => {
+    expect(XNamespace.getXmlns()).toBe(XNamespace.getXmlns());
+  });
+
+  it('getXmlns() result is the same object reference as XNamespace.xmlns', () => {
+    expect(XNamespace.getXmlns()).toBe(XNamespace.xmlns);
+  });
+
+  it("getXmlns() resets preferredPrefix to 'xmlns' after user code changed it", () => {
+    new XNamespace('http://www.w3.org/2000/xmlns/', 'other');
+    const ns = XNamespace.getXmlns();
+    expect(ns.preferredPrefix).toBe('xmlns');
+  });
+});
+
+describe('XNamespace.xmlns', () => {
+  it('has the correct xmlns URI', () => {
+    expect(XNamespace.xmlns.uri).toBe('http://www.w3.org/2000/xmlns/');
+  });
+
+  it("has preferredPrefix 'xmlns'", () => {
+    expect(XNamespace.xmlns.preferredPrefix).toBe('xmlns');
+  });
+
+  it('is the same object reference as XNamespace.getXmlns()', () => {
+    expect(XNamespace.xmlns).toBe(XNamespace.getXmlns());
+  });
+});
+
+describe('XNamespace cross-checks', () => {
+  it('none, xml, and xmlns are all different object references', () => {
+    expect(XNamespace.none).not.toBe(XNamespace.xml);
+    expect(XNamespace.none).not.toBe(XNamespace.xmlns);
+    expect(XNamespace.xml).not.toBe(XNamespace.xmlns);
   });
 });

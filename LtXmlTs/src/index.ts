@@ -40,8 +40,22 @@ export class XObject {
   }
 }
 
+class XNamespaceCacheEntry {
+  namespace: XNamespace;
+  preferredPrefix: string | null;
+
+  constructor(namespace: XNamespace, preferredPrefix: string | null) {
+    this.namespace = namespace;
+    this.preferredPrefix = preferredPrefix;
+  }
+}
+
 export class XNamespace {
   static #namespaceCache: XNamespaceCacheEntry[] = [];
+
+  public static readonly none: XNamespace = new XNamespace('');
+  public static readonly xml: XNamespace = new XNamespace('http://www.w3.org/XML/1998/namespace', 'xml');
+  public static readonly xmlns: XNamespace = new XNamespace('http://www.w3.org/2000/xmlns/', 'xmlns');
 
   public readonly uri: string;
 
@@ -61,6 +75,14 @@ export class XNamespace {
     return new XNamespace('');
   }
 
+  public static getXml(): XNamespace {
+    return new XNamespace('http://www.w3.org/XML/1998/namespace', 'xml');
+  }
+
+  public static getXmlns(): XNamespace {
+    return new XNamespace('http://www.w3.org/2000/xmlns/', 'xmlns');
+  }
+
   public toString(): string {
     return `{${this.uri}}`;
   }
@@ -77,15 +99,5 @@ export class XNamespace {
     }
 
     XNamespace.#namespaceCache.push(new XNamespaceCacheEntry(this, preferredPrefix));
-  }
-}
-
-class XNamespaceCacheEntry {
-  namespace: XNamespace;
-  preferredPrefix: string | null;
-
-  constructor(namespace: XNamespace, preferredPrefix: string | null) {
-    this.namespace = namespace;
-    this.preferredPrefix = preferredPrefix;
   }
 }

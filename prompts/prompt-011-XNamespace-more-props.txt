@@ -1,0 +1,11 @@
+Modify the XNamespace class in the LtXmlTs module.
+  - Add a static public property, none, to the class. This returns the XNamespace object that is returned by the getNone() method.
+  - Add a static public method, getXml(), that returns an XNamespace object for the uri: "http://www.w3.org/XML/1998/namespace".  The prefix for this XNamespace object is "xml".
+  - Add a static public property, xml, that returns the XNamespace object returned by the getXml() method.
+  - Add a static public method, getXmlns(), that returns an XNamespace object for the uri: "http://www.w3.org/2000/xmlns/".  The prefix for this XNamespace object is "xmlns".
+  - Add a static public property, xmlns, that returns the XNamespace object returned by the getXmlns() method.
+
+Add unit tests for this new property:
+  - Add any unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
