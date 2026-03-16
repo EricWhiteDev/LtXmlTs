@@ -156,7 +156,7 @@ export class XNamespace {
 }
 
 export class XName {
-  static #nameCache: XNameCacheEntry[] = [];
+  private static nameCache: XNameCacheEntry[] = [];
 
   public readonly namespace: XNamespace;
   public readonly localName: string;
@@ -202,12 +202,12 @@ export class XName {
     this.localName = local;
 
     const clarkKey = ns.uri === '' ? local : `{${ns.uri}}${local}`;
-    const cached = XName.#nameCache.find(e => e.name.toString() === clarkKey);
+    const cached = XName.nameCache.find(e => e.name.toString() === clarkKey);
     if (cached) {
       return cached.name;
     }
 
-    XName.#nameCache.push(new XNameCacheEntry(this));
+    XName.nameCache.push(new XNameCacheEntry(this));
   }
 
   public toString(): string {

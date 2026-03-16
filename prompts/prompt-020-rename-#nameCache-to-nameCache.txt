@@ -1,0 +1,5 @@
+Modify the #nameCache field in the XName class.
+  - Rename the field from #nameCache to nameCache.
+  - Use the TypeScript private access modifier, instead of prepending the # to the name.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
