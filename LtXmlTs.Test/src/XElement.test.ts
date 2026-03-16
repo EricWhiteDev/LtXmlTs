@@ -11,4 +11,14 @@ describe('XElement', () => {
     const e = new XElement(XName.get('root'));
     expect(e.name).toBe(XName.get('root'));
   });
+
+  it('constructor with string content adds XText node', () => {
+    const e = new XElement(XName.get('root'), 'hello');
+    expect(e.nodes()).toHaveLength(1);
+  });
+
+  it('constructor with no content produces empty nodes', () => {
+    const e = new XElement(XName.get('root'));
+    expect(e.nodes()).toHaveLength(0);
+  });
 });

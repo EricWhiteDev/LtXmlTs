@@ -125,8 +125,78 @@ export class XProcessingInstruction extends XNode {
   }
 }
 
-export abstract class XContainer extends XNode {
+export class XContainer extends XNode {
   protected nodesArray: XNode[] = [];
+
+  public nodes(): XNode[] {
+    return [...this.nodesArray];
+  }
+
+  protected addContentList(...items: unknown[]): void {
+    for (const item of items) {
+      this.addContentObject(item);
+    }
+  }
+
+  protected addContentObject(content: unknown): void {
+    if (content === null || content === undefined) {
+      return;
+    }
+    if (Array.isArray(content)) {
+      for (const item of content) {
+        this.addContentObject(item);
+      }
+      return;
+    }
+    if (content instanceof XAttribute) {
+      return;
+    }
+    if (typeof content === 'string') {
+      const text = new XText(content);
+      text.parent = this;
+      this.nodesArray.push(text);
+      return;
+    }
+    if (
+      content instanceof XComment ||
+      content instanceof XText ||
+      content instanceof XEntity ||
+      content instanceof XCData ||
+      content instanceof XProcessingInstruction
+    ) {
+      let node: XNode;
+      if (content.parent === null) {
+        content.parent = this;
+        node = content;
+      } else {
+        if (content instanceof XComment) {
+          node = new XComment(content);
+        } else if (content instanceof XText) {
+          node = new XText(content);
+        } else if (content instanceof XEntity) {
+          node = new XEntity(content);
+        } else if (content instanceof XCData) {
+          node = new XCData(content);
+        } else {
+          node = new XProcessingInstruction(content);
+        }
+        node.parent = this;
+      }
+      this.nodesArray.push(node);
+      return;
+    }
+    if (content instanceof XElement) {
+      content.parent = this;
+      this.nodesArray.push(content);
+      return;
+    }
+    const str = (content as { toString(): string }).toString();
+    if (str !== '[object Object]') {
+      const text = new XText(str);
+      text.parent = this;
+      this.nodesArray.push(text);
+    }
+  }
 }
 
 export class XAttribute extends XObject {
@@ -162,7 +232,7 @@ export class XElement extends XContainer {
     super();
     this.nodeType = 'Element';
     this.name = name;
-    this.nodesArray = [];
+    this.addContentList(...content);
   }
 }
 

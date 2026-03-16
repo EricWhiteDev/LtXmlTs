@@ -1,0 +1,19 @@
+Enhance the XContainer class:
+- Add a protected method, addContentList() to the XContainer class.
+- The addContentList() method has a rest parameter. The array type of the rest parameter is explicitly unknown.
+- In the addContentList() method, iterate through all arguments in the rest parameter, and call the addContentObject() method passing each argument in turn.
+
+- Add another protected method, addContentObject() to the class. This method takes a single argument of type unknown.
+- In this addContentObject() method, process the argument as follows:
+  - If the type of the argument is XComment, XText, XEntity, XCData, XProcessingInstruction, or XElement, then
+    {
+        - if the parent property of the argument is not set, then set the parent property of the argument to the 'this' container, then add them in order to the nodesArray. The order in the nodesArray should be the same order as in the rest parameter.
+        - if the parent property is set, then clone the argument by calling the appropriate copy constructor for the class of the argument, set the parent property of the cloned object to 'this' container, and add them in order to the nodesArray. The order in the nodesArray should be the same order as in the rest parameter.
+    }
+  - If the type of the argument is XAttribute, then bypass that argument, doing nothing with it.
+  - If the type of the argument is string, then create an XText object, set the parent property of the XText object to the 'this' container, and then add the XText object to the nodesArray. Again, the order in the nodesArray should be the same order as in the rest parameter.
+  - If the type of the argument is other than XComment, XText, XEntity, XCData, XProcessingInstruction, XElement, XAttribute, or string, and if the object has a toString() method, then call the toString() method, construct an XText object with the results of the toString() method, set the parent property of the XText object to the 'this' container, and then add the XText object to the nodesArray. Again, the order in the nodesArray should be the same order as in the rest parameter.
+
+Add unit tests as necessary to cause code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
