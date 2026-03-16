@@ -116,3 +116,39 @@ describe('XNamespace.toString', () => {
     expect(`${ns}`).toBe(ns.toString());
   });
 });
+
+describe('XNamespace.getNone', () => {
+  it('returns an XNamespace with uri equal to empty string', () => {
+    const ns = XNamespace.getNone();
+    expect(ns.uri).toBe('');
+  });
+
+  it('returns an XNamespace with preferredPrefix of null', () => {
+    const ns = XNamespace.getNone();
+    expect(ns.preferredPrefix).toBeNull();
+  });
+
+  it('calling getNone() twice returns the same object reference', () => {
+    const first = XNamespace.getNone();
+    const second = XNamespace.getNone();
+    expect(first).toBe(second);
+  });
+
+  it('getNone() result is the same object reference as new XNamespace(\'\')', () => {
+    const fromGetNone = XNamespace.getNone();
+    const fromCtor = new XNamespace('');
+    expect(fromGetNone).toBe(fromCtor);
+  });
+
+  it('getNone() result is the same object reference as XNamespace.get(\'\')', () => {
+    const fromGetNone = XNamespace.getNone();
+    const fromGet = XNamespace.get('');
+    expect(fromGetNone).toBe(fromGet);
+  });
+
+  it('getNone() result is a different object than an XNamespace with a non-empty URI', () => {
+    const none = XNamespace.getNone();
+    const other = new XNamespace('urn:test:getnone:nonempty');
+    expect(none).not.toBe(other);
+  });
+});

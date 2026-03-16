@@ -1,0 +1,14 @@
+Modify the XNamespace class in the LtXmlTs module.
+  - Add a public method, getNone(), to the class.
+  - This method takes no arguments. It returns an XNamespace object.
+  - This method looks in the #namespaceCache for a namespace that consists of an empty string.
+  - If an entry exists in the #namespaceCache that has a namespace of an empty string, then return that namespace object from the #namespaceCache.
+  - If no entry exists in the #namespaceCache that has a namespace of an empty string, then create a new XNamespace object where the uri is the empty string, and add it to the cache.  The preferredPrefix should be set to null for an empty string namespace.
+  
+Add unit tests for this new property:
+  - Validate that calling the getNone() method returns an XNamespace object where the uri is the empty string.
+  - Validate that calling getNone() more than once returns the same object.
+  - Validate that calling getNone() returns a different object than an XNamespace object that was created by passing a uri to the constructor.
+  - Add any other unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

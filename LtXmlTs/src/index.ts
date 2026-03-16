@@ -57,6 +57,10 @@ export class XNamespace {
     return new XNamespace(uri);
   }
 
+  public static getNone(): XNamespace {
+    return new XNamespace('');
+  }
+
   public toString(): string {
     return `{${this.uri}}`;
   }
