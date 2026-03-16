@@ -34,4 +34,23 @@ describe('XAttribute', () => {
   it('constructor with undefined content throws', () => {
     expect(() => new XAttribute(XName.get('id'), undefined)).toThrow();
   });
+
+  it('copy constructor copies name and value', () => {
+    const a = new XAttribute(XName.get('id'), 'abc');
+    const b = new XAttribute(a);
+    expect(b.name).toBe(XName.get('id'));
+    expect(b.value).toBe('abc');
+  });
+
+  it('copy constructor sets nodeType to Attribute', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const b = new XAttribute(a);
+    expect(b.nodeType).toBe('Attribute');
+  });
+
+  it('copy constructor produces a distinct object', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const b = new XAttribute(a);
+    expect(b).not.toBe(a);
+  });
 });

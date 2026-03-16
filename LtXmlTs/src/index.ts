@@ -205,18 +205,24 @@ export class XAttribute extends XObject {
 
   constructor(name: XName);
   constructor(name: XName, content: unknown);
-  constructor(name: XName, content?: unknown) {
+  constructor(other: XAttribute);
+  constructor(nameOrOther: XName | XAttribute, content?: unknown) {
     super();
     this.nodeType = 'Attribute';
-    this.name = name;
-    this.value = '';
-    if (arguments.length >= 2) {
-      if (content === null || content === undefined) {
-        throw new Error('XAttribute content cannot be null or undefined');
-      } else if (typeof content === 'string') {
-        this.value = content;
-      } else {
-        this.value = (content as { toString(): string }).toString();
+    if (nameOrOther instanceof XAttribute) {
+      this.name = nameOrOther.name;
+      this.value = nameOrOther.value;
+    } else {
+      this.name = nameOrOther;
+      this.value = '';
+      if (arguments.length >= 2) {
+        if (content === null || content === undefined) {
+          throw new Error('XAttribute content cannot be null or undefined');
+        } else if (typeof content === 'string') {
+          this.value = content;
+        } else {
+          this.value = (content as { toString(): string }).toString();
+        }
       }
     }
   }
@@ -226,6 +232,33 @@ export class XElement extends XContainer {
   public readonly name: XName;
   private attributesArray: XAttribute[] = [];
 
+  public attributes(): XAttribute[] {
+    return [...this.attributesArray];
+  }
+
+  protected addAttributeContentList(...items: unknown[]): void {
+    for (const item of items) {
+      this.addAttributeContentObject(item);
+    }
+  }
+
+  protected addAttributeContentObject(content: unknown): void {
+    if (content === null || content === undefined) {
+      return;
+    }
+    if (!(content instanceof XAttribute)) {
+      return;
+    }
+    if (content.parent !== null) {
+      const clone = new XAttribute(content);
+      clone.parent = this;
+      this.attributesArray.push(clone);
+    } else {
+      content.parent = this;
+      this.attributesArray.push(content);
+    }
+  }
+
   constructor(name: XName);
   constructor(name: XName, ...content: unknown[]);
   constructor(name: XName, ...content: unknown[]) {
@@ -233,6 +266,7 @@ export class XElement extends XContainer {
     this.nodeType = 'Element';
     this.name = name;
     this.addContentList(...content);
+    this.addAttributeContentList(...content);
   }
 }
 
