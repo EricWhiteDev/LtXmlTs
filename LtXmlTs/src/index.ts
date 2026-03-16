@@ -12,6 +12,7 @@ export type XmlNodeType =
 export class XObject {
   #annotations: any[] = [];
   public nodeType: XmlNodeType = null;
+  public parent: XObject | null = null;
 
   addAnnotation(obj: any): void {
     this.#annotations.push(obj);

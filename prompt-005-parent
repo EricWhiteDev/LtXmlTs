@@ -1,0 +1,7 @@
+Add a public field to the XObject class.
+  - The type of the field is XObject.
+  - the name of the field is parent.
+
+No unit tests need to be created for this modification.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
