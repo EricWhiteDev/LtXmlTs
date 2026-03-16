@@ -1,0 +1,11 @@
+Add a new public class to the LtXmlTs module.
+  - The name of the class is XProcessingInstruction.
+  - It derives from its base class XNode.
+  - It declares a readonly field, target, which is a string object.
+  - It declares a readonly field, data, which is a string object.
+  - The XProcessingInstruction class contains a constructor with two overloads.
+    - The first overload has two arguments, target, which is a string object, and data, which is a string object. This overload creates a new XProcessingInstruction object, setting the target and data fields to the target and data arguments.
+    - The second overload has one argument, other, which is an XProcessingInstruction object. This is a copy constructor. Set the target and data fields in the newly constructed object to the target and data fields from the other XProcessingInstruction object.
+  - In the constructor, set the nodeType field to 'ProcessingInstruction'.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

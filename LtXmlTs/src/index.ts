@@ -58,6 +58,25 @@ export class XComment extends XNode {
   }
 }
 
+export class XProcessingInstruction extends XNode {
+  public readonly target: string;
+  public readonly data: string;
+
+  constructor(target: string, data: string);
+  constructor(other: XProcessingInstruction);
+  constructor(targetOrOther: string | XProcessingInstruction, data?: string) {
+    super();
+    this.nodeType = 'ProcessingInstruction';
+    if (typeof targetOrOther === 'string') {
+      this.target = targetOrOther;
+      this.data = data!;
+    } else {
+      this.target = targetOrOther.target;
+      this.data = targetOrOther.data;
+    }
+  }
+}
+
 export abstract class XContainer extends XNode {
   protected nodesArray: XNode[] = [];
 }
