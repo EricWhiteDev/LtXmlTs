@@ -49,6 +49,10 @@ export class XNamespace {
     return XNamespace.#namespaceCache.find(e => e.namespace === this)?.preferredPrefix ?? null;
   }
 
+  public get namespaceName(): string {
+    return this.uri;
+  }
+
   public static get(uri: string): XNamespace {
     return new XNamespace(uri);
   }

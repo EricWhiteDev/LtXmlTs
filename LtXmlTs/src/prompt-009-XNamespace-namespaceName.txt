@@ -1,0 +1,9 @@
+Modify the XNamespace class in the LtXmlTs module.
+  - Add a public property, namespaceName, to the class.
+  - This property returns the uri.
+  
+Add unit tests for this new property:
+  - Validate that namespaceName returns the uri.
+  - Add any other unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

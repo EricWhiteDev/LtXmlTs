@@ -82,6 +82,24 @@ describe('XNamespace.get', () => {
   });
 });
 
+describe('XNamespace namespaceName property', () => {
+  it('returns the URI passed to the constructor', () => {
+    const ns = new XNamespace('urn:test:namespacename:value');
+    expect(ns.namespaceName).toBe('urn:test:namespacename:value');
+  });
+
+  it('returns an empty string when URI is empty', () => {
+    const ns = new XNamespace('urn:test:namespacename:empty');
+    const ns2 = new XNamespace('');
+    expect(ns2.namespaceName).toBe('');
+  });
+
+  it('returns the same value as the uri property', () => {
+    const ns = new XNamespace('urn:test:namespacename:same-as-uri');
+    expect(ns.namespaceName).toBe(ns.uri);
+  });
+});
+
 describe('XNamespace.toString', () => {
   it('standard URI returns the URI wrapped in braces', () => {
     const ns = new XNamespace('urn:test:tostring:standard');
