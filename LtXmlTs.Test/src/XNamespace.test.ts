@@ -258,3 +258,45 @@ describe('XNamespace cross-checks', () => {
     expect(XNamespace.xml).not.toBe(XNamespace.xmlns);
   });
 });
+
+describe('XNamespace.getName()', () => {
+  it('returns an XName whose namespace is the calling XNamespace instance', () => {
+    const ns = new XNamespace('http://example.com/');
+    const name = ns.getName('foo');
+    expect(name.namespace).toBe(ns);
+  });
+
+  it('returns an XName whose localName matches the argument', () => {
+    const ns = new XNamespace('http://example.com/');
+    const name = ns.getName('bar');
+    expect(name.localName).toBe('bar');
+  });
+
+  it('works when called on XNamespace.none', () => {
+    const name = XNamespace.none.getName('local');
+    expect(name.namespace).toBe(XNamespace.none);
+    expect(name.localName).toBe('local');
+    expect(name.namespace.uri).toBe('');
+  });
+
+  it('works when called on a named namespace', () => {
+    const ns = new XNamespace('http://example.com/ns');
+    const name = ns.getName('element');
+    expect(name.namespace.uri).toBe('http://example.com/ns');
+    expect(name.localName).toBe('element');
+  });
+
+  it('returns the same cached object for the same namespace and localName', () => {
+    const ns = new XNamespace('http://example.com/');
+    const name1 = ns.getName('cached');
+    const name2 = ns.getName('cached');
+    expect(name1).toBe(name2);
+  });
+
+  it('returns different objects for different localNames on the same namespace', () => {
+    const ns = new XNamespace('http://example.com/');
+    const name1 = ns.getName('alpha');
+    const name2 = ns.getName('beta');
+    expect(name1).not.toBe(name2);
+  });
+});

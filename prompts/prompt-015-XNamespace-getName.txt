@@ -1,0 +1,9 @@
+Modify the XNamespace class in the LtXmlTs module.
+  - Add a public instance method, getName, to the class. This method returns an XName object.
+  - This getName method takes a string argument named localName.
+  - This getName method calls the XName constructor passing the XNamespace object upon which getName was called, and passing the localName that was passed as an argument, and returns the object that is returned by the constructor.
+  
+Add unit tests for this new method:
+  - Add any unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

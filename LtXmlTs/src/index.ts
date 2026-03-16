@@ -95,6 +95,10 @@ export class XNamespace {
     return `{${this.uri}}`;
   }
 
+  public getName(localName: string): XName {
+    return new XName(this, localName);
+  }
+
   constructor(uri: string, preferredPrefix: string | null = null) {
     this.uri = uri;
 
