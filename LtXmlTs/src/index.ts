@@ -58,6 +58,22 @@ export class XComment extends XNode {
   }
 }
 
+export class XText extends XNode {
+  public readonly value: string;
+
+  constructor(value: string);
+  constructor(other: XText);
+  constructor(valueOrOther: string | XText) {
+    super();
+    this.nodeType = 'Text';
+    if (typeof valueOrOther === 'string') {
+      this.value = valueOrOther;
+    } else {
+      this.value = valueOrOther.value;
+    }
+  }
+}
+
 export class XProcessingInstruction extends XNode {
   public readonly target: string;
   public readonly data: string;
