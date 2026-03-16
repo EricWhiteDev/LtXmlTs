@@ -120,6 +120,15 @@ export class XName {
     return this.namespace.uri;
   }
 
+  public static get(namespace: XNamespace, localName: string): XName
+  public static get(name: string): XName
+  public static get(namespaceOrName: XNamespace | string, localName?: string): XName {
+    if (namespaceOrName instanceof XNamespace) {
+      return new XName(namespaceOrName, localName!);
+    }
+    return new XName(namespaceOrName);
+  }
+
   constructor(namespace: XNamespace, localName: string)
   constructor(name: string)
   constructor(namespaceOrName: XNamespace | string, localName?: string) {

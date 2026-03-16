@@ -128,6 +128,97 @@ describe('XName.toString', () => {
   });
 });
 
+describe('XName.get — overload 1: XNamespace + localName', () => {
+  it('returns an XName with the correct namespace', () => {
+    const ns = new XNamespace('urn:test:xname:get:ov1:ns');
+    const name = XName.get(ns, 'foo');
+    expect(name.namespace).toBe(ns);
+  });
+
+  it('returns an XName with the correct localName', () => {
+    const ns = new XNamespace('urn:test:xname:get:ov1:local');
+    const name = XName.get(ns, 'bar');
+    expect(name.localName).toBe('bar');
+  });
+
+  it('called twice with the same args returns the same object reference', () => {
+    const ns = new XNamespace('urn:test:xname:get:ov1:same');
+    const first = XName.get(ns, 'elem');
+    const second = XName.get(ns, 'elem');
+    expect(first).toBe(second);
+  });
+
+  it('result is the same object reference as new XName(namespace, localName)', () => {
+    const ns = new XNamespace('urn:test:xname:get:ov1:cross');
+    const fromGet = XName.get(ns, 'item');
+    const fromNew = new XName(ns, 'item');
+    expect(fromGet).toBe(fromNew);
+  });
+});
+
+describe('XName.get — overload 2: clark notation string', () => {
+  it('parses namespace.uri and localName from a valid clark string', () => {
+    const name = XName.get('{urn:test:xname:get:clark:parse}element');
+    expect(name.namespace.uri).toBe('urn:test:xname:get:clark:parse');
+    expect(name.localName).toBe('element');
+  });
+
+  it('called twice with the same clark string returns the same object reference', () => {
+    const first = XName.get('{urn:test:xname:get:clark:twice}elem');
+    const second = XName.get('{urn:test:xname:get:clark:twice}elem');
+    expect(first).toBe(second);
+  });
+
+  it('result is the same object reference as new XName(clarkString)', () => {
+    const fromGet = XName.get('{urn:test:xname:get:clark:new}x');
+    const fromNew = new XName('{urn:test:xname:get:clark:new}x');
+    expect(fromGet).toBe(fromNew);
+  });
+
+  it('result is the same object reference as get(namespace, localName) for equivalent name', () => {
+    const ns = new XNamespace('urn:test:xname:get:clark:equiv');
+    const fromClark = XName.get('{urn:test:xname:get:clark:equiv}y');
+    const fromNsLocal = XName.get(ns, 'y');
+    expect(fromClark).toBe(fromNsLocal);
+  });
+});
+
+describe('XName.get — overload 2: plain string (no namespace)', () => {
+  it('localName equals the input string', () => {
+    const name = XName.get('getPlainLocal');
+    expect(name.localName).toBe('getPlainLocal');
+  });
+
+  it('namespace is XNamespace.none', () => {
+    const name = XName.get('getPlainNs');
+    expect(name.namespace).toBe(XNamespace.none);
+  });
+
+  it('called twice returns the same object reference', () => {
+    const first = XName.get('getPlainTwice');
+    const second = XName.get('getPlainTwice');
+    expect(first).toBe(second);
+  });
+
+  it('result is the same object reference as new XName(plainString)', () => {
+    const fromGet = XName.get('getPlainNew');
+    const fromNew = new XName('getPlainNew');
+    expect(fromGet).toBe(fromNew);
+  });
+
+  it('result is the same object reference as get(XNamespace.none, plainString)', () => {
+    const fromPlain = XName.get('getPlainCross');
+    const fromNsLocal = XName.get(XNamespace.none, 'getPlainCross');
+    expect(fromPlain).toBe(fromNsLocal);
+  });
+});
+
+describe('XName.get — overload 2: invalid clark notation', () => {
+  it('throws Error when the opening brace has no closing brace', () => {
+    expect(() => XName.get('{urn:missing-close')).toThrow(Error);
+  });
+});
+
 describe('XName cross-checks', () => {
   it('two XName objects with different fully-qualified names are different object references', () => {
     const a = new XName('{urn:test:xname:cross:a}foo');

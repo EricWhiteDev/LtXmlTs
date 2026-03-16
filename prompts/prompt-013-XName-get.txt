@@ -1,0 +1,10 @@
+Modify the XName class in the LtXmlTs module.
+  - Add a public static method, get, to the class.
+  - There are two overloads of the get() method.
+    - The first overload takes two arguments, an XNamespace object named namespace, and string named localName. This overload simply calls the XName constructor that takes two arguments, passing the two arguments, and returns the XName object that was returned by the constructor.
+    - The second overload takes one argument, a string object named name. This overload simply calls the XName constructor that takes one argument, passing the name argument. It returns the XName object that was returned by the constructor.
+  
+Add unit tests for this new method:
+  - Add any other unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
