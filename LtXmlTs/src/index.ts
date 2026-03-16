@@ -40,6 +40,14 @@ export class XObject {
   }
 }
 
+class XNameCacheEntry {
+  name: XName;
+
+  constructor(name: XName) {
+    this.name = name;
+  }
+}
+
 class XNamespaceCacheEntry {
   namespace: XNamespace;
   preferredPrefix: string | null;
@@ -99,5 +107,56 @@ export class XNamespace {
     }
 
     XNamespace.#namespaceCache.push(new XNamespaceCacheEntry(this, preferredPrefix));
+  }
+}
+
+export class XName {
+  static #nameCache: XNameCacheEntry[] = [];
+
+  public readonly namespace: XNamespace;
+  public readonly localName: string;
+
+  public get namespaceName(): string {
+    return this.namespace.uri;
+  }
+
+  constructor(namespace: XNamespace, localName: string)
+  constructor(name: string)
+  constructor(namespaceOrName: XNamespace | string, localName?: string) {
+    let ns: XNamespace;
+    let local: string;
+
+    if (namespaceOrName instanceof XNamespace) {
+      ns = namespaceOrName;
+      local = localName!;
+    } else {
+      const name = namespaceOrName;
+      if (name.startsWith('{')) {
+        const closeIdx = name.indexOf('}');
+        if (closeIdx === -1) {
+          throw new Error(`Invalid clark notation name: '${name}'`);
+        }
+        ns = new XNamespace(name.slice(1, closeIdx));
+        local = name.slice(closeIdx + 1);
+      } else {
+        ns = XNamespace.none;
+        local = name;
+      }
+    }
+
+    this.namespace = ns;
+    this.localName = local;
+
+    const clarkKey = ns.uri === '' ? local : `{${ns.uri}}${local}`;
+    const cached = XName.#nameCache.find(e => e.name.toString() === clarkKey);
+    if (cached) {
+      return cached.name;
+    }
+
+    XName.#nameCache.push(new XNameCacheEntry(this));
+  }
+
+  public toString(): string {
+    return this.namespace.uri === '' ? this.localName : `{${this.namespace.uri}}${this.localName}`;
   }
 }

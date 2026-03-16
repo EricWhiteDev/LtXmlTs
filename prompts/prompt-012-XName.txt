@@ -1,0 +1,25 @@
+Add a new class to the LtXmlTs module.
+  - The name of the class is XName.
+  - There are two overloads for the constructor of the class.
+    - The first overload takes an XNamespace object named namespace as the first argument. It takes a string named localName as the second argument.
+    - The second overload takes a string named name as its one and only argument. The name might be in clark notation, in which case there is a namespace surrounded   by curly braces. It might be in no namespace, in which case, the first character is not an open curly brace.
+    - In the case of the first overload, the XNamespace object (converted to clark notation via the toString() method) and the localName string can be concatenated to form a fully qualified name in clark notation.
+    - In the case of the second overload, the name is already in clark notation. If the name is in a namespace, then the namespace will be surrounded by curly braces. If the name is in no namespace, then the local name (without any braces) is the fully qualified name in clark notation.
+    - In the case of the second overload, if a name is passed in with a namespace in clark notation, validate that the name is valid, i.e. that there is both an open and close curly brace.
+  - Add a private static array of XNameCacheEntry objects to the XName class. This array name is #nameCache.
+  - If the XName constructor is called with a new fully qualified name, i.e. it has never been seen before, then create a new XName object, and then create a new XNameCacheEntry object, and add it to the #nameCache. Return the new XName object from the constructor.
+  - If the XName constructor is called with a fully qualified name that has been constructed before, then there will be an XNameCacheEntry object in the #nameCache for that fully qualified name. In any case, if the XName constructor is called with a fully qualified name that has been constructed before, then do not create a new XName object, but instead return the XName object from the #nameCache.
+  
+Add another new private class to the LtXmlTs module.
+  - The name of the class is XNameCacheEntry.
+  - This class is private, and should not be visible to code outside of the LtXmlTs module.
+  - There is one field in this class.
+    - The field is an XName object, named name.
+  - This is the type of objects in the static #nameCache array in the XName class.
+
+Add unit tests for these new classes:
+  - Validate that if two XName objects are created with different fully qualified names, the constructor returns different objects.
+  - Validate that if two XNamespace objects are created with the same fully qualified name, the constructor returns the same object.
+  - Add any other unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
