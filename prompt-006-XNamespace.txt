@@ -1,0 +1,22 @@
+Add a new class to the LtXmlTs module.
+  - The name of the class is XNamespace.
+  - The constructor for the class takes two arguments. The first argument is uri, which is a string. The second argument is preferredPrefix, which is a string.
+  - It is valid to pass null as the prefix. It is also valid to only pass the uri to the constructor, omitting the preferredPrefix argument. It is not valid to pass null for the uri argument.
+  - Add a private static array of XNamespaceCacheEntry objects to the XNamespace class. This array name is #namespaceCache.
+  - If the XNamespace constructor is called with a new uri, i.e. it has never been seen before, then create a new XNamespaceCacheEntry object, and add it to the #namespaceCache.  Set the preferredPrefix of the XNamespaceCacheEntry object to the preferredPrefix argument.  Return the new XNamespace object from the constructor.
+  - If the XNamespace constructor is called with a uri that has been constructed before, then there will be an XNamespaceCacheEntry object in the #namespaceCache for that uri. If the preferredPrefix field in the XNamespaceCacheEntry object is different from the preferredPrefix argument, then set the preferredPrefix field in the XNamespaceCacheEntry object to the preferredPrefix argument. In any case, if the XNamespace constructor is called with a uri that has been constructed before, then do not create a new XNamespace object, but instead return the XNamespace object from the #namespaceCache.
+  
+Add another new private class to the LtXmlTs module.
+  - The name of the class is XNamespaceCacheEntry.
+  - This class is private, and should not be visible to code outside of the LtXmlTs module.
+  - There are two fields in this class.
+    - The first field is an XNamespace object, named namespace.
+    - The second field is a string, named preferredPrefix.
+  - This is the type of objects in the static #namespaceCache array in the XNamespace class.
+
+Add unit tests for these new classes:
+  - Validate that if two XNamespace objects are created with different uri arguments, the constructor returns different objects.
+  - Validate that if two XNamespace objects are created with the same uri, the constructor returns the same object.  Validate this in the case that different prefixes are passed when calling the constructor, and in the case that the same prefix is passed when calling the constructor.
+  - Add any other unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

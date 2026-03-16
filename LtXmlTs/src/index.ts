@@ -39,3 +39,37 @@ export class XObject {
     }
   }
 }
+
+export class XNamespace {
+  static #namespaceCache: XNamespaceCacheEntry[] = [];
+
+  public readonly uri: string;
+
+  public get preferredPrefix(): string | null {
+    return XNamespace.#namespaceCache.find(e => e.namespace === this)?.preferredPrefix ?? null;
+  }
+
+  constructor(uri: string, preferredPrefix: string | null = null) {
+    this.uri = uri;
+
+    const cached = XNamespace.#namespaceCache.find(e => e.namespace.uri === uri);
+    if (cached) {
+      if (cached.preferredPrefix !== preferredPrefix) {
+        cached.preferredPrefix = preferredPrefix;
+      }
+      return cached.namespace;
+    }
+
+    XNamespace.#namespaceCache.push(new XNamespaceCacheEntry(this, preferredPrefix));
+  }
+}
+
+class XNamespaceCacheEntry {
+  namespace: XNamespace;
+  preferredPrefix: string | null;
+
+  constructor(namespace: XNamespace, preferredPrefix: string | null) {
+    this.namespace = namespace;
+    this.preferredPrefix = preferredPrefix;
+  }
+}
