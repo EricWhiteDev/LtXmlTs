@@ -1,0 +1,10 @@
+Modify the XNamespace class in the LtXmlTs module.
+  - Add a public method, toString, to the class.
+  - This method takes no arguments.
+  - This method returns the uri, prepended with the open curly brace {, and appended with the close curly brace }.
+  
+Add unit tests for this new method:
+  - Validate that toString returns the uri surrounded by { and }.
+  - Add any other unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

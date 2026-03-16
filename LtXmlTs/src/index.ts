@@ -53,6 +53,10 @@ export class XNamespace {
     return new XNamespace(uri);
   }
 
+  public toString(): string {
+    return `{${this.uri}}`;
+  }
+
   constructor(uri: string, preferredPrefix: string | null = null) {
     this.uri = uri;
 

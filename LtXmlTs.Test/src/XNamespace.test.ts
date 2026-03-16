@@ -81,3 +81,20 @@ describe('XNamespace.get', () => {
     expect(first).toBe(second);
   });
 });
+
+describe('XNamespace.toString', () => {
+  it('standard URI returns the URI wrapped in braces', () => {
+    const ns = new XNamespace('urn:test:tostring:standard');
+    expect(ns.toString()).toBe('{urn:test:tostring:standard}');
+  });
+
+  it('empty URI returns empty braces', () => {
+    const ns = new XNamespace('');
+    expect(ns.toString()).toBe('{}');
+  });
+
+  it('template literal interpolation produces the same result as explicit toString()', () => {
+    const ns = new XNamespace('urn:test:tostring:interpolation');
+    expect(`${ns}`).toBe(ns.toString());
+  });
+});
