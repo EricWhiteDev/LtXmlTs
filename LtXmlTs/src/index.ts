@@ -46,6 +46,41 @@ export abstract class XContainer extends XNode {
   protected nodesArray: XNode[] = [];
 }
 
+export class XAttribute extends XObject {
+  public readonly name: XName;
+  public readonly value: string;
+
+  constructor(name: XName);
+  constructor(name: XName, content: unknown);
+  constructor(name: XName, content?: unknown) {
+    super();
+    this.name = name;
+    this.value = '';
+    if (arguments.length >= 2) {
+      if (content === null || content === undefined) {
+        throw new Error('XAttribute content cannot be null or undefined');
+      } else if (typeof content === 'string') {
+        this.value = content;
+      } else {
+        this.value = (content as { toString(): string }).toString();
+      }
+    }
+  }
+}
+
+export class XElement extends XContainer {
+  public readonly name: XName;
+  private attributesArray: XAttribute[] = [];
+
+  constructor(name: XName);
+  constructor(name: XName, ...content: unknown[]);
+  constructor(name: XName, ...content: unknown[]) {
+    super();
+    this.name = name;
+    this.nodesArray = [];
+  }
+}
+
 class XNameCacheEntry {
   name: XName;
 

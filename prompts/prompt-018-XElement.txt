@@ -1,0 +1,22 @@
+Add a new class to the LtXmlTs module.
+  - The name of the class is XElement.
+  - It derives from its base class XContainer.
+  - It should inherit the nodeType and parent properties from the XContainer class.
+  - It should inherit the addAnnotation(), annotation(), annotations(), and removeAnnotations() methods from the XContainer class.
+  - It declares a new public field, name, which is an XName object.
+  - The XElement class contains a constructor with two overloads.
+    - The first overload has one arguement, name, which is an XName object. This overload creates a new XElement object, setting the name field to the name argument. In this overload, set the nodesArray field to an empty array.
+    - The second overload has an argument, name, which is an XName object. Set the name property to the name argument. It also has a rest parameter. The array type of the rest parameter is explicitly unknown. For now, do not do anything with the rest parameter. The functionality associated with the rest parameter will be implemented in the future.
+  - The XElement class declares a private field, attributesArray, which is an array of XAttribute objects. The attributesArray field can be accessed by code in the XElement class, but not by any other classes.
+
+Add a new class to the LtXmlTs module.
+  - The name of the class is XAttribute.
+  - It derives from its base class XObject.
+  - It declares a public field, name, which is an XName object.
+  - It declares a public field, value, which is a string.
+  - It has two overloads of its constructor.
+    - The first overload takes two arguments. The first argument, name, is an XName object. The name field should be set to the name argument. The second argument, content, is of type unknown.
+    - In the constructor, if the content argument is of type string, set the value field to content.
+    - In the constructor, if the content argument implements the toString() method, then call toString(), and set the value field to the resulting string.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
