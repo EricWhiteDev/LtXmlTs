@@ -261,12 +261,43 @@ export class XElement extends XContainer {
 
   constructor(name: XName);
   constructor(name: XName, ...content: unknown[]);
-  constructor(name: XName, ...content: unknown[]) {
+  constructor(other: XElement);
+  constructor(nameOrOther: XName | XElement, ...content: unknown[]) {
     super();
     this.nodeType = 'Element';
-    this.name = name;
-    this.addContentList(...content);
-    this.addAttributeContentList(...content);
+    if (nameOrOther instanceof XElement) {
+      const other = nameOrOther;
+      this.name = other.name;
+      for (const attr of other.attributesArray) {
+        const clone = new XAttribute(attr);
+        clone.parent = this;
+        this.attributesArray.push(clone);
+      }
+      for (const node of other.nodesArray) {
+        let clonedNode: XNode;
+        if (node instanceof XElement) {
+          clonedNode = new XElement(node);
+        } else if (node instanceof XComment) {
+          clonedNode = new XComment(node);
+        } else if (node instanceof XText) {
+          clonedNode = new XText(node);
+        } else if (node instanceof XEntity) {
+          clonedNode = new XEntity(node);
+        } else if (node instanceof XCData) {
+          clonedNode = new XCData(node);
+        } else if (node instanceof XProcessingInstruction) {
+          clonedNode = new XProcessingInstruction(node);
+        } else {
+          continue;
+        }
+        clonedNode.parent = this;
+        this.nodesArray.push(clonedNode);
+      }
+    } else {
+      this.name = nameOrOther;
+      this.addContentList(...content);
+      this.addAttributeContentList(...content);
+    }
   }
 }
 

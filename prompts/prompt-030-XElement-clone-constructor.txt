@@ -1,0 +1,5 @@
+Enhance the XElement class:
+- Add a clone constructor.  The clone constructor takes a single argument, other, which is of type XElement.
+- The clone constructor first creates a new XElement object, passing the name object. Then for each of the attributes in the other argument, it clones the attribute by calling the XAttribute clone constructor. It then sets the parent propery of the newly cloned XAttribute object to the 'this' XElement object. It then adds the newly cloned XAttribute object to the attributesArray.
+- Then for each of the nodes in the other XElement object, it clones the node by calling the clone constructor for that node's class. After calling the clone constructor, it sets the parent property of the newly cloned node to the 'this' XElement object. It then adds the newly cloned object to the nodesArray.
+- Note that if one of the nodes is an XElement object, the clone constructor calls itself recursively.

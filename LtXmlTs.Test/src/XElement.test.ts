@@ -70,4 +70,74 @@ describe('XElement', () => {
     expect(attrs[0].name).toBe(XName.get('a'));
     expect(attrs[1].name).toBe(XName.get('b'));
   });
+
+  it('clone constructor copies name', () => {
+    const e = new XElement(XName.get('root'));
+    const clone = new XElement(e);
+    expect(clone.name).toBe(XName.get('root'));
+  });
+
+  it('clone constructor produces a distinct object', () => {
+    const e = new XElement(XName.get('root'));
+    const clone = new XElement(e);
+    expect(clone).not.toBe(e);
+  });
+
+  it('clone constructor copies attributes', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    const clone = new XElement(e);
+    expect(clone.attributes()).toHaveLength(1);
+    expect(clone.attributes()[0].value).toBe('1');
+  });
+
+  it('clone constructor does not share attribute objects', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    const clone = new XElement(e);
+    expect(clone.attributes()[0]).not.toBe(e.attributes()[0]);
+  });
+
+  it('clone constructor sets parent of cloned attributes to new element', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    const clone = new XElement(e);
+    expect(clone.attributes()[0].parent).toBe(clone);
+  });
+
+  it('clone constructor copies child nodes', () => {
+    const e = new XElement(XName.get('root'), 'hello');
+    const clone = new XElement(e);
+    expect(clone.nodes()).toHaveLength(1);
+  });
+
+  it('clone constructor does not share node objects', () => {
+    const e = new XElement(XName.get('root'), 'hello');
+    const clone = new XElement(e);
+    expect(clone.nodes()[0]).not.toBe(e.nodes()[0]);
+  });
+
+  it('clone constructor sets parent of cloned nodes to new element', () => {
+    const e = new XElement(XName.get('root'), 'hello');
+    const clone = new XElement(e);
+    expect(clone.nodes()[0].parent).toBe(clone);
+  });
+
+  it('clone constructor recursively clones nested XElement', () => {
+    const child = new XElement(XName.get('child'), 'text');
+    const parent = new XElement(XName.get('root'), child);
+    const clone = new XElement(parent);
+    const clonedChild = clone.nodes()[0] as XElement;
+    expect(clonedChild).not.toBe(child);
+    expect(clonedChild.name).toBe(XName.get('child'));
+    expect(clonedChild.nodes()[0]).not.toBe(child.nodes()[0]);
+    expect(clonedChild.parent).toBe(clone);
+  });
+
+  it('clone constructor with empty element produces empty clone', () => {
+    const e = new XElement(XName.get('root'));
+    const clone = new XElement(e);
+    expect(clone.attributes()).toHaveLength(0);
+    expect(clone.nodes()).toHaveLength(0);
+  });
 });
