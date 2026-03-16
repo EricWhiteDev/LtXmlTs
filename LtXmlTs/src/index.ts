@@ -100,7 +100,7 @@ class XNamespaceCacheEntry {
 }
 
 export class XNamespace {
-  static #namespaceCache: XNamespaceCacheEntry[] = [];
+  private static namespaceCache: XNamespaceCacheEntry[] = [];
 
   public static readonly none: XNamespace = new XNamespace('');
   public static readonly xml: XNamespace = new XNamespace('http://www.w3.org/XML/1998/namespace', 'xml');
@@ -109,7 +109,7 @@ export class XNamespace {
   public readonly uri: string;
 
   public get preferredPrefix(): string | null {
-    return XNamespace.#namespaceCache.find(e => e.namespace === this)?.preferredPrefix ?? null;
+    return XNamespace.namespaceCache.find(e => e.namespace === this)?.preferredPrefix ?? null;
   }
 
   public get namespaceName(): string {
@@ -143,7 +143,7 @@ export class XNamespace {
   constructor(uri: string, preferredPrefix: string | null = null) {
     this.uri = uri;
 
-    const cached = XNamespace.#namespaceCache.find(e => e.namespace.uri === uri);
+    const cached = XNamespace.namespaceCache.find(e => e.namespace.uri === uri);
     if (cached) {
       if (cached.preferredPrefix !== preferredPrefix) {
         cached.preferredPrefix = preferredPrefix;
@@ -151,7 +151,7 @@ export class XNamespace {
       return cached.namespace;
     }
 
-    XNamespace.#namespaceCache.push(new XNamespaceCacheEntry(this, preferredPrefix));
+    XNamespace.namespaceCache.push(new XNamespaceCacheEntry(this, preferredPrefix));
   }
 }
 
