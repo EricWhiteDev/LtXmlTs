@@ -40,6 +40,8 @@ export class XObject {
   }
 }
 
+export abstract class XNode extends XObject {}
+
 class XNameCacheEntry {
   name: XName;
 

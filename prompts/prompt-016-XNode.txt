@@ -1,0 +1,9 @@
+Add a new class to the LtXmlTs module.
+  - The name of the class is XNode.
+  - It derives from its base class XObject.
+  - It should inherit the nodeType and parent properties from the XObject class.
+  - It should inherit the addAnnotation(), annotation(), annotations(), and removeAnnotations() methods from the XObject class.
+
+XNode is an abstract base class, so no unit tests are required.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
