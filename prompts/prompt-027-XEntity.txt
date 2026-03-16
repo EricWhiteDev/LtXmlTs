@@ -1,0 +1,21 @@
+Add a new public class to the LtXmlTs module.
+  - The name of the class is XEntity.
+  - It derives from its base class XNode.
+  - It declares a readonly field, value, which is a string object.
+  - The XEntity class contains a constructor with two overloads.
+    - The first overload has one argument, value, which is a string object. This overload creates a new XEntity object, setting the value field to the value argument.
+    - The second overload has one argument, other, which is an XEntity object. This is a copy constructor. Set the value field in the newly constructed object to the value field from the other XEntity object.
+  - In the constructor, set the nodeType field to 'Entity'.
+
+Add a new public class to the LtXmlTs module.
+  - The name of the class is XCData.
+  - It derives from its base class XNode.
+  - It declares a readonly field, value, which is a string object.
+  - The XCData class contains a constructor with two overloads.
+    - The first overload has one argument, value, which is a string object. This overload creates a new XCData object, setting the value field to the value argument.
+    - The second overload has one argument, other, which is an XCData object. This is a copy constructor. Set the value field in the newly constructed object to the value field from the other XCData object.
+  - In the constructor, set the nodeType field to 'CDATA'.
+
+Add unit tests as necessary to cause code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

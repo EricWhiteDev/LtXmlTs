@@ -74,6 +74,38 @@ export class XText extends XNode {
   }
 }
 
+export class XEntity extends XNode {
+  public readonly value: string;
+
+  constructor(value: string);
+  constructor(other: XEntity);
+  constructor(valueOrOther: string | XEntity) {
+    super();
+    this.nodeType = 'Entity';
+    if (typeof valueOrOther === 'string') {
+      this.value = valueOrOther;
+    } else {
+      this.value = valueOrOther.value;
+    }
+  }
+}
+
+export class XCData extends XNode {
+  public readonly value: string;
+
+  constructor(value: string);
+  constructor(other: XCData);
+  constructor(valueOrOther: string | XCData) {
+    super();
+    this.nodeType = 'CDATA';
+    if (typeof valueOrOther === 'string') {
+      this.value = valueOrOther;
+    } else {
+      this.value = valueOrOther.value;
+    }
+  }
+}
+
 export class XProcessingInstruction extends XNode {
   public readonly target: string;
   public readonly data: string;
