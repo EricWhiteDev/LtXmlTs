@@ -80,3 +80,50 @@ describe('XObject.annotations', () => {
     expect(notes[0]).toBe(note);
   });
 });
+
+describe('XObject.removeAnnotations', () => {
+  it('no-arg overload clears all annotations', () => {
+    class Tag { public label: string = ''; }
+    class Note { public text: string = ''; }
+
+    const myXObject = new XObject();
+    myXObject.addAnnotation(new Tag());
+    myXObject.addAnnotation(new Note());
+
+    myXObject.removeAnnotations();
+
+    expect(myXObject.annotations(Tag)).toEqual([]);
+    expect(myXObject.annotations(Note)).toEqual([]);
+  });
+
+  it('typed overload removes only entries with exact constructor match', () => {
+    class Tag { public label: string = ''; }
+    class Note { public text: string = ''; }
+
+    const myXObject = new XObject();
+    const tag = new Tag();
+    const note = new Note();
+    myXObject.addAnnotation(tag);
+    myXObject.addAnnotation(note);
+
+    myXObject.removeAnnotations(Tag);
+
+    expect(myXObject.annotations(Tag)).toEqual([]);
+    expect(myXObject.annotations(Note)).toHaveLength(1);
+    expect(myXObject.annotations(Note)[0]).toBe(note);
+  });
+
+  it('typed overload leaves subclass instances in place', () => {
+    class Animal {}
+    class Dog extends Animal {}
+
+    const myXObject = new XObject();
+    const dog = new Dog();
+    myXObject.addAnnotation(dog);
+
+    myXObject.removeAnnotations(Animal);
+
+    expect(myXObject.annotations(Dog)).toHaveLength(1);
+    expect(myXObject.annotations(Dog)[0]).toBe(dog);
+  });
+});

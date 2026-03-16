@@ -15,4 +15,14 @@ export class XObject {
   annotations<T>(ctor: new (...args: any[]) => T): T[] {
     return this.#annotations.filter(item => item instanceof ctor) as T[];
   }
+
+  removeAnnotations(): void;
+  removeAnnotations<T>(ctor: new (...args: any[]) => T): void;
+  removeAnnotations<T>(ctor?: new (...args: any[]) => T): void {
+    if (ctor === undefined) {
+      this.#annotations = [];
+    } else {
+      this.#annotations = this.#annotations.filter(item => item.constructor !== ctor);
+    }
+  }
 }

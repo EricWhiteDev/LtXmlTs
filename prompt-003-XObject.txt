@@ -1,0 +1,9 @@
+Enhance the XObject class as follows:
+  - The class XObject should have a public method, removeAnnotations, with two overloads. The first overload takes no arguments, and clears the #annotations array. The second overload takes one argument, a type. This overload removes all entries in the #annotations array that have that specific type, leaving all other entries that are of other types in the #annotations array.
+
+Enhance the LtXmlTs.test as follows:
+  - Add unit tests to test both overloads of the new removeAnnotations method.
+
+After making these changes, run the unit tests and validate that the XObject.annotations method works as described.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
