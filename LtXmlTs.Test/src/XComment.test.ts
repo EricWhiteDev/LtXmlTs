@@ -1,0 +1,26 @@
+import { describe, it, expect } from 'vitest';
+import { XComment } from 'ltxmlts';
+
+describe('XComment', () => {
+  it('constructs from a string and sets value', () => {
+    const c = new XComment('hello');
+    expect(c.value).toBe('hello');
+  });
+
+  it('sets nodeType to Comment', () => {
+    const c = new XComment('hello');
+    expect(c.nodeType).toBe('Comment');
+  });
+
+  it('copy constructor copies value from other XComment', () => {
+    const original = new XComment('original text');
+    const copy = new XComment(original);
+    expect(copy.value).toBe('original text');
+  });
+
+  it('copy constructor produces an independent object', () => {
+    const original = new XComment('original text');
+    const copy = new XComment(original);
+    expect(copy).not.toBe(original);
+  });
+});

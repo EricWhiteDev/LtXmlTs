@@ -1,0 +1,9 @@
+Add a new class to the LtXmlTs module.
+  - The name of the class is XComment.
+  - It derives from its base class XNode.
+  - It declares a readonly field, value, which is a string object.
+  - The XComment class contains a constructor with two overloads.
+    - The first overload has one arguement, content, which is a string object. This overload creates a new XComment object, setting the value field to the content argument.
+    - The second overload has one argument, other, which is an XComment object. This is a copy constructor. Set the value field in the newly constructed object to the value field from the other XComment object.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

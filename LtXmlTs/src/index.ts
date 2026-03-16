@@ -42,6 +42,22 @@ export class XObject {
 
 export abstract class XNode extends XObject {}
 
+export class XComment extends XNode {
+  public readonly value: string;
+
+  constructor(content: string);
+  constructor(other: XComment);
+  constructor(contentOrOther: string | XComment) {
+    super();
+    this.nodeType = 'Comment';
+    if (typeof contentOrOther === 'string') {
+      this.value = contentOrOther;
+    } else {
+      this.value = contentOrOther.value;
+    }
+  }
+}
+
 export abstract class XContainer extends XNode {
   protected nodesArray: XNode[] = [];
 }
