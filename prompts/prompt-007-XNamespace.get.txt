@@ -1,0 +1,10 @@
+Modify the XNamespace class in the LtXmlTs module.
+  - Add a public static method, get, to the class.
+  - This get method takes a string argument named uri.
+  - This get method calls the XNamespace constructor, and returns the object that was returned by the constructor.
+  
+Add unit tests for this new method:
+  - Validate that if a constructor is called with a given uri, and if the get method is called with the same uri, the object that is returned by the constructor, and the object returned by the get method are the same object.
+  - Add any other unit tests that are necessary for good code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

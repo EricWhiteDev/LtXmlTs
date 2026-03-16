@@ -56,3 +56,28 @@ describe('XNamespace preferredPrefix property', () => {
     expect(first.preferredPrefix).toBe('stable');
   });
 });
+
+describe('XNamespace.get', () => {
+  it('get with a URI not yet cached returns an XNamespace with the correct uri', () => {
+    const ns = XNamespace.get('urn:test:get:new');
+    expect(ns.uri).toBe('urn:test:get:new');
+  });
+
+  it('constructor called first, then get with the same URI returns the same object reference', () => {
+    const first = new XNamespace('urn:test:get:ctor-first');
+    const second = XNamespace.get('urn:test:get:ctor-first');
+    expect(first).toBe(second);
+  });
+
+  it('get called first, then constructor with the same URI returns the same object reference', () => {
+    const first = XNamespace.get('urn:test:get:get-first');
+    const second = new XNamespace('urn:test:get:get-first');
+    expect(first).toBe(second);
+  });
+
+  it('get called twice with the same URI returns the same object reference', () => {
+    const first = XNamespace.get('urn:test:get:twice');
+    const second = XNamespace.get('urn:test:get:twice');
+    expect(first).toBe(second);
+  });
+});
