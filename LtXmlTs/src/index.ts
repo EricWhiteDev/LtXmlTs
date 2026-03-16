@@ -70,6 +70,7 @@ export class XAttribute extends XObject {
   constructor(name: XName, content: unknown);
   constructor(name: XName, content?: unknown) {
     super();
+    this.nodeType = 'Attribute';
     this.name = name;
     this.value = '';
     if (arguments.length >= 2) {
@@ -92,6 +93,7 @@ export class XElement extends XContainer {
   constructor(name: XName, ...content: unknown[]);
   constructor(name: XName, ...content: unknown[]) {
     super();
+    this.nodeType = 'Element';
     this.name = name;
     this.nodesArray = [];
   }

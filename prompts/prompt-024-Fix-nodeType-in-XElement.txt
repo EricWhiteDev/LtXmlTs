@@ -1,0 +1,9 @@
+Modify the XElement class.
+  - In the constructor, set the nodeType field to 'Element'.
+
+Modify the XAttribute class.
+  - In the constructor, set the nodeType field to 'Attribute'.
+
+Add unit tests to validate this functionality, and for better code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
