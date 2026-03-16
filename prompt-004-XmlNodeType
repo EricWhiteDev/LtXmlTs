@@ -1,0 +1,12 @@
+Add a new type to the LtXmlTs module. This type is a union of string literals:
+  - The name of the type is XmlNodeType.
+  - the type is nullable; null is a valid value of the type. null is the default value.
+  - The strings that are valid values are: 'Element' | 'Text' | 'Comment' | 'CDATA' | 'ProcessingInstruction' | 'Entity' | 'Attribute' | 'Document'
+
+Add a public field to the XObject class.
+  - the type of the field is XmlNodeType.
+  - the name of the field is nodeType.
+
+No unit tests need to be created for this modification.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

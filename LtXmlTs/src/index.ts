@@ -1,5 +1,17 @@
+export type XmlNodeType =
+  | 'Element'
+  | 'Text'
+  | 'Comment'
+  | 'CDATA'
+  | 'ProcessingInstruction'
+  | 'Entity'
+  | 'Attribute'
+  | 'Document'
+  | null;
+
 export class XObject {
   #annotations: any[] = [];
+  public nodeType: XmlNodeType = null;
 
   addAnnotation(obj: any): void {
     this.#annotations.push(obj);
