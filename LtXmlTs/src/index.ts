@@ -10,32 +10,32 @@ export type XmlNodeType =
   | null;
 
 export class XObject {
-  #annotations: any[] = [];
+  protected annotationsArray: any[] = [];
   public nodeType: XmlNodeType = null;
   public parent: XObject | null = null;
 
   addAnnotation(obj: any): void {
-    this.#annotations.push(obj);
+    this.annotationsArray.push(obj);
   }
 
   annotation<T>(ctor: new (...args: any[]) => T): T | null {
-    for (const item of this.#annotations) {
+    for (const item of this.annotationsArray) {
       if (item instanceof ctor) return item as T;
     }
     return null;
   }
 
   annotations<T>(ctor: new (...args: any[]) => T): T[] {
-    return this.#annotations.filter(item => item instanceof ctor) as T[];
+    return this.annotationsArray.filter(item => item instanceof ctor) as T[];
   }
 
   removeAnnotations(): void;
   removeAnnotations<T>(ctor: new (...args: any[]) => T): void;
   removeAnnotations<T>(ctor?: new (...args: any[]) => T): void {
     if (ctor === undefined) {
-      this.#annotations = [];
+      this.annotationsArray = [];
     } else {
-      this.#annotations = this.#annotations.filter(item => item.constructor !== ctor);
+      this.annotationsArray = this.annotationsArray.filter(item => item.constructor !== ctor);
     }
   }
 }

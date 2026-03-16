@@ -1,0 +1,5 @@
+Modify the #annotations field in the XObject class.
+  - Rename the field to annotationsArray.
+  - Use the TypeScript private access modifier, instead of prepending the # to the name.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
