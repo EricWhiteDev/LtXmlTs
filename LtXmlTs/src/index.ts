@@ -328,10 +328,43 @@ export class XDocument extends XContainer {
 
   constructor();
   constructor(declaration: XDeclaration);
-  constructor(declaration?: XDeclaration) {
+  constructor(other: XDocument);
+  constructor(declarationOrOther?: XDeclaration | XDocument) {
     super();
     this.nodeType = 'Document';
-    this.declaration = declaration ?? null;
+    if (declarationOrOther instanceof XDocument) {
+      const other = declarationOrOther;
+      this.declaration = other.declaration !== null
+        ? new XDeclaration(other.declaration)
+        : null;
+      for (const node of other.nodesArray) {
+        if (node.parent === null) {
+          node.parent = this;
+          this.nodesArray.push(node);
+        } else {
+          let clonedNode: XNode;
+          if (node instanceof XElement) {
+            clonedNode = new XElement(node);
+          } else if (node instanceof XComment) {
+            clonedNode = new XComment(node);
+          } else if (node instanceof XText) {
+            clonedNode = new XText(node);
+          } else if (node instanceof XEntity) {
+            clonedNode = new XEntity(node);
+          } else if (node instanceof XCData) {
+            clonedNode = new XCData(node);
+          } else if (node instanceof XProcessingInstruction) {
+            clonedNode = new XProcessingInstruction(node);
+          } else {
+            continue;
+          }
+          clonedNode.parent = this;
+          this.nodesArray.push(clonedNode);
+        }
+      }
+    } else {
+      this.declaration = declarationOrOther ?? null;
+    }
   }
 }
 

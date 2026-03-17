@@ -1,0 +1,14 @@
+Enhance the XDocument class:
+- Add a copy constructor.  The copy constructor takes a single argument, other, which is of type XDocument.
+- If the other XDocument object's declaration property is not set to null, then call the XDocument constructor, passing the cloned XDeclaration object as an argument.
+- If the other XDocument object's declaration property is set to null, then call the XDocument constructor that takes no arguments.
+- Then regardless of which constructor was called, for each of the nodes in the other XDocument object:
+  {
+    - if the node's parent property is set to null, then set the parent property to the 'this' XDocument object, then add the node to the nodesArray.
+    - if the node's parent property is not set to null, then call the copy constructor for the class for that node. After calling the copy constructor, on the cloned object, set the parent property to the 'this' XDocument object, then add the node to the nodesArray.
+  } 
+
+For now, do not write unit tests for this functionality. They will be added in the future.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
+
