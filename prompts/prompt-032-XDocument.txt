@@ -1,0 +1,15 @@
+Add a new class to the LtXmlTs module.
+  - The name of the class is XDocument.
+  - It derives from its base class XContainer.
+  - It should inherit the nodeType and parent properties from the XContainer class.
+  - It should inherit the addAnnotation(), annotation(), annotations(), and removeAnnotations() methods from the XContainer class.
+  - It declares a public field, declaration, which is an XDeclaration object. The declaration property may be null.
+  - The XDocument class has two overloads:
+    - One overload has no arguments. The declaration and the root element are set to null.
+    - The second overload has one argument, an XDeclaration object. Set the declaration field to the specified declaration argument.
+    - In both overloads of the constructor, set the noteType property to 'Document'.
+    - For now, these are the only overloads of the constructor. In the future, more overloads will be added.
+
+Add unit tests for this new class for code coverage.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

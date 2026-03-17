@@ -323,6 +323,18 @@ export class XDeclaration {
   }
 }
 
+export class XDocument extends XContainer {
+  public readonly declaration: XDeclaration | null;
+
+  constructor();
+  constructor(declaration: XDeclaration);
+  constructor(declaration?: XDeclaration) {
+    super();
+    this.nodeType = 'Document';
+    this.declaration = declaration ?? null;
+  }
+}
+
 class XNameCacheEntry {
   name: XName;
 
