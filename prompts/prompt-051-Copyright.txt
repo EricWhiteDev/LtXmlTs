@@ -1,0 +1,12 @@
+Add the following copyright to every source module in the project:
+
+/*
+ * LtXmlTs (LINQ to XML for TypeScript)
+ * Copyright (c) 2026 Eric White
+ * eric@ericwhite.com
+ * https://www.ericwhite.com
+ * linkedin.com/in/ericwhitedev
+ * Licensed under the MIT License
+ */
+
+Add instructions to CLAUDE.md to always add this copyright notice.
