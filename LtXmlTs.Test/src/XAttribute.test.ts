@@ -159,6 +159,14 @@ describe('XAttribute.remove', () => {
   });
 });
 
+describe('XAttribute.parent', () => {
+  it('is set to the parent XElement when added to an element', () => {
+    const el = new XElement('root', new XAttribute('id', '1'));
+    const a = el.firstAttribute!;
+    expect(a.parent).toBe(el);
+  });
+});
+
 describe('XAttribute.setValue', () => {
   it('sets value on a parentless attribute', () => {
     const a = new XAttribute('id', 'original');
