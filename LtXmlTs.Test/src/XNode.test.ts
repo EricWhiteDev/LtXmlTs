@@ -174,3 +174,100 @@ describe('XNode.addBeforeSelf', () => {
     });
   });
 });
+
+describe('XNode.replaceWith', () => {
+  describe('error cases', () => {
+    it('throws when node has no parent', () => {
+      const el = new XElement('root');
+      expect(() => el.replaceWith(new XComment('x'))).toThrow('The parent is missing.');
+    });
+  });
+
+  describe('replacement order with XElement parent', () => {
+    it('replaces first of two siblings', () => {
+      const parent = new XElement('root', new XElement('a'), new XElement('b'));
+      const [a] = parent.nodes() as XElement[];
+      a.replaceWith(new XElement('x'));
+      const names = (parent.nodes() as XElement[]).map(n => n.name.localName);
+      expect(names).toEqual(['x', 'b']);
+    });
+
+    it('replaces middle of three siblings', () => {
+      const parent = new XElement('root',
+        new XElement('a'), new XElement('b'), new XElement('c'));
+      const nodes = parent.nodes() as XElement[];
+      nodes[1].replaceWith(new XElement('x'));
+      const names = (parent.nodes() as XElement[]).map(n => n.name.localName);
+      expect(names).toEqual(['a', 'x', 'c']);
+    });
+
+    it('replaces last of two siblings', () => {
+      const parent = new XElement('root', new XElement('a'), new XElement('b'));
+      const nodes = parent.nodes() as XElement[];
+      nodes[1].replaceWith(new XElement('x'));
+      const names = (parent.nodes() as XElement[]).map(n => n.name.localName);
+      expect(names).toEqual(['a', 'x']);
+    });
+  });
+
+  describe('content variety', () => {
+    it('wraps string content in XText and sets parent', () => {
+      const parent = new XElement('root', new XElement('a'));
+      const [a] = parent.nodes();
+      a.replaceWith('hello');
+      const nodes = parent.nodes();
+      expect(nodes.length).toBe(1);
+      expect(nodes[0]).toBeInstanceOf(XText);
+      expect((nodes[0] as XText).value).toBe('hello');
+      expect(nodes[0].parent).toBe(parent);
+    });
+
+    it('inserts multiple content args in place of this', () => {
+      const parent = new XElement('root', new XElement('a'), new XElement('b'));
+      const [a] = parent.nodes() as XElement[];
+      a.replaceWith(new XComment('c1'), new XComment('c2'));
+      const nodes = parent.nodes();
+      expect(nodes.length).toBe(3);
+      expect((nodes[0] as XComment).value).toBe('c1');
+      expect((nodes[1] as XComment).value).toBe('c2');
+      expect((nodes[2] as XElement).name.localName).toBe('b');
+    });
+
+    it('sets parent on XElement content', () => {
+      const parent = new XElement('root', new XElement('a'));
+      const [a] = parent.nodes();
+      const child = new XElement('x');
+      a.replaceWith(child);
+      expect(child.parent).toBe(parent);
+    });
+  });
+
+  describe('XDocument parent', () => {
+    it('replaces root XElement with a new XElement', () => {
+      const doc = new XDocument(new XElement('root'));
+      const root = doc.nodes()[0] as XElement;
+      root.replaceWith(new XElement('newRoot'));
+      const nodes = doc.nodes();
+      expect(nodes.length).toBe(1);
+      expect(nodes[0]).toBeInstanceOf(XElement);
+      expect((nodes[0] as XElement).name.localName).toBe('newRoot');
+    });
+
+    it('replaces root XElement with a comment', () => {
+      const doc = new XDocument(new XElement('root'));
+      const root = doc.nodes()[0] as XElement;
+      root.replaceWith(new XComment('no-root'));
+      const nodes = doc.nodes();
+      expect(nodes.length).toBe(1);
+      expect(nodes[0]).toBeInstanceOf(XComment);
+    });
+
+    it('throws when replacing root with two XElements', () => {
+      const doc = new XDocument(new XElement('root'));
+      const root = doc.nodes()[0] as XElement;
+      expect(() => root.replaceWith(new XElement('a'), new XElement('b'))).toThrow(
+        'An XDocument may contain only one XElement.'
+      );
+    });
+  });
+});

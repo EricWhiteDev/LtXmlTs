@@ -62,6 +62,13 @@ export class XNode extends XObject {
     }
     (this.parent as XContainer).insertBeforeChild(this, ...content);
   }
+
+  public replaceWith(...content: unknown[]): void {
+    if (this.parent === null) {
+      throw new Error('The parent is missing.');
+    }
+    (this.parent as XContainer).replaceChild(this, ...content);
+  }
 }
 
 export class XComment extends XNode {
@@ -243,6 +250,19 @@ export class XContainer extends XNode {
     // Pre-populate the suffix so insertContentItems can check existing nodes
     // (e.g. XDocument's single-root constraint).
     this.nodesArray = copy.slice(idx);
+    const suffixLen = this.nodesArray.length;
+    this.insertContentItems(...content);
+    // New nodes were appended after the suffix; extract and reorder.
+    const newNodes = this.nodesArray.splice(suffixLen);
+    this.nodesArray = [...copy.slice(0, idx), ...newNodes, ...this.nodesArray];
+  }
+
+  public replaceChild(child: XNode, ...content: unknown[]): void {
+    const copy = [...this.nodesArray];
+    const idx = copy.indexOf(child);
+    // Pre-populate suffix so insertContentItems can check existing nodes
+    // (e.g. XDocument's single-root constraint).
+    this.nodesArray = copy.slice(idx + 1);
     const suffixLen = this.nodesArray.length;
     this.insertContentItems(...content);
     // New nodes were appended after the suffix; extract and reorder.
