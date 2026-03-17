@@ -129,6 +129,21 @@ export class XNode extends XObject {
     (this.parent as XContainer).removeChild(this);
     this.parent = null;
   }
+
+  public deepEquals(other: XNode): boolean {
+    if (this instanceof XElement && other instanceof XElement) return this.equals(other);
+    if (this instanceof XDocument && other instanceof XDocument) return this.equals(other);
+    if (this instanceof XComment && other instanceof XComment) return this.equals(other);
+    if (this instanceof XText && other instanceof XText) return this.equals(other);
+    if (this instanceof XEntity && other instanceof XEntity) return this.equals(other);
+    if (this instanceof XCData && other instanceof XCData) return this.equals(other);
+    if (this instanceof XProcessingInstruction && other instanceof XProcessingInstruction) return this.equals(other);
+    return false;
+  }
+
+  public static deepEquals(a: XNode, b: XNode): boolean {
+    return a.deepEquals(b);
+  }
 }
 
 export class XComment extends XNode {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { XElement, XComment, XText, XDocument, XName } from 'ltxmlts';
+import { XNode, XElement, XComment, XText, XDocument, XName, XAttribute, XDeclaration, XEntity, XCData, XProcessingInstruction } from 'ltxmlts';
 
 describe('XNode.addAfterSelf', () => {
   describe('error cases', () => {
@@ -735,5 +735,62 @@ describe('XNode.remove', () => {
     const doc = new XDocument(cmt, root);
     cmt.remove();
     expect(doc.nodes()).toEqual([root]);
+  });
+});
+
+describe('XNode.deepEquals', () => {
+  // Instance method — same-type equal nodes
+  it('returns true for two equal XText nodes', () => {
+    expect(new XText('hello').deepEquals(new XText('hello'))).toBe(true);
+  });
+  it('returns true for two equal XComment nodes', () => {
+    expect(new XComment('note').deepEquals(new XComment('note'))).toBe(true);
+  });
+  it('returns true for two equal XCData nodes', () => {
+    expect(new XCData('raw').deepEquals(new XCData('raw'))).toBe(true);
+  });
+  it('returns true for two equal XEntity nodes', () => {
+    expect(new XEntity('amp').deepEquals(new XEntity('amp'))).toBe(true);
+  });
+  it('returns true for two equal XProcessingInstruction nodes', () => {
+    expect(new XProcessingInstruction('xml-stylesheet', 'type="text/css"')
+      .deepEquals(new XProcessingInstruction('xml-stylesheet', 'type="text/css"'))).toBe(true);
+  });
+  it('returns true for two equal XElement nodes', () => {
+    const a = new XElement('root', new XAttribute('id', '1'), new XText('hello'));
+    const b = new XElement('root', new XAttribute('id', '1'), new XText('hello'));
+    expect(a.deepEquals(b)).toBe(true);
+  });
+  it('returns true for two equal XDocument nodes', () => {
+    const a = new XDocument(new XDeclaration('1.0', 'utf-8', 'yes'), new XElement('root'));
+    const b = new XDocument(new XDeclaration('1.0', 'utf-8', 'yes'), new XElement('root'));
+    expect(a.deepEquals(b)).toBe(true);
+  });
+
+  // Instance method — same-type unequal nodes
+  it('returns false for two unequal XText nodes', () => {
+    expect(new XText('hello').deepEquals(new XText('world'))).toBe(false);
+  });
+  it('returns false for two unequal XElement nodes', () => {
+    expect(new XElement('foo').deepEquals(new XElement('bar'))).toBe(false);
+  });
+
+  // Instance method — mismatched types
+  it('returns false when node types differ', () => {
+    expect(new XText('x').deepEquals(new XComment('x'))).toBe(false);
+  });
+  it('returns false for XElement vs XDocument', () => {
+    expect(new XElement('root').deepEquals(new XDocument())).toBe(false);
+  });
+
+  // Static method
+  it('static deepEquals returns true for equal nodes', () => {
+    expect(XNode.deepEquals(new XText('hello'), new XText('hello'))).toBe(true);
+  });
+  it('static deepEquals returns false for unequal nodes', () => {
+    expect(XNode.deepEquals(new XText('hello'), new XText('world'))).toBe(false);
+  });
+  it('static deepEquals returns false for mismatched types', () => {
+    expect(XNode.deepEquals(new XText('x'), new XComment('x'))).toBe(false);
   });
 });

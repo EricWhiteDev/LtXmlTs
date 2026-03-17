@@ -1,0 +1,9 @@
+Enhance the XNode class as follows:
+- Add a deepEquals method to the class. The deepEquals method takes one argument, other, of type XNode. It returns a boolean.
+- The deepEquals method calls the equals method, passing the 'this' XNode object and the other XNode object, and returns the result.
+- Providing this method gives API parity between this module and LINQ to XML.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
+
