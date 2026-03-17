@@ -456,3 +456,102 @@ describe('XNode.elementsAfterSelf', () => {
     });
   });
 });
+
+describe('XNode.elementsBeforeSelf', () => {
+  describe('no-arg overload', () => {
+    it('returns [] when node has no parent', () => {
+      const node = new XElement('a');
+      expect(node.elementsBeforeSelf()).toEqual([]);
+    });
+
+    it('returns [] when node is the first child', () => {
+      const a = new XElement('a');
+      const parent = new XElement('root', a, new XElement('b'));
+      expect(a.elementsBeforeSelf()).toEqual([]);
+    });
+
+    it('returns single XElement sibling before', () => {
+      const a = new XElement('a');
+      const b = new XElement('b');
+      const parent = new XElement('root', a, b);
+      expect(b.elementsBeforeSelf()).toEqual([a]);
+    });
+
+    it('returns two XElement siblings before in document order', () => {
+      const a = new XElement('a');
+      const b = new XElement('b');
+      const c = new XElement('c');
+      const parent = new XElement('root', a, b, c);
+      expect(c.elementsBeforeSelf()).toEqual([a, b]);
+    });
+
+    it('excludes non-element siblings (XText, XComment) before', () => {
+      const txt = new XText('hello');
+      const cmt = new XComment('note');
+      const b = new XElement('b');
+      const parent = new XElement('root', txt, cmt, b);
+      expect(b.elementsBeforeSelf()).toEqual([]);
+    });
+
+    it('returns only XElements from a mix of siblings before', () => {
+      const a = new XElement('a');
+      const txt = new XText('hello');
+      const b = new XElement('b');
+      const c = new XElement('c');
+      const parent = new XElement('root', a, txt, b, c);
+      expect(c.elementsBeforeSelf()).toEqual([a, b]);
+    });
+
+    it('returns [] when node is a child of XDocument with no preceding siblings', () => {
+      const root = new XElement('root');
+      const doc = new XDocument(root);
+      expect(root.elementsBeforeSelf()).toEqual([]);
+    });
+  });
+
+  describe('named overload (XName arg)', () => {
+    it('matches one preceding sibling by XName', () => {
+      const a = new XElement('a');
+      const b = new XElement('b');
+      const parent = new XElement('root', a, b);
+      expect(b.elementsBeforeSelf(new XName('a'))).toEqual([a]);
+    });
+
+    it('returns [] when no preceding sibling matches XName', () => {
+      const parent = new XElement('root', new XElement('a'), new XElement('b'));
+      const [, b] = parent.nodes() as XElement[];
+      expect(b.elementsBeforeSelf(new XName('x'))).toEqual([]);
+    });
+
+    it('returns all preceding siblings with same XName in document order', () => {
+      const b1 = new XElement('b');
+      const b2 = new XElement('b');
+      const c = new XElement('c');
+      const parent = new XElement('root', b1, b2, c);
+      expect(c.elementsBeforeSelf(new XName('b'))).toEqual([b1, b2]);
+    });
+
+    it('returns only matching sibling when not the last preceding sibling', () => {
+      const a = new XElement('a');
+      const b = new XElement('b');
+      const c = new XElement('c');
+      const parent = new XElement('root', a, b, c);
+      expect(c.elementsBeforeSelf(new XName('a'))).toEqual([a]);
+    });
+  });
+
+  describe('named overload (string arg)', () => {
+    it('matches preceding sibling by string name', () => {
+      const foo = new XElement('foo');
+      const bar = new XElement('bar');
+      const parent = new XElement('root', foo, bar);
+      expect(bar.elementsBeforeSelf('foo')).toEqual([foo]);
+    });
+
+    it('returns [] when no preceding sibling matches string name', () => {
+      const parent = new XElement('root', new XElement('a'), new XElement('b'));
+      const [, b] = parent.nodes() as XElement[];
+      expect(b.elementsBeforeSelf('x')).toEqual([]);
+    });
+  });
+});

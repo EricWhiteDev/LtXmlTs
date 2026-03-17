@@ -95,6 +95,18 @@ export class XNode extends XObject {
     const xname = typeof name === 'string' ? new XName(name) : name;
     return result.filter(e => e.name === xname);
   }
+
+  public elementsBeforeSelf(): XElement[];
+  public elementsBeforeSelf(name: XName | string): XElement[];
+  public elementsBeforeSelf(name?: XName | string): XElement[] {
+    if (!(this.parent instanceof XContainer)) return [];
+    const siblings = (this.parent as XContainer).nodes();
+    const idx = siblings.indexOf(this);
+    const result = siblings.slice(0, idx).filter((n): n is XElement => n instanceof XElement);
+    if (name === undefined) return result;
+    const xname = typeof name === 'string' ? new XName(name) : name;
+    return result.filter(e => e.name === xname);
+  }
 }
 
 export class XComment extends XNode {
