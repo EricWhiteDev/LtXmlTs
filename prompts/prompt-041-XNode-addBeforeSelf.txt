@@ -1,0 +1,16 @@
+Enhance the XNode class as follows:
+- Add an addBeforeSelf() method.
+- The addBeforeSelf() method has a rest parameter. The array type of the rest parameter is explicitly unknown.
+- If the parent property of the XNode object is null, then throw an error.
+- Replace the nodesArray of the parent object as follows:
+  - First, Make a shallow copy of the parent's nodesArray.
+  - Next, set the parent's nodesArray to an empty array of XNode.
+  - Next, add all of the nodes shallow copy, up to but not including 'this' node.
+  - Next, call addContentList on the parent, passing the rest parameter that was passed into addBeforeSelf.
+  - Finally, add all of the nodes from the shallow copy of the parent's nodesArray, start with the 'this' object, and up to the end of the shallow copy array.
+- Implement this method in a similar way to the implementation of addAfterSelf
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
+ 
