@@ -423,7 +423,7 @@ export class XContainer extends XNode {
 
 export class XAttribute extends XObject {
   public readonly name: XName;
-  public readonly value: string;
+  public value: string;
 
   constructor(name: XName | string);
   constructor(name: XName | string, content: unknown);
@@ -456,6 +456,13 @@ export class XAttribute extends XObject {
     }
     (this.parent as XElement).removeAttribute(this);
     this.parent = null;
+  }
+
+  public setValue(value: string): void {
+    if (value === null || value === undefined) {
+      throw new Error('XAttribute value cannot be null or undefined');
+    }
+    this.value = value;
   }
 
   public equals(other: XAttribute): boolean {

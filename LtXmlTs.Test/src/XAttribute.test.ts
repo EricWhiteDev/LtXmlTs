@@ -158,3 +158,40 @@ describe('XAttribute.remove', () => {
     expect(el.attributes()).not.toContain(a);
   });
 });
+
+describe('XAttribute.setValue', () => {
+  it('sets value on a parentless attribute', () => {
+    const a = new XAttribute('id', 'original');
+    a.setValue('updated');
+    expect(a.value).toBe('updated');
+  });
+
+  it('sets value on an attribute with a parent', () => {
+    const el = new XElement('root', new XAttribute('id', 'original'));
+    const a = el.firstAttribute!;
+    a.setValue('updated');
+    expect(el.firstAttribute!.value).toBe('updated');
+  });
+
+  it('sets value to empty string', () => {
+    const a = new XAttribute('id', 'something');
+    a.setValue('');
+    expect(a.value).toBe('');
+  });
+
+  it('value property reflects new value after setValue', () => {
+    const a = new XAttribute('id', 'old');
+    a.setValue('new');
+    expect(a.value).toBe('new');
+  });
+
+  it('throws when called with null', () => {
+    const a = new XAttribute('id', 'val');
+    expect(() => a.setValue(null as any)).toThrow('XAttribute value cannot be null or undefined');
+  });
+
+  it('throws when called with undefined', () => {
+    const a = new XAttribute('id', 'val');
+    expect(() => a.setValue(undefined as any)).toThrow('XAttribute value cannot be null or undefined');
+  });
+});
