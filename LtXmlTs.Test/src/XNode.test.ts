@@ -803,3 +803,111 @@ describe('XNode.deepEquals', () => {
     expect(XNode.deepEquals(new XText('x'), new XComment('x'))).toBe(false);
   });
 });
+
+describe('XNode.nextNode', () => {
+  it('returns null when node has no parent', () => {
+    const el = new XElement('root');
+    expect(el.nextNode).toBeNull();
+  });
+
+  it('returns null when node is the last child', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const nodes = parent.nodes();
+    expect(nodes[1].nextNode).toBeNull();
+  });
+
+  it('returns the only sibling when there are exactly two nodes', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const parent = new XElement('root', a, b);
+    expect(a.nextNode).toBe(b);
+  });
+
+  it('returns the correct node when node is first of three', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const c = new XElement('c');
+    const parent = new XElement('root', a, b, c);
+    expect(a.nextNode).toBe(b);
+  });
+
+  it('returns the correct node when node is in the middle of three', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const c = new XElement('c');
+    const parent = new XElement('root', a, b, c);
+    expect(b.nextNode).toBe(c);
+  });
+
+  it('works with mixed node types', () => {
+    const el = new XElement('child');
+    const txt = new XText('hello');
+    const cmt = new XComment('note');
+    const parent = new XElement('root', el, txt, cmt);
+    expect(el.nextNode).toBe(txt);
+    expect(txt.nextNode).toBe(cmt);
+  });
+
+  it('works when parent is XDocument', () => {
+    const decl = new XDeclaration('1.0', 'utf-8', null);
+    const cmt = new XComment('doc-comment');
+    const root = new XElement('root');
+    const doc = new XDocument(decl, cmt, root);
+    const nodes = doc.nodes();
+    expect(nodes[0].nextNode).toBe(root);
+  });
+});
+
+describe('XNode.previousNode', () => {
+  it('returns null when node has no parent', () => {
+    const el = new XElement('root');
+    expect(el.previousNode).toBeNull();
+  });
+
+  it('returns null when node is the first child', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const nodes = parent.nodes();
+    expect(nodes[0].previousNode).toBeNull();
+  });
+
+  it('returns the only sibling when there are exactly two nodes', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const parent = new XElement('root', a, b);
+    expect(b.previousNode).toBe(a);
+  });
+
+  it('returns the correct node when node is last of three', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const c = new XElement('c');
+    const parent = new XElement('root', a, b, c);
+    expect(c.previousNode).toBe(b);
+  });
+
+  it('returns the correct node when node is in the middle of three', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const c = new XElement('c');
+    const parent = new XElement('root', a, b, c);
+    expect(b.previousNode).toBe(a);
+  });
+
+  it('works with mixed node types', () => {
+    const el = new XElement('child');
+    const txt = new XText('hello');
+    const cmt = new XComment('note');
+    const parent = new XElement('root', el, txt, cmt);
+    expect(cmt.previousNode).toBe(txt);
+    expect(txt.previousNode).toBe(el);
+  });
+
+  it('works when parent is XDocument', () => {
+    const decl = new XDeclaration('1.0', 'utf-8', null);
+    const cmt = new XComment('doc-comment');
+    const root = new XElement('root');
+    const doc = new XDocument(decl, cmt, root);
+    const nodes = doc.nodes();
+    expect(root.previousNode).toBe(nodes[0]);
+  });
+});

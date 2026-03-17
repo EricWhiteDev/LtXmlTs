@@ -131,6 +131,20 @@ export class XNode extends XObject {
     return siblings.slice(idx + 1);
   }
 
+  public get previousNode(): XNode | null {
+    if (!(this.parent instanceof XContainer)) return null;
+    const siblings = (this.parent as XContainer).nodes();
+    const idx = siblings.indexOf(this);
+    return idx > 0 ? siblings[idx - 1] : null;
+  }
+
+  public get nextNode(): XNode | null {
+    if (!(this.parent instanceof XContainer)) return null;
+    const siblings = (this.parent as XContainer).nodes();
+    const idx = siblings.indexOf(this);
+    return idx < siblings.length - 1 ? siblings[idx + 1] : null;
+  }
+
   public remove(): void {
     if (this.parent === null) {
       throw new Error('The parent is missing.');

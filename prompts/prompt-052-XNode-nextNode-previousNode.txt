@@ -1,0 +1,17 @@
+Enhance the XNode class as follows:
+- Add a nextNode property. This property finds the node following 'this' XNode object from its parent's nodeArray. The type of this property is XNode | null.
+- First, get the parent object.
+- Find 'this' node in the parent's nodeArray.
+- Return the node after 'this' node.
+- If 'this' node is the last node in the parent's nodeArray, then return null.
+
+Enhance the XNode class as follows:
+- Add a previousNode property. This property finds the node preceding 'this' XNode object from its parent's nodeArray. The type of this property is XNode | null.
+- First, get the parent object.
+- Find 'this' node in the parent's nodeArray.
+- Return the node before 'this' node.
+- If 'this' node is the first node in the parent's nodeArray, then return null.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
