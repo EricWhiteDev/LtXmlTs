@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { XAttribute, XElement, XName } from 'ltxmlts';
+import { XAttribute, XElement, XName, XNamespace } from 'ltxmlts';
 
 describe('XAttribute', () => {
   it('sets nodeType to Attribute', () => {
@@ -193,5 +193,32 @@ describe('XAttribute.setValue', () => {
   it('throws when called with undefined', () => {
     const a = new XAttribute('id', 'val');
     expect(() => a.setValue(undefined as any)).toThrow('XAttribute value cannot be null or undefined');
+  });
+});
+
+describe('XAttribute.isNamespaceDeclaration', () => {
+  it('returns true for a default namespace declaration (xmlns="...")', () => {
+    const a = new XAttribute(XNamespace.xmlns.getName('xmlns'), 'http://example.com');
+    expect(a.isNamespaceDeclaration).toBe(true);
+  });
+
+  it('returns true for a prefixed namespace declaration (xmlns:foo="...")', () => {
+    const a = new XAttribute(XNamespace.xmlns.getName('foo'), 'http://example.com');
+    expect(a.isNamespaceDeclaration).toBe(true);
+  });
+
+  it('returns false for a plain attribute with no namespace', () => {
+    const a = new XAttribute('id', 'val');
+    expect(a.isNamespaceDeclaration).toBe(false);
+  });
+
+  it('returns false for an attribute in the xml namespace', () => {
+    const a = new XAttribute(XNamespace.xml.getName('lang'), 'en');
+    expect(a.isNamespaceDeclaration).toBe(false);
+  });
+
+  it('returns false for an attribute named "xmlns" but in no namespace', () => {
+    const a = new XAttribute('xmlns', 'http://example.com');
+    expect(a.isNamespaceDeclaration).toBe(false);
   });
 });

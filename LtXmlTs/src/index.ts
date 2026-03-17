@@ -425,6 +425,10 @@ export class XAttribute extends XObject {
   public readonly name: XName;
   public value: string;
 
+  public get isNamespaceDeclaration(): boolean {
+    return this.name.namespace === XNamespace.xmlns;
+  }
+
   constructor(name: XName | string);
   constructor(name: XName | string, content: unknown);
   constructor(other: XAttribute);
