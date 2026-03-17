@@ -450,6 +450,14 @@ export class XAttribute extends XObject {
     }
   }
 
+  public remove(): void {
+    if (this.parent === null) {
+      throw new Error('The parent is missing.');
+    }
+    (this.parent as XElement).removeAttribute(this);
+    this.parent = null;
+  }
+
   public equals(other: XAttribute): boolean {
     return this.name.toString() === other.name.toString() && this.value === other.value;
   }
@@ -489,6 +497,14 @@ export class XElement extends XContainer {
     for (const item of items) {
       this.addAttributeContentObject(item);
     }
+  }
+
+  public removeAttribute(attr: XAttribute): void {
+    const idx = this.attributesArray.indexOf(attr);
+    this.attributesArray = [
+      ...this.attributesArray.slice(0, idx),
+      ...this.attributesArray.slice(idx + 1),
+    ];
   }
 
   protected addAttributeContentObject(content: unknown): void {

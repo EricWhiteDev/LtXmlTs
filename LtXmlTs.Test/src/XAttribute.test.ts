@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { XAttribute, XName } from 'ltxmlts';
+import { XAttribute, XElement, XName } from 'ltxmlts';
 
 describe('XAttribute', () => {
   it('sets nodeType to Attribute', () => {
@@ -99,5 +99,62 @@ describe('XAttribute.equals', () => {
   it('returns true for namespaced name compared by toString', () => {
     expect(new XAttribute('{http://example.com}id', 'v')
       .equals(new XAttribute('{http://example.com}id', 'v'))).toBe(true);
+  });
+});
+
+describe('XAttribute.remove', () => {
+  it('throws when attribute has no parent', () => {
+    const a = new XAttribute('id', 'val');
+    expect(() => a.remove()).toThrow('The parent is missing.');
+  });
+
+  it('removes the only attribute from parent', () => {
+    const el = new XElement('root', new XAttribute('id', '1'));
+    const a = el.firstAttribute!;
+    a.remove();
+    expect(el.attributes()).toHaveLength(0);
+  });
+
+  it('removes first of two attributes', () => {
+    const el = new XElement('root', new XAttribute('a', '1'), new XAttribute('b', '2'));
+    el.firstAttribute!.remove();
+    const attrs = el.attributes();
+    expect(attrs).toHaveLength(1);
+    expect(attrs[0].name.toString()).toBe('b');
+  });
+
+  it('removes last of two attributes', () => {
+    const el = new XElement('root', new XAttribute('a', '1'), new XAttribute('b', '2'));
+    el.lastAttribute!.remove();
+    const attrs = el.attributes();
+    expect(attrs).toHaveLength(1);
+    expect(attrs[0].name.toString()).toBe('a');
+  });
+
+  it('removes middle of three attributes', () => {
+    const el = new XElement('root',
+      new XAttribute('a', '1'),
+      new XAttribute('b', '2'),
+      new XAttribute('c', '3'),
+    );
+    el.attributes()[1].remove();
+    const attrs = el.attributes();
+    expect(attrs).toHaveLength(2);
+    expect(attrs[0].name.toString()).toBe('a');
+    expect(attrs[1].name.toString()).toBe('c');
+  });
+
+  it('sets parent to null after removal', () => {
+    const el = new XElement('root', new XAttribute('id', '1'));
+    const a = el.firstAttribute!;
+    a.remove();
+    expect(a.parent).toBeNull();
+  });
+
+  it('attribute is no longer returned by parent.attributes() after removal', () => {
+    const el = new XElement('root', new XAttribute('id', '1'));
+    const a = el.firstAttribute!;
+    a.remove();
+    expect(el.attributes()).not.toContain(a);
   });
 });
