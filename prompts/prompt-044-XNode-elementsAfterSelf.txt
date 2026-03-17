@@ -1,0 +1,17 @@
+Enhance the XNode class as follows:
+- Add an elementsAfterSelf() method.
+- This method returns an array of the node sibling following elements, in document order.
+- The algorithm is as follows:
+  - First, create a new array of XElement.
+  - Find the node in the parent's nodeArray.
+  - For each node after the found node, if the node is an XElement object, then add it to the new array.
+  - Finally, return the new array.
+
+- Add an overload of the elementsAfterSelf() method.
+  - This method takes one argument, an XName object.
+  - This overload is similar to the elementsAfterSelf method that takes no arguments, except that it returns an array that is filtered to just those elements whose name is the same as the argument XName object.
+  - Because XName objects are atomized, then it is sufficient to compare the XName object to the argument XName object.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
