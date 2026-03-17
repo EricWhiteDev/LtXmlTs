@@ -1,0 +1,13 @@
+Enhance the XNode class as follows:
+- Add a nodesBeforeSelf() method. This method returns an array of XNode objects.
+- This method returns an array of the node's preceding sibling nodes, in document order.
+- Implement this in a manner similar to elementsBeforeSelf, except that the results are not restricted to the XElement type; all nodes before the 'this' node should be returned in the array.
+
+Enhance the XNode class as follows:
+- Add a nodesAfterSelf() method. This method returns an array of XNode objects.
+- This method returns an array of the node's following sibling nodes, in document order.
+- Implement this in a manner similar to elementsAfterSelf, except that the results are not restricted to the XElement type; all nodes before the 'this' node should be returned in the array.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

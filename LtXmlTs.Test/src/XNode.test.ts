@@ -555,3 +555,117 @@ describe('XNode.elementsBeforeSelf', () => {
     });
   });
 });
+
+describe('XNode.nodesBeforeSelf', () => {
+  it('returns [] when node has no parent', () => {
+    const el = new XElement('root');
+    expect(el.nodesBeforeSelf()).toEqual([]);
+  });
+
+  it('returns [] when node is the first child', () => {
+    const a = new XElement('a');
+    const parent = new XElement('root', a, new XElement('b'));
+    expect(a.nodesBeforeSelf()).toEqual([]);
+  });
+
+  it('returns single XElement sibling before', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const parent = new XElement('root', a, b);
+    expect(b.nodesBeforeSelf()).toEqual([a]);
+  });
+
+  it('returns two XElement siblings before in document order', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const c = new XElement('c');
+    const parent = new XElement('root', a, b, c);
+    expect(c.nodesBeforeSelf()).toEqual([a, b]);
+  });
+
+  it('returns single XText sibling before', () => {
+    const txt = new XText('hello');
+    const b = new XElement('b');
+    const parent = new XElement('root', txt, b);
+    expect(b.nodesBeforeSelf()).toEqual([txt]);
+  });
+
+  it('returns single XComment sibling before', () => {
+    const cmt = new XComment('note');
+    const b = new XElement('b');
+    const parent = new XElement('root', cmt, b);
+    expect(b.nodesBeforeSelf()).toEqual([cmt]);
+  });
+
+  it('returns mixed XElement + XText + XComment before in document order', () => {
+    const a = new XElement('a');
+    const txt = new XText('hello');
+    const cmt = new XComment('note');
+    const b = new XElement('b');
+    const parent = new XElement('root', a, txt, cmt, b);
+    expect(b.nodesBeforeSelf()).toEqual([a, txt, cmt]);
+  });
+
+  it('returns [] for child of XDocument with no preceding siblings', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(root.nodesBeforeSelf()).toEqual([]);
+  });
+});
+
+describe('XNode.nodesAfterSelf', () => {
+  it('returns [] when node has no parent', () => {
+    const el = new XElement('root');
+    expect(el.nodesAfterSelf()).toEqual([]);
+  });
+
+  it('returns [] when node is the last child', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const nodes = parent.nodes();
+    expect(nodes[1].nodesAfterSelf()).toEqual([]);
+  });
+
+  it('returns single XElement sibling after', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const parent = new XElement('root', a, b);
+    expect(a.nodesAfterSelf()).toEqual([b]);
+  });
+
+  it('returns two XElement siblings after in document order', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const c = new XElement('c');
+    const parent = new XElement('root', a, b, c);
+    expect(a.nodesAfterSelf()).toEqual([b, c]);
+  });
+
+  it('returns single XText sibling after', () => {
+    const a = new XElement('a');
+    const txt = new XText('hello');
+    const parent = new XElement('root', a, txt);
+    expect(a.nodesAfterSelf()).toEqual([txt]);
+  });
+
+  it('returns single XComment sibling after', () => {
+    const a = new XElement('a');
+    const cmt = new XComment('note');
+    const parent = new XElement('root', a, cmt);
+    expect(a.nodesAfterSelf()).toEqual([cmt]);
+  });
+
+  it('returns mixed XElement + XText + XComment after in document order', () => {
+    const a = new XElement('a');
+    const txt = new XText('hello');
+    const cmt = new XComment('note');
+    const b = new XElement('b');
+    const parent = new XElement('root', a, txt, cmt, b);
+    expect(a.nodesAfterSelf()).toEqual([txt, cmt, b]);
+  });
+
+  it('returns [] for child of XDocument with no following siblings', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(root.nodesAfterSelf()).toEqual([]);
+  });
+});

@@ -1,0 +1,13 @@
+Enhance the XNode class as follows:
+- Add an elementsBeforeSelf() method.
+- This method returns an array of the node sibling preceding elements, in document order.
+- Implement this in a manner similar to elementsAfterSelf, except that the results are the elements before self.
+
+- Add an overload of the elementsBeforeSelf() method.
+  - This method takes one argument, an XName object.
+  - This overload is similar to the elementsBeforeSelf method that takes no arguments, except that it returns an array that is filtered to just those elements whose name is the same as the argument XName object.
+  - Because XName objects are atomized, then it is sufficient to compare the XName object to the argument XName object.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

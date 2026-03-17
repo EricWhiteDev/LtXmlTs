@@ -107,6 +107,20 @@ export class XNode extends XObject {
     const xname = typeof name === 'string' ? new XName(name) : name;
     return result.filter(e => e.name === xname);
   }
+
+  public nodesBeforeSelf(): XNode[] {
+    if (!(this.parent instanceof XContainer)) return [];
+    const siblings = (this.parent as XContainer).nodes();
+    const idx = siblings.indexOf(this);
+    return siblings.slice(0, idx);
+  }
+
+  public nodesAfterSelf(): XNode[] {
+    if (!(this.parent instanceof XContainer)) return [];
+    const siblings = (this.parent as XContainer).nodes();
+    const idx = siblings.indexOf(this);
+    return siblings.slice(idx + 1);
+  }
 }
 
 export class XComment extends XNode {
