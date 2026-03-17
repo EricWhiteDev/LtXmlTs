@@ -1,0 +1,3 @@
+Enhance the XNamespace class:
+- Currently, the namespaceCache is implemented as an array. Therefore, looking up a namespace object by sequentially searching through the array will be inefficient.
+- Instead, replace namespaceCache with a Map<string, NamespaceCacheEntry> object. The string is the uri of the namespace, and when looking up the NamespaceCacheEntry object, it will be more efficient to retrieve it from a Map<string, NamespaceCacheEntry>.

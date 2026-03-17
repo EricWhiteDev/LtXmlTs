@@ -462,7 +462,7 @@ class XNamespaceCacheEntry {
 }
 
 export class XNamespace {
-  private static namespaceCache: XNamespaceCacheEntry[] = [];
+  private static namespaceCache: Map<string, XNamespaceCacheEntry> = new Map();
 
   public static readonly none: XNamespace = new XNamespace('');
   public static readonly xml: XNamespace = new XNamespace('http://www.w3.org/XML/1998/namespace', 'xml');
@@ -471,7 +471,7 @@ export class XNamespace {
   public readonly uri: string;
 
   public get preferredPrefix(): string | null {
-    return XNamespace.namespaceCache.find(e => e.namespace === this)?.preferredPrefix ?? null;
+    return XNamespace.namespaceCache.get(this.uri)?.preferredPrefix ?? null;
   }
 
   public get namespaceName(): string {
@@ -505,7 +505,7 @@ export class XNamespace {
   constructor(uri: string, preferredPrefix: string | null = null) {
     this.uri = uri;
 
-    const cached = XNamespace.namespaceCache.find(e => e.namespace.uri === uri);
+    const cached = XNamespace.namespaceCache.get(uri);
     if (cached) {
       if (cached.preferredPrefix !== preferredPrefix) {
         cached.preferredPrefix = preferredPrefix;
@@ -513,12 +513,12 @@ export class XNamespace {
       return cached.namespace;
     }
 
-    XNamespace.namespaceCache.push(new XNamespaceCacheEntry(this, preferredPrefix));
+    XNamespace.namespaceCache.set(uri, new XNamespaceCacheEntry(this, preferredPrefix));
   }
 }
 
 export class XName {
-  private static nameCache: XNameCacheEntry[] = [];
+  private static nameCache: Map<string, XNameCacheEntry> = new Map();
 
   public readonly namespace: XNamespace;
   public readonly localName: string;
@@ -564,12 +564,12 @@ export class XName {
     this.localName = local;
 
     const clarkKey = ns.uri === '' ? local : `{${ns.uri}}${local}`;
-    const cached = XName.nameCache.find(e => e.name.toString() === clarkKey);
+    const cached = XName.nameCache.get(clarkKey);
     if (cached) {
       return cached.name;
     }
 
-    XName.nameCache.push(new XNameCacheEntry(this));
+    XName.nameCache.set(clarkKey, new XNameCacheEntry(this));
   }
 
   public toString(): string {
