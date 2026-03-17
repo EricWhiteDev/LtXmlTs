@@ -140,4 +140,26 @@ describe('XElement', () => {
     expect(clone.attributes()).toHaveLength(0);
     expect(clone.nodes()).toHaveLength(0);
   });
+
+  it('string constructor sets name via clark notation (plain)', () => {
+    const e = new XElement('root');
+    expect(e.name).toBe(XName.get('root'));
+  });
+
+  it('string constructor sets name via clark notation (namespaced)', () => {
+    const e = new XElement('{http://example.com}root');
+    expect(e.name).toBe(XName.get('{http://example.com}root'));
+  });
+
+  it('string constructor with content adds nodes', () => {
+    const e = new XElement('root', 'hello');
+    expect(e.name).toBe(XName.get('root'));
+    expect(e.nodes()).toHaveLength(1);
+  });
+
+  it('string constructor with namespaced name and content adds nodes', () => {
+    const e = new XElement('{http://example.com}root', 'hello');
+    expect(e.name).toBe(XName.get('{http://example.com}root'));
+    expect(e.nodes()).toHaveLength(1);
+  });
 });

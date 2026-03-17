@@ -53,4 +53,26 @@ describe('XAttribute', () => {
     const b = new XAttribute(a);
     expect(b).not.toBe(a);
   });
+
+  it('string constructor sets name via clark notation (plain)', () => {
+    const a = new XAttribute('id');
+    expect(a.name).toBe(XName.get('id'));
+  });
+
+  it('string constructor sets name via clark notation (namespaced)', () => {
+    const a = new XAttribute('{http://example.com}id');
+    expect(a.name).toBe(XName.get('{http://example.com}id'));
+  });
+
+  it('string constructor with content sets value', () => {
+    const a = new XAttribute('id', '42');
+    expect(a.name).toBe(XName.get('id'));
+    expect(a.value).toBe('42');
+  });
+
+  it('string constructor with namespaced name and content sets value', () => {
+    const a = new XAttribute('{http://example.com}id', 'val');
+    expect(a.name).toBe(XName.get('{http://example.com}id'));
+    expect(a.value).toBe('val');
+  });
 });

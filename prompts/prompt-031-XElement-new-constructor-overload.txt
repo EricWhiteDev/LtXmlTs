@@ -1,0 +1,13 @@
+Enhance the XElement constructor.
+- Two of the overloads of the XElement constructor take an XName object as the first argument.
+- Alter these overloads so that they take either an XName as the first argument, or take a string as the first argument.
+- If a string is passed to these overloads, then the string uses clark notation. The string can be converted to a fully qualified name by calling the XName constructor, passing the string. The resultant XName object can then be used in the same manner as if it had been passed as the first argument to the XElement constructor.
+
+Enhance the XAttribute constructor.
+- Two of the overloads of the XAttribute constructor take an XName object as the first argument.
+- Alter these overloads so that they take either an XName as the first argument, or take a string as the first argument.
+- If a string is passed to these overloads, then the string uses clark notation. The string can be converted to a fully qualified name by calling the XName constructor, passing the string. The resultant XName object can then be used in the same manner as if it had been passed as the first argument to the XAttribute constructor.
+
+Add unit tests for this new functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

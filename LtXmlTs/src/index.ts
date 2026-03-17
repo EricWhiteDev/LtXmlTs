@@ -203,17 +203,18 @@ export class XAttribute extends XObject {
   public readonly name: XName;
   public readonly value: string;
 
-  constructor(name: XName);
-  constructor(name: XName, content: unknown);
+  constructor(name: XName | string);
+  constructor(name: XName | string, content: unknown);
   constructor(other: XAttribute);
-  constructor(nameOrOther: XName | XAttribute, content?: unknown) {
+  constructor(nameOrOther: XName | XAttribute | string, content?: unknown) {
     super();
     this.nodeType = 'Attribute';
     if (nameOrOther instanceof XAttribute) {
       this.name = nameOrOther.name;
       this.value = nameOrOther.value;
     } else {
-      this.name = nameOrOther;
+      const name = typeof nameOrOther === 'string' ? new XName(nameOrOther) : nameOrOther;
+      this.name = name;
       this.value = '';
       if (arguments.length >= 2) {
         if (content === null || content === undefined) {
@@ -259,10 +260,10 @@ export class XElement extends XContainer {
     }
   }
 
-  constructor(name: XName);
-  constructor(name: XName, ...content: unknown[]);
+  constructor(name: XName | string);
+  constructor(name: XName | string, ...content: unknown[]);
   constructor(other: XElement);
-  constructor(nameOrOther: XName | XElement, ...content: unknown[]) {
+  constructor(nameOrOther: XName | XElement | string, ...content: unknown[]) {
     super();
     this.nodeType = 'Element';
     if (nameOrOther instanceof XElement) {
@@ -294,7 +295,8 @@ export class XElement extends XContainer {
         this.nodesArray.push(clonedNode);
       }
     } else {
-      this.name = nameOrOther;
+      const name = typeof nameOrOther === 'string' ? new XName(nameOrOther) : nameOrOther;
+      this.name = name;
       this.addContentList(...content);
       this.addAttributeContentList(...content);
     }
