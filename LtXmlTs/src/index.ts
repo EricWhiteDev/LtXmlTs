@@ -48,7 +48,14 @@ export class XObject {
   }
 }
 
-export abstract class XNode extends XObject {}
+export class XNode extends XObject {
+  public addAfterSelf(...content: unknown[]): void {
+    if (this.parent === null) {
+      throw new Error('The parent is missing.');
+    }
+    (this.parent as XContainer).insertAfterChild(this, ...content);
+  }
+}
 
 export class XComment extends XNode {
   public readonly value: string;
@@ -203,6 +210,23 @@ export class XContainer extends XNode {
       const text = new XText(str);
       text.parent = this;
       this.nodesArray.push(text);
+    }
+  }
+
+  protected insertContentItems(...items: unknown[]): void {
+    this.addContentList(...items);
+  }
+
+  public insertAfterChild(child: XNode, ...content: unknown[]): void {
+    const copy = [...this.nodesArray];
+    this.nodesArray = [];
+    const idx = copy.indexOf(child);
+    for (let i = 0; i <= idx; i++) {
+      this.nodesArray.push(copy[i]);
+    }
+    this.insertContentItems(...content);
+    for (let i = idx + 1; i < copy.length; i++) {
+      this.nodesArray.push(copy[i]);
     }
   }
 }
@@ -403,6 +427,10 @@ export class XDocument extends XContainer {
       this.declaration = null;
       this.addDocumentContentList(firstOrContent, ...rest);
     }
+  }
+
+  protected override insertContentItems(...items: unknown[]): void {
+    this.addDocumentContentList(...items);
   }
 
   protected addDocumentContentList(...items: unknown[]): void {
