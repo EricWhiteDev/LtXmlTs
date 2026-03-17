@@ -329,11 +329,13 @@ export class XDocument extends XContainer {
   constructor();
   constructor(declaration: XDeclaration);
   constructor(other: XDocument);
-  constructor(declarationOrOther?: XDeclaration | XDocument) {
+  constructor(...content: unknown[]);
+  constructor(declaration: XDeclaration, ...content: unknown[]);
+  constructor(firstOrContent?: XDeclaration | XDocument | unknown, ...rest: unknown[]) {
     super();
     this.nodeType = 'Document';
-    if (declarationOrOther instanceof XDocument) {
-      const other = declarationOrOther;
+    if (firstOrContent instanceof XDocument) {
+      const other = firstOrContent;
       this.declaration = other.declaration !== null
         ? new XDeclaration(other.declaration)
         : null;
@@ -362,8 +364,81 @@ export class XDocument extends XContainer {
           this.nodesArray.push(clonedNode);
         }
       }
+    } else if (firstOrContent instanceof XDeclaration) {
+      this.declaration = firstOrContent;
+      this.addDocumentContentList(...rest);
+    } else if (firstOrContent === undefined) {
+      this.declaration = null;
     } else {
-      this.declaration = declarationOrOther ?? null;
+      this.declaration = null;
+      this.addDocumentContentList(firstOrContent, ...rest);
+    }
+  }
+
+  protected addDocumentContentList(...items: unknown[]): void {
+    for (const item of items) {
+      this.addDocumentContentObject(item);
+    }
+  }
+
+  protected addDocumentContentObject(content: unknown): void {
+    if (content === null || content === undefined) {
+      return;
+    }
+    if (Array.isArray(content)) {
+      for (const item of content) {
+        this.addDocumentContentObject(item);
+      }
+      return;
+    }
+    if (content instanceof XAttribute) {
+      throw new Error('XAttribute is not valid content for an XDocument.');
+    }
+    if (content instanceof XEntity) {
+      throw new Error('XEntity is not valid content for an XDocument.');
+    }
+    if (content instanceof XCData) {
+      throw new Error('XCData is not valid content for an XDocument.');
+    }
+    if (typeof content === 'string') {
+      if (/\S/.test(content)) {
+        throw new Error('Non-whitespace string content is not valid for an XDocument.');
+      }
+      const text = new XText(content);
+      text.parent = this;
+      this.nodesArray.push(text);
+      return;
+    }
+    if (
+      content instanceof XComment ||
+      content instanceof XText ||
+      content instanceof XProcessingInstruction ||
+      content instanceof XElement
+    ) {
+      if (content instanceof XText && /\S/.test(content.value)) {
+        throw new Error('XText with non-whitespace content is not valid for an XDocument.');
+      }
+      if (content instanceof XElement && this.nodesArray.some(n => n instanceof XElement)) {
+        throw new Error('An XDocument may contain only one XElement.');
+      }
+      if (content.parent === null) {
+        content.parent = this;
+        this.nodesArray.push(content);
+      } else {
+        let clonedNode: XNode;
+        if (content instanceof XElement) {
+          clonedNode = new XElement(content);
+        } else if (content instanceof XComment) {
+          clonedNode = new XComment(content);
+        } else if (content instanceof XText) {
+          clonedNode = new XText(content);
+        } else {
+          clonedNode = new XProcessingInstruction(content);
+        }
+        clonedNode.parent = this;
+        this.nodesArray.push(clonedNode);
+      }
+      return;
     }
   }
 }

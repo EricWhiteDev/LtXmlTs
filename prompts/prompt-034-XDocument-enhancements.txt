@@ -1,0 +1,29 @@
+Enhance the XDocument class as follows:
+- Add a protected method, addDocumentContentList() to the XDocument class.
+  - The addDocumentContentList() method has a rest parameter. The array type of the rest parameter is explicitly unknown.
+- In the addDocumentContentList() method, iterate through all arguments in the rest parameter, and call the addDocumentContentObject() method passing each argument in turn.
+
+- Add another protected method, addDocumentContentObject() to the XDocument class. This method takes a single argument of type unknown.
+  - In this addDocumentContentObject() method, process the argument as follows:
+    - If the type of the argument is XComment, XText, XProcessingInstruction, or XElement, then
+      {
+        - if the type of the argument is XText, and if the value of the XText object contains other than whitespace, then throw an error. Text other than whitespace is not valid content of an XDocument object.
+        - if the parent property of the argument is not set, then set the parent property of the argument tothe 'this' XDocument object, then add them in order to the nodesArray. The order in the nodesArrayshould be the same order as in the rest parameter.
+        - if the parent property is set, then clone the argument by calling the appropriate copy constructorfor the class of the argument, set the parent property of the cloned object to 'this' XDocumentobject, and add the cloned object in order to the nodesArray. The order in the nodesArray should be the same order as in the rest parameter.
+      }
+    - if the type of the argument is an array, then recursively add the contents of the array, in a similar way to how such content is handled for XElement.
+    - If the type of the argument is XAttribute, throw an exception. Attributes are not valid content for the XDocument object.
+    - If the type of the argument is XEntity, throw an exception. Entities are not valid content for the XDocument object.
+    - If the type of the argument is XCData, throw an exception. CData is not valid content for the XDocument object.
+    - If the type of the argument is string, and the contents of the argument consists of only white space, then create an XText object, set the parent property of the XText object to the 'this' container, and then add the XText object to the nodesArray. Again, the order in the nodesArray should be the same order as in the rest parameter. XText objects must contain only white space in order to be valid content of an XDocument object.
+    - If the type of the argument is string, and the contents of the argument consists of other than white space, then throw an exception. XText objects that contain non-white space are not valid content for an XDocument object.
+
+Add another constructor to the XDocument class:
+- This constructor takes a rest parameter. The array type of the rest parameter is explicitly unknown.
+- This constructor calls addDocumentContentList(), passing the rest parameter.
+- As with the other XDocument constructors, set the nodeType to 'Document'.
+
+Add another constructor to the XDocument class:
+- The first argument of this constructor, named declaration, is an XDeclaration object. Set the declaration property to the declaration argument.
+- The first argument is followed by a rest parameter. The array type of the rest parameter is explicitly unknown. This constructor then calls addDocumentContentList(), passing the rest parameter.
+- As with the other XDocument constructors, set the nodeType to 'Document'.
