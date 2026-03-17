@@ -162,4 +162,103 @@ describe('XElement', () => {
     expect(e.name).toBe(XName.get('{http://example.com}root'));
     expect(e.nodes()).toHaveLength(1);
   });
+
+  // firstAttribute
+  it('firstAttribute returns null when no attributes', () => {
+    const e = new XElement(XName.get('root'));
+    expect(e.firstAttribute).toBeNull();
+  });
+
+  it('firstAttribute returns the attribute when one exists', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    expect(e.firstAttribute).toBe(a);
+  });
+
+  it('firstAttribute returns the first attribute when multiple exist', () => {
+    const a1 = new XAttribute(XName.get('a'), '1');
+    const a2 = new XAttribute(XName.get('b'), '2');
+    const e = new XElement(XName.get('root'), a1, a2);
+    expect(e.firstAttribute).toBe(a1);
+    expect(e.firstAttribute).not.toBe(a2);
+  });
+
+  // lastAttribute
+  it('lastAttribute returns null when no attributes', () => {
+    const e = new XElement(XName.get('root'));
+    expect(e.lastAttribute).toBeNull();
+  });
+
+  it('lastAttribute returns the attribute when one exists', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    expect(e.lastAttribute).toBe(a);
+  });
+
+  it('lastAttribute returns the last attribute when multiple exist', () => {
+    const a1 = new XAttribute(XName.get('a'), '1');
+    const a2 = new XAttribute(XName.get('b'), '2');
+    const e = new XElement(XName.get('root'), a1, a2);
+    expect(e.lastAttribute).toBe(a2);
+    expect(e.lastAttribute).not.toBe(a1);
+  });
+
+  // hasAttributes
+  it('hasAttributes returns false when no attributes', () => {
+    const e = new XElement(XName.get('root'));
+    expect(e.hasAttributes).toBe(false);
+  });
+
+  it('hasAttributes returns true when one attribute exists', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    expect(e.hasAttributes).toBe(true);
+  });
+
+  it('hasAttributes returns true when multiple attributes exist', () => {
+    const a1 = new XAttribute(XName.get('a'), '1');
+    const a2 = new XAttribute(XName.get('b'), '2');
+    const e = new XElement(XName.get('root'), a1, a2);
+    expect(e.hasAttributes).toBe(true);
+  });
+
+  // hasElements
+  it('hasElements returns false when nodesArray is empty', () => {
+    const e = new XElement(XName.get('root'));
+    expect(e.hasElements).toBe(false);
+  });
+
+  it('hasElements returns false when nodesArray contains only text nodes', () => {
+    const e = new XElement(XName.get('root'), 'hello');
+    expect(e.hasElements).toBe(false);
+  });
+
+  it('hasElements returns true when nodesArray contains an XElement child', () => {
+    const child = new XElement(XName.get('child'));
+    const e = new XElement(XName.get('root'), child);
+    expect(e.hasElements).toBe(true);
+  });
+
+  it('hasElements returns true when XElement is mixed with text nodes', () => {
+    const child = new XElement(XName.get('child'));
+    const e = new XElement(XName.get('root'), 'text', child);
+    expect(e.hasElements).toBe(true);
+  });
+
+  // isEmpty
+  it('isEmpty returns true when nodesArray is empty', () => {
+    const e = new XElement(XName.get('root'));
+    expect(e.isEmpty).toBe(true);
+  });
+
+  it('isEmpty returns false when nodesArray has content', () => {
+    const e = new XElement(XName.get('root'), 'hello');
+    expect(e.isEmpty).toBe(false);
+  });
+
+  it('isEmpty returns true when element has attributes but no child nodes', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    expect(e.isEmpty).toBe(true);
+  });
 });

@@ -1,0 +1,10 @@
+Enhance the XElement class as follows:
+- Add a firstAttribute property. This property returns the first XAttribute object in the attributesArray, if there are any XAttribute objects in the attributesArray. If there are no XAttribute objects in the attributesArray, then return null.
+- Add a lastAttribute property. This property returns the last XAttribute object in the attributesArray, if there are any XAttribute objects in the attributesArray. If there are no XAttribute objects in the attributesArray, then return null.
+- Add a boolean hasAttributes property. This property returns true if there are any XAttribute objects in the attributesArray, otherwise false.
+- Add a boolean hasElements property. This property returns true if there are any XElement objects in the nodesArray, otherwise false.  Note there may be other types of nodes in the nodes array. This property returns true only if one of the nodes is of type XElement.
+- Add a boolean isEmpty property. This property returns true if the nodesArray length == 0, otherwise false.
+
+Add unit tests for all of this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

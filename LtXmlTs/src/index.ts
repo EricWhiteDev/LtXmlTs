@@ -237,6 +237,28 @@ export class XElement extends XContainer {
     return [...this.attributesArray];
   }
 
+  public get firstAttribute(): XAttribute | null {
+    return this.attributesArray.length > 0 ? this.attributesArray[0] : null;
+  }
+
+  public get lastAttribute(): XAttribute | null {
+    return this.attributesArray.length > 0
+      ? this.attributesArray[this.attributesArray.length - 1]
+      : null;
+  }
+
+  public get hasAttributes(): boolean {
+    return this.attributesArray.length > 0;
+  }
+
+  public get hasElements(): boolean {
+    return this.nodesArray.some(n => n instanceof XElement);
+  }
+
+  public get isEmpty(): boolean {
+    return this.nodesArray.length === 0;
+  }
+
   protected addAttributeContentList(...items: unknown[]): void {
     for (const item of items) {
       this.addAttributeContentObject(item);
