@@ -669,3 +669,71 @@ describe('XNode.nodesAfterSelf', () => {
     expect(root.nodesAfterSelf()).toEqual([]);
   });
 });
+
+describe('XNode.remove', () => {
+  it('throws when node has no parent', () => {
+    const node = new XElement('a');
+    expect(() => node.remove()).toThrow('The parent is missing.');
+  });
+
+  it('removes the only child', () => {
+    const child = new XElement('a');
+    const parent = new XElement('root', child);
+    child.remove();
+    expect(parent.nodes()).toEqual([]);
+  });
+
+  it('removes the first of two siblings', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const parent = new XElement('root', a, b);
+    a.remove();
+    expect(parent.nodes()).toEqual([b]);
+  });
+
+  it('removes the middle of three siblings', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const c = new XElement('c');
+    const parent = new XElement('root', a, b, c);
+    b.remove();
+    expect(parent.nodes()).toEqual([a, c]);
+  });
+
+  it('removes the last of two siblings', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const parent = new XElement('root', a, b);
+    b.remove();
+    expect(parent.nodes()).toEqual([a]);
+  });
+
+  it('sets parent to null after removal', () => {
+    const child = new XElement('a');
+    const parent = new XElement('root', child);
+    child.remove();
+    expect(child.parent).toBeNull();
+  });
+
+  it('removes an XText node', () => {
+    const txt = new XText('hello');
+    const parent = new XElement('root', txt);
+    txt.remove();
+    expect(parent.nodes()).toEqual([]);
+  });
+
+  it('removes an XComment node', () => {
+    const cmt = new XComment('note');
+    const parent = new XElement('root', cmt);
+    cmt.remove();
+    expect(parent.nodes()).toEqual([]);
+  });
+
+  it('removes a comment child of XDocument leaving only root element', () => {
+    const root = new XElement('root');
+    const cmt = new XComment('doc-comment');
+    const doc = new XDocument(cmt, root);
+    cmt.remove();
+    expect(doc.nodes()).toEqual([root]);
+  });
+});

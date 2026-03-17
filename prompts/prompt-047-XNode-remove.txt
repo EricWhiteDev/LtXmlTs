@@ -1,0 +1,10 @@
+Enhance the XNode class as follows:
+- Add a remove() method. This method removes 'this' XNode object from its parent's nodeArray.
+- First, get the parent object.
+- Find 'this' node in the parent's nodeArray.
+- Use slice to create a new array that consists of all of the nodes before the 'this' node, and all of the nodes after the 'this' node
+- Replace the nodeArray in the parent with the new array. This effectively removes 'this' node from the XML tree
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

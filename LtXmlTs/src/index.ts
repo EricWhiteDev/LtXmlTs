@@ -121,6 +121,14 @@ export class XNode extends XObject {
     const idx = siblings.indexOf(this);
     return siblings.slice(idx + 1);
   }
+
+  public remove(): void {
+    if (this.parent === null) {
+      throw new Error('The parent is missing.');
+    }
+    (this.parent as XContainer).removeChild(this);
+    this.parent = null;
+  }
 }
 
 export class XComment extends XNode {
@@ -320,6 +328,14 @@ export class XContainer extends XNode {
     // New nodes were appended after the suffix; extract and reorder.
     const newNodes = this.nodesArray.splice(suffixLen);
     this.nodesArray = [...copy.slice(0, idx), ...newNodes, ...this.nodesArray];
+  }
+
+  public removeChild(child: XNode): void {
+    const idx = this.nodesArray.indexOf(child);
+    this.nodesArray = [
+      ...this.nodesArray.slice(0, idx),
+      ...this.nodesArray.slice(idx + 1),
+    ];
   }
 }
 
