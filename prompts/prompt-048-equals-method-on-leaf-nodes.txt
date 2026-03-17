@@ -1,0 +1,24 @@
+Enhance the XComment class as follows:
+- Add an equals method to the class. The equals method takes one argument, other, of type XComment. It returns a boolean.
+- It returns true if the value property of the 'this' XComment object === the value property of the other XComment object.
+
+Enhance the XText class as follows:
+- Add an equals method to the class. The equals method takes one argument, other, of type XText. It returns a boolean.
+- It returns true if the value property of the 'this' XText object === the value property of the other XText object.
+
+Enhance the XCData class as follows:
+- Add an equals method to the class. The equals method takes one argument, other, of type XCData. It returns a boolean.
+- It returns true if the value property of the 'this' XCData object === the value property of the other XCData object.
+
+Enhance the XProcessingInstruction class as follows:
+- Add an equals method to the class. The equals method takes one argument, other, of type XProcessingInstruction. It returns a boolean.
+- It returns true if the target property of the 'this' XProcessingInstruction object === the target property of the other XProcessingInstruction object and if the data property of the 'this' XProcessingInstruction object === the data property of the other XProcessingInstruction object
+
+Enhance the XAttribute class as follows:
+- Add an equals method to the class. The equals method takes one argument, other, of type XAttribute. It returns a boolean.
+- It returns true if the name property of the 'this' XAttribute object (converted to a string via the toString method) === the name property of the other XAttribute object (converted to a string via the toString method) and if the value property of the 'this' XAttribute object === the value property of the other XAttribute object
+
+Enhance the XDeclaration class as follows:
+- Add an equals method to the class. The equals method takes one argument, other, of type XDeclaration. It returns a boolean.
+- It returns true if the version property of the 'this' XDeclaration object === the version property of the other XDeclaration object and if the encoding property of the 'this' XDeclaration object === the encoding property of the other XDeclaration object and if the standalone property of the 'this' XDeclaration object === the standalone property of the other XDeclaration object
+

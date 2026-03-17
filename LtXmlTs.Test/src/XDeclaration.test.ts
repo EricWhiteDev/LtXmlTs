@@ -41,3 +41,22 @@ describe('XDeclaration', () => {
     expect(copy).not.toBe(original);
   });
 });
+
+describe('XDeclaration.equals', () => {
+  it('returns true when all three properties are equal', () => {
+    expect(new XDeclaration('1.0', 'utf-8', 'yes')
+      .equals(new XDeclaration('1.0', 'utf-8', 'yes'))).toBe(true);
+  });
+  it('returns false when version differs', () => {
+    expect(new XDeclaration('1.0', 'utf-8', 'yes')
+      .equals(new XDeclaration('1.1', 'utf-8', 'yes'))).toBe(false);
+  });
+  it('returns false when encoding differs', () => {
+    expect(new XDeclaration('1.0', 'utf-8', 'yes')
+      .equals(new XDeclaration('1.0', 'utf-16', 'yes'))).toBe(false);
+  });
+  it('returns false when standalone differs', () => {
+    expect(new XDeclaration('1.0', 'utf-8', 'yes')
+      .equals(new XDeclaration('1.0', 'utf-8', 'no'))).toBe(false);
+  });
+});

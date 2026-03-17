@@ -24,3 +24,15 @@ describe('XComment', () => {
     expect(copy).not.toBe(original);
   });
 });
+
+describe('XComment.equals', () => {
+  it('returns true when values are equal', () => {
+    expect(new XComment('hello').equals(new XComment('hello'))).toBe(true);
+  });
+  it('returns false when values differ', () => {
+    expect(new XComment('hello').equals(new XComment('world'))).toBe(false);
+  });
+  it('returns true for two empty-string comments', () => {
+    expect(new XComment('').equals(new XComment(''))).toBe(true);
+  });
+});

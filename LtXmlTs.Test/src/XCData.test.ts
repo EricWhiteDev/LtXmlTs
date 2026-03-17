@@ -24,3 +24,15 @@ describe('XCData', () => {
     expect(copy).not.toBe(original);
   });
 });
+
+describe('XCData.equals', () => {
+  it('returns true when values are equal', () => {
+    expect(new XCData('hello').equals(new XCData('hello'))).toBe(true);
+  });
+  it('returns false when values differ', () => {
+    expect(new XCData('hello').equals(new XCData('world'))).toBe(false);
+  });
+  it('returns true for two empty-string CDATA nodes', () => {
+    expect(new XCData('').equals(new XCData(''))).toBe(true);
+  });
+});

@@ -76,3 +76,19 @@ describe('XAttribute', () => {
     expect(a.value).toBe('val');
   });
 });
+
+describe('XAttribute.equals', () => {
+  it('returns true when name and value are equal', () => {
+    expect(new XAttribute('id', 'val').equals(new XAttribute('id', 'val'))).toBe(true);
+  });
+  it('returns false when names differ', () => {
+    expect(new XAttribute('id', 'val').equals(new XAttribute('class', 'val'))).toBe(false);
+  });
+  it('returns false when values differ', () => {
+    expect(new XAttribute('id', 'val').equals(new XAttribute('id', 'other'))).toBe(false);
+  });
+  it('returns true for namespaced name compared by toString', () => {
+    expect(new XAttribute('{http://example.com}id', 'v')
+      .equals(new XAttribute('{http://example.com}id', 'v'))).toBe(true);
+  });
+});

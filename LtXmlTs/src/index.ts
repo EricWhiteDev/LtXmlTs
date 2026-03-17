@@ -145,6 +145,10 @@ export class XComment extends XNode {
       this.value = contentOrOther.value;
     }
   }
+
+  public equals(other: XComment): boolean {
+    return this.value === other.value;
+  }
 }
 
 export class XText extends XNode {
@@ -160,6 +164,10 @@ export class XText extends XNode {
     } else {
       this.value = valueOrOther.value;
     }
+  }
+
+  public equals(other: XText): boolean {
+    return this.value === other.value;
   }
 }
 
@@ -193,6 +201,10 @@ export class XCData extends XNode {
       this.value = valueOrOther.value;
     }
   }
+
+  public equals(other: XCData): boolean {
+    return this.value === other.value;
+  }
 }
 
 export class XProcessingInstruction extends XNode {
@@ -211,6 +223,10 @@ export class XProcessingInstruction extends XNode {
       this.target = targetOrOther.target;
       this.data = targetOrOther.data;
     }
+  }
+
+  public equals(other: XProcessingInstruction): boolean {
+    return this.target === other.target && this.data === other.data;
   }
 }
 
@@ -367,6 +383,10 @@ export class XAttribute extends XObject {
       }
     }
   }
+
+  public equals(other: XAttribute): boolean {
+    return this.name.toString() === other.name.toString() && this.value === other.value;
+  }
 }
 
 export class XElement extends XContainer {
@@ -482,6 +502,12 @@ export class XDeclaration {
       this.encoding = versionOrOther.encoding;
       this.standalone = versionOrOther.standalone;
     }
+  }
+
+  public equals(other: XDeclaration): boolean {
+    return this.version === other.version &&
+      this.encoding === other.encoding &&
+      this.standalone === other.standalone;
   }
 }
 

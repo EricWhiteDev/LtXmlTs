@@ -24,3 +24,15 @@ describe('XText', () => {
     expect(copy).not.toBe(original);
   });
 });
+
+describe('XText.equals', () => {
+  it('returns true when values are equal', () => {
+    expect(new XText('hello').equals(new XText('hello'))).toBe(true);
+  });
+  it('returns false when values differ', () => {
+    expect(new XText('hello').equals(new XText('world'))).toBe(false);
+  });
+  it('returns true for two empty-string text nodes', () => {
+    expect(new XText('').equals(new XText(''))).toBe(true);
+  });
+});
