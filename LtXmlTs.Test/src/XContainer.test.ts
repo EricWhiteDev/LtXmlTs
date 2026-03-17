@@ -164,3 +164,34 @@ describe('XContainer.addContentObject', () => {
     expect((nodes[2] as XText).value).toBe('c');
   });
 });
+
+describe('XContainer.equals', () => {
+  it('returns true for two empty containers', () => {
+    expect(new XElement('root').equals(new XElement('root'))).toBe(true);
+  });
+  it('returns false when node counts differ', () => {
+    const a = new XElement('root', new XText('hello'));
+    const b = new XElement('root');
+    expect(a.equals(b)).toBe(false);
+  });
+  it('returns true when child text nodes are equal', () => {
+    const a = new XElement('root', new XText('hello'));
+    const b = new XElement('root', new XText('hello'));
+    expect(a.equals(b)).toBe(true);
+  });
+  it('returns false when child text node values differ', () => {
+    const a = new XElement('root', new XText('hello'));
+    const b = new XElement('root', new XText('world'));
+    expect(a.equals(b)).toBe(false);
+  });
+  it('returns false when child node types differ at same position', () => {
+    const a = new XElement('root', new XText('x'));
+    const b = new XElement('root', new XComment('x'));
+    expect(a.equals(b)).toBe(false);
+  });
+  it('returns true with mixed node types that are pairwise equal', () => {
+    const a = new XElement('root', new XComment('c'), new XText('t'), new XCData('d'));
+    const b = new XElement('root', new XComment('c'), new XText('t'), new XCData('d'));
+    expect(a.equals(b)).toBe(true);
+  });
+});

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { XElement, XName, XAttribute } from 'ltxmlts';
+import { XElement, XName, XAttribute, XText } from 'ltxmlts';
 
 describe('XElement', () => {
   it('sets nodeType to Element', () => {
@@ -260,5 +260,39 @@ describe('XElement', () => {
     const a = new XAttribute(XName.get('id'), '1');
     const e = new XElement(XName.get('root'), a);
     expect(e.isEmpty).toBe(true);
+  });
+});
+
+describe('XElement.equals', () => {
+  it('returns true for two elements with same name and no children', () => {
+    expect(new XElement('foo').equals(new XElement('foo'))).toBe(true);
+  });
+  it('returns false when names differ', () => {
+    expect(new XElement('foo').equals(new XElement('bar'))).toBe(false);
+  });
+  it('returns false when attribute counts differ', () => {
+    const a = new XElement('foo', new XAttribute('id', '1'));
+    const b = new XElement('foo');
+    expect(a.equals(b)).toBe(false);
+  });
+  it('returns false when attribute values differ', () => {
+    const a = new XElement('foo', new XAttribute('id', '1'));
+    const b = new XElement('foo', new XAttribute('id', '2'));
+    expect(a.equals(b)).toBe(false);
+  });
+  it('returns true when names, attributes, and children are all equal', () => {
+    const a = new XElement('foo', new XAttribute('id', '1'), new XText('hello'));
+    const b = new XElement('foo', new XAttribute('id', '1'), new XText('hello'));
+    expect(a.equals(b)).toBe(true);
+  });
+  it('returns true for nested equal elements', () => {
+    const a = new XElement('root', new XElement('child', new XText('x')));
+    const b = new XElement('root', new XElement('child', new XText('x')));
+    expect(a.equals(b)).toBe(true);
+  });
+  it('returns false for nested elements that differ', () => {
+    const a = new XElement('root', new XElement('child', new XText('x')));
+    const b = new XElement('root', new XElement('child', new XText('y')));
+    expect(a.equals(b)).toBe(false);
   });
 });

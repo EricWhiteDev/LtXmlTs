@@ -185,6 +185,10 @@ export class XEntity extends XNode {
       this.value = valueOrOther.value;
     }
   }
+
+  public equals(other: XEntity): boolean {
+    return this.value === other.value;
+  }
 }
 
 export class XCData extends XNode {
@@ -353,6 +357,30 @@ export class XContainer extends XNode {
       ...this.nodesArray.slice(idx + 1),
     ];
   }
+
+  public equals(other: XContainer): boolean {
+    if (this.nodesArray.length !== other.nodesArray.length) return false;
+    for (let i = 0; i < this.nodesArray.length; i++) {
+      const a = this.nodesArray[i];
+      const b = other.nodesArray[i];
+      if (a instanceof XElement && b instanceof XElement) {
+        if (!a.equals(b)) return false;
+      } else if (a instanceof XComment && b instanceof XComment) {
+        if (!a.equals(b)) return false;
+      } else if (a instanceof XText && b instanceof XText) {
+        if (!a.equals(b)) return false;
+      } else if (a instanceof XEntity && b instanceof XEntity) {
+        if (!a.equals(b)) return false;
+      } else if (a instanceof XCData && b instanceof XCData) {
+        if (!a.equals(b)) return false;
+      } else if (a instanceof XProcessingInstruction && b instanceof XProcessingInstruction) {
+        if (!a.equals(b)) return false;
+      } else {
+        return false; // different types
+      }
+    }
+    return true;
+  }
 }
 
 export class XAttribute extends XObject {
@@ -483,6 +511,15 @@ export class XElement extends XContainer {
       this.addAttributeContentList(...content);
     }
   }
+
+  public override equals(other: XElement): boolean {
+    if (!this.name.equals(other.name)) return false;
+    if (this.attributesArray.length !== other.attributesArray.length) return false;
+    for (let i = 0; i < this.attributesArray.length; i++) {
+      if (!this.attributesArray[i].equals(other.attributesArray[i])) return false;
+    }
+    return super.equals(other);
+  }
 }
 
 export class XDeclaration {
@@ -561,6 +598,15 @@ export class XDocument extends XContainer {
       this.declaration = null;
       this.addDocumentContentList(firstOrContent, ...rest);
     }
+  }
+
+  public override equals(other: XDocument): boolean {
+    if (this.declaration === null && other.declaration !== null) return false;
+    if (this.declaration !== null && other.declaration === null) return false;
+    if (this.declaration !== null && other.declaration !== null) {
+      if (!this.declaration.equals(other.declaration)) return false;
+    }
+    return super.equals(other);
   }
 
   protected override insertContentItems(...items: unknown[]): void {
@@ -694,6 +740,10 @@ export class XNamespace {
     return new XName(this, localName);
   }
 
+  public equals(other: XNamespace): boolean {
+    return this === other;
+  }
+
   constructor(uri: string, preferredPrefix: string | null = null) {
     this.uri = uri;
 
@@ -766,5 +816,9 @@ export class XName {
 
   public toString(): string {
     return this.namespace.uri === '' ? this.localName : `{${this.namespace.uri}}${this.localName}`;
+  }
+
+  public equals(other: XName): boolean {
+    return this === other;
   }
 }

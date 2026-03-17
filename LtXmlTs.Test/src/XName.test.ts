@@ -240,3 +240,18 @@ describe('XName cross-checks', () => {
     expect(a).not.toBe(b);
   });
 });
+
+describe('XName.equals', () => {
+  it('returns true for the same cached instance', () => {
+    expect(XName.get('foo').equals(XName.get('foo'))).toBe(true);
+  });
+  it('returns false when local names differ', () => {
+    expect(XName.get('foo').equals(XName.get('bar'))).toBe(false);
+  });
+  it('returns false when namespaces differ', () => {
+    expect(XName.get('{http://a.com}foo').equals(XName.get('{http://b.com}foo'))).toBe(false);
+  });
+  it('returns true for two calls with same namespaced name', () => {
+    expect(XName.get('{http://example.com}id').equals(XName.get('{http://example.com}id'))).toBe(true);
+  });
+});

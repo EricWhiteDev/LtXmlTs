@@ -300,3 +300,15 @@ describe('XNamespace.getName()', () => {
     expect(name1).not.toBe(name2);
   });
 });
+
+describe('XNamespace.equals', () => {
+  it('returns true for the same cached instance', () => {
+    expect(XNamespace.get('http://example.com').equals(XNamespace.get('http://example.com'))).toBe(true);
+  });
+  it('returns false for different namespaces', () => {
+    expect(XNamespace.get('http://example.com').equals(XNamespace.get('http://other.com'))).toBe(false);
+  });
+  it('returns true for XNamespace.none compared to itself', () => {
+    expect(XNamespace.none.equals(XNamespace.none)).toBe(true);
+  });
+});

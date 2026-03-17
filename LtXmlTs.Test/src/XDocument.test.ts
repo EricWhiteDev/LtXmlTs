@@ -319,3 +319,29 @@ describe('XDocument', () => {
     });
   });
 });
+
+describe('XDocument.equals', () => {
+  it('returns true for two empty documents with no declaration', () => {
+    expect(new XDocument().equals(new XDocument())).toBe(true);
+  });
+  it('returns true when both have the same declaration and same content', () => {
+    const a = new XDocument(new XDeclaration('1.0', 'utf-8', 'yes'), new XElement('root'));
+    const b = new XDocument(new XDeclaration('1.0', 'utf-8', 'yes'), new XElement('root'));
+    expect(a.equals(b)).toBe(true);
+  });
+  it('returns false when one has a declaration and the other does not', () => {
+    const a = new XDocument(new XDeclaration('1.0', 'utf-8', 'yes'));
+    const b = new XDocument();
+    expect(a.equals(b)).toBe(false);
+  });
+  it('returns false when declarations differ', () => {
+    const a = new XDocument(new XDeclaration('1.0', 'utf-8', 'yes'));
+    const b = new XDocument(new XDeclaration('1.1', 'utf-8', 'yes'));
+    expect(a.equals(b)).toBe(false);
+  });
+  it('returns false when root elements differ', () => {
+    const a = new XDocument(new XElement('root', new XText('a')));
+    const b = new XDocument(new XElement('root', new XText('b')));
+    expect(a.equals(b)).toBe(false);
+  });
+});

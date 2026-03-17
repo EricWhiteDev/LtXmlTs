@@ -24,3 +24,15 @@ describe('XEntity', () => {
     expect(copy).not.toBe(original);
   });
 });
+
+describe('XEntity.equals', () => {
+  it('returns true when values are equal', () => {
+    expect(new XEntity('amp').equals(new XEntity('amp'))).toBe(true);
+  });
+  it('returns false when values differ', () => {
+    expect(new XEntity('amp').equals(new XEntity('lt'))).toBe(false);
+  });
+  it('returns true for two empty-string entities', () => {
+    expect(new XEntity('').equals(new XEntity(''))).toBe(true);
+  });
+});
