@@ -38,6 +38,14 @@ export class XObject {
       this.annotationsArray = this.annotationsArray.filter(item => item.constructor !== ctor);
     }
   }
+
+  public get document(): XDocument | null {
+    let current: XObject = this;
+    while (current.parent !== null) {
+      current = current.parent;
+    }
+    return current instanceof XDocument ? current : null;
+  }
 }
 
 export abstract class XNode extends XObject {}

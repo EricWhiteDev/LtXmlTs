@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { XObject } from 'ltxmlts';
+import { XObject, XElement, XAttribute, XDocument } from 'ltxmlts';
 
 describe('XObject', () => {
   it('annotation returns the same object added via addAnnotation', () => {
@@ -125,5 +125,47 @@ describe('XObject.removeAnnotations', () => {
 
     expect(myXObject.annotations(Dog)).toHaveLength(1);
     expect(myXObject.annotations(Dog)[0]).toBe(dog);
+  });
+});
+
+describe('XObject.document', () => {
+  it('returns null for a standalone XElement with no parent', () => {
+    const el = new XElement('root');
+    expect(el.document).toBeNull();
+  });
+
+  it('returns null for a standalone XAttribute with no parent', () => {
+    const attr = new XAttribute('id', '1');
+    expect(attr.document).toBeNull();
+  });
+
+  it('returns the document for a direct child XElement', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(root.document).toBe(doc);
+  });
+
+  it('returns the document for a grandchild XElement', () => {
+    const child = new XElement('child');
+    const doc = new XDocument(new XElement('root', child));
+    expect(child.document).toBe(doc);
+  });
+
+  it('returns the document for an XAttribute on a child element', () => {
+    const attr = new XAttribute('id', '42');
+    const doc = new XDocument(new XElement('root', attr));
+    expect(attr.document).toBe(doc);
+  });
+
+  it('returns itself when called on an XDocument', () => {
+    const doc = new XDocument(new XElement('root'));
+    expect(doc.document).toBe(doc);
+  });
+
+  it('returns null when root is an XElement, not an XDocument', () => {
+    const child = new XElement('child');
+    const parent = new XElement('parent', child);
+    expect(child.document).toBeNull();
+    expect(parent.document).toBeNull();
   });
 });

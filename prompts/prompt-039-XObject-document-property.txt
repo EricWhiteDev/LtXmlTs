@@ -1,0 +1,9 @@
+Enhance the XObject class as follows:
+- Add a document property that returns an XDocument object or null.
+- To implement this, traverse from parent to parent until we find an XObject where the parent property is null.
+- If the last XObject in the chain is an XDocument object, then return it.
+- If the last XObject in the chain is not an XDocument object, then return null.
+
+Add unit tests for all of this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
