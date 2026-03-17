@@ -159,6 +159,14 @@ describe('XAttribute.remove', () => {
   });
 });
 
+describe('XAttribute.value', () => {
+  it('can be set via direct assignment', () => {
+    const a = new XAttribute('id', 'original');
+    a.value = 'updated';
+    expect(a.value).toBe('updated');
+  });
+});
+
 describe('XAttribute.parent', () => {
   it('is set to the parent XElement when added to an element', () => {
     const el = new XElement('root', new XAttribute('id', '1'));
