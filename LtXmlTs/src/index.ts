@@ -69,6 +69,20 @@ export class XNode extends XObject {
     }
     (this.parent as XContainer).replaceChild(this, ...content);
   }
+
+  public ancestors(): XElement[];
+  public ancestors(name: XName | string): XElement[];
+  public ancestors(name?: XName | string): XElement[] {
+    const result: XElement[] = [];
+    let current: XObject | null = this.parent;
+    while (current instanceof XElement) {
+      result.push(current);
+      current = current.parent;
+    }
+    if (name === undefined) return result;
+    const xname = typeof name === 'string' ? new XName(name) : name;
+    return result.filter(e => e.name === xname);
+  }
 }
 
 export class XComment extends XNode {

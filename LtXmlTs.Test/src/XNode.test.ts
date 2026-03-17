@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { XElement, XComment, XText, XDocument } from 'ltxmlts';
+import { XElement, XComment, XText, XDocument, XName } from 'ltxmlts';
 
 describe('XNode.addAfterSelf', () => {
   describe('error cases', () => {
@@ -268,6 +268,100 @@ describe('XNode.replaceWith', () => {
       expect(() => root.replaceWith(new XElement('a'), new XElement('b'))).toThrow(
         'An XDocument may contain only one XElement.'
       );
+    });
+  });
+});
+
+describe('XNode.ancestors', () => {
+  describe('no-arg overload', () => {
+    it('returns [] when node has no parent', () => {
+      const el = new XElement('root');
+      expect(el.ancestors()).toEqual([]);
+    });
+
+    it('returns [] when immediate parent is XDocument', () => {
+      const doc = new XDocument(new XElement('root'));
+      const root = doc.nodes()[0] as XElement;
+      expect(root.ancestors()).toEqual([]);
+    });
+
+    it('returns [parent] for single XElement parent', () => {
+      const parent = new XElement('parent', new XElement('child'));
+      const child = parent.nodes()[0] as XElement;
+      expect(child.ancestors()).toEqual([parent]);
+    });
+
+    it('returns [parent, grandparent] for two levels deep', () => {
+      const grandparent = new XElement('grandparent', new XElement('parent', new XElement('child')));
+      const parent = grandparent.nodes()[0] as XElement;
+      const child = parent.nodes()[0] as XElement;
+      expect(child.ancestors()).toEqual([parent, grandparent]);
+    });
+
+    it('returns [parent, grandparent, great-grandparent] for three levels deep', () => {
+      const great = new XElement('great', new XElement('grand', new XElement('parent', new XElement('child'))));
+      const grand = great.nodes()[0] as XElement;
+      const parent = grand.nodes()[0] as XElement;
+      const child = parent.nodes()[0] as XElement;
+      expect(child.ancestors()).toEqual([parent, grand, great]);
+    });
+
+    it('collects XElement ancestors for XText child', () => {
+      const grandparent = new XElement('gp', new XElement('p', new XText('hello')));
+      const parent = grandparent.nodes()[0] as XElement;
+      const text = parent.nodes()[0] as XText;
+      expect(text.ancestors()).toEqual([parent, grandparent]);
+    });
+
+    it('collects XElement ancestor chain for XComment child of nested XElement', () => {
+      const outer = new XElement('outer', new XElement('inner', new XComment('note')));
+      const inner = outer.nodes()[0] as XElement;
+      const comment = inner.nodes()[0] as XComment;
+      expect(comment.ancestors()).toEqual([inner, outer]);
+    });
+  });
+
+  describe('named overload (XName arg)', () => {
+    it('returns matching ancestor only', () => {
+      const grandparent = new XElement('gp', new XElement('p', new XElement('child')));
+      const parent = grandparent.nodes()[0] as XElement;
+      const child = parent.nodes()[0] as XElement;
+      expect(child.ancestors(new XName('gp'))).toEqual([grandparent]);
+    });
+
+    it('returns [] when no ancestor matches', () => {
+      const parent = new XElement('parent', new XElement('child'));
+      const child = parent.nodes()[0] as XElement;
+      expect(child.ancestors(new XName('other'))).toEqual([]);
+    });
+
+    it('returns all matching ancestors in inner-to-outer order', () => {
+      const outer = new XElement('foo', new XElement('foo', new XElement('child')));
+      const inner = outer.nodes()[0] as XElement;
+      const child = inner.nodes()[0] as XElement;
+      const result = child.ancestors(new XName('foo'));
+      expect(result).toEqual([inner, outer]);
+    });
+
+    it('returns only the matching ancestor when top does not match', () => {
+      const top = new XElement('top', new XElement('foo', new XElement('child')));
+      const mid = top.nodes()[0] as XElement;
+      const child = mid.nodes()[0] as XElement;
+      expect(child.ancestors(new XName('foo'))).toEqual([mid]);
+    });
+  });
+
+  describe('named overload (string arg)', () => {
+    it('matches ancestor by string name', () => {
+      const parent = new XElement('foo', new XElement('child'));
+      const child = parent.nodes()[0] as XElement;
+      expect(child.ancestors('foo')).toEqual([parent]);
+    });
+
+    it('returns [] when no ancestor matches string name', () => {
+      const parent = new XElement('parent', new XElement('child'));
+      const child = parent.nodes()[0] as XElement;
+      expect(child.ancestors('other')).toEqual([]);
     });
   });
 });

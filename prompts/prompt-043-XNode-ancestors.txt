@@ -1,0 +1,17 @@
+Enhance the XNode class as follows:
+- Add an ancestors() method.
+- This method returns an array of the node's ancestor elements, in reverse document order.
+- The algorithm is as follows:
+  - First, create a new array of XElement.
+  - Add the node's parent to the array.
+  - Add the node's parent's parent to the array.
+  - And so on until either the parent property is null, or the parent property is an XDocument object.
+
+- Add an overload of the ancestors() method.
+  - This method takes one argument, an XName object.
+  - This overload is similar to the ancestors method that takes no arguments, except that it returns an array that is filtered to just those ancestors whose name is the same as the argument XName object.
+  - Because XName objects are atomized, then it is sufficient to compare the XName object to the argument XName object.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
