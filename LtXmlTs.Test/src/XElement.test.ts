@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { XElement, XName, XAttribute, XText } from 'ltxmlts';
+import { XElement, XName, XAttribute, XText, XComment } from 'ltxmlts';
 
 describe('XElement', () => {
   it('sets nodeType to Element', () => {
@@ -303,5 +303,51 @@ describe('XElement.equals', () => {
     const a = new XElement('root', new XElement('child', new XText('x')));
     const b = new XElement('root', new XElement('child', new XText('y')));
     expect(a.equals(b)).toBe(false);
+  });
+});
+
+describe('XElement.add', () => {
+  it('appends a text node to an empty element', () => {
+    const e = new XElement('root');
+    e.add('hello');
+    const nodes = e.nodes();
+    expect(nodes).toHaveLength(1);
+    expect((nodes[0] as XText).value).toBe('hello');
+  });
+
+  it('appends to existing content', () => {
+    const e = new XElement('root', 'first');
+    e.add('second');
+    const nodes = e.nodes();
+    expect(nodes).toHaveLength(2);
+    expect((nodes[0] as XText).value).toBe('first');
+    expect((nodes[1] as XText).value).toBe('second');
+  });
+
+  it('appends multiple items in one call', () => {
+    const e = new XElement('root');
+    e.add('a', 'b', 'c');
+    expect(e.nodes()).toHaveLength(3);
+  });
+
+  it('appends a child element', () => {
+    const parent = new XElement('root');
+    const child = new XElement('child');
+    parent.add(child);
+    expect(parent.nodes()[0]).toBe(child);
+    expect(child.parent).toBe(parent);
+  });
+
+  it('ignores null and undefined', () => {
+    const e = new XElement('root');
+    e.add(null, undefined);
+    expect(e.nodes()).toHaveLength(0);
+  });
+
+  it('appends a comment node', () => {
+    const e = new XElement('root');
+    const c = new XComment('note');
+    e.add(c);
+    expect(e.nodes()[0]).toBe(c);
   });
 });

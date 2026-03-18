@@ -366,6 +366,10 @@ export class XContainer extends XNode {
     }
   }
 
+  public add(...content: unknown[]): void {
+    this.insertContentItems(...content);
+  }
+
   public insertBeforeChild(child: XNode, ...content: unknown[]): void {
     const copy = [...this.nodesArray];
     const idx = copy.indexOf(child);

@@ -354,3 +354,31 @@ describe('XDocument.equals', () => {
     expect(a.equals(b)).toBe(false);
   });
 });
+
+describe('XDocument.add', () => {
+  it('appends a root element to an empty document', () => {
+    const doc = new XDocument();
+    doc.add(new XElement('root'));
+    expect(doc.nodes()).toHaveLength(1);
+    expect(doc.nodes()[0]).toBeInstanceOf(XElement);
+  });
+
+  it('appends a comment before the root element', () => {
+    const doc = new XDocument();
+    doc.add(new XComment('preamble'));
+    doc.add(new XElement('root'));
+    expect(doc.nodes()).toHaveLength(2);
+    expect(doc.nodes()[0]).toBeInstanceOf(XComment);
+    expect(doc.nodes()[1]).toBeInstanceOf(XElement);
+  });
+
+  it('throws when a second root element is added', () => {
+    const doc = new XDocument(new XElement('root'));
+    expect(() => doc.add(new XElement('other'))).toThrow();
+  });
+
+  it('throws when an XAttribute is added', () => {
+    const doc = new XDocument();
+    expect(() => doc.add(new XAttribute('id', '1'))).toThrow();
+  });
+});
