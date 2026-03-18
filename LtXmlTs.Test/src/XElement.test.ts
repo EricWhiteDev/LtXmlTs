@@ -585,6 +585,83 @@ describe('XElement.descendantNodesAndSelf', () => {
   });
 });
 
+describe('XElement.descendantsAndSelf', () => {
+  it('returns only the element itself for an empty element', () => {
+    const e = new XElement('root');
+    const result = e.descendantsAndSelf();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(e);
+  });
+
+  it('returns self followed by flat children in document order', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    const result = e.descendantsAndSelf();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBe(e);
+    expect(result[1]).toBe(a);
+    expect(result[2]).toBe(b);
+  });
+
+  it('returns self followed by nested descendants in depth-first pre-order', () => {
+    const grandchild = new XElement('gc');
+    const child = new XElement('child', grandchild);
+    const e = new XElement('root', child);
+    const result = e.descendantsAndSelf();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBe(e);
+    expect(result[1]).toBe(child);
+    expect(result[2]).toBe(grandchild);
+  });
+
+  it('excludes non-element nodes (XText, XComment)', () => {
+    const t = new XText('hello');
+    const c = new XComment('note');
+    const child = new XElement('child');
+    const e = new XElement('root');
+    e.add(t, c, child);
+    const result = e.descendantsAndSelf();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(e);
+    expect(result[1]).toBe(child);
+  });
+
+  it('filters by XName — returns self and matching descendants only', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const a2 = new XElement('a');
+    const e = new XElement('root', a, b, a2);
+    const result = e.descendantsAndSelf(new XName('a'));
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(a);
+    expect(result[1]).toBe(a2);
+  });
+
+  it('filters by string name — same result as XName overload', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    const result = e.descendantsAndSelf('a');
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(a);
+  });
+
+  it('returns empty array when filter matches nothing (including self)', () => {
+    const a = new XElement('a');
+    const e = new XElement('root', a);
+    const result = e.descendantsAndSelf('nomatch');
+    expect(result).toHaveLength(0);
+  });
+
+  it('self is always first when unfiltered', () => {
+    const child = new XElement('child');
+    const e = new XElement('root', child);
+    const result = e.descendantsAndSelf();
+    expect(result[0]).toBe(e);
+  });
+});
+
 describe('XElement.descendants', () => {
   it('returns empty array for an element with no children', () => {
     const e = new XElement('root');

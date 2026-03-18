@@ -1,0 +1,20 @@
+Enhance the XElement class as follows:
+- Add an descendantsAndSelf() method. It returns an array of XElement objects.
+- There are two overloads of the descendantsAndSelf() method:
+  - The first overload of the descendantsAndSelf() method takes no arguments. It returns an array containing the 'this' XElement object, and each and every descendant XElement object, in document order.
+  - The second overload takes one argument, named name, which is of type XName | string. In this case, the method returns an array containing the 'this' XElement, and each and every descendant XElement object where the name === the specified name argument.
+- Here is the alorithm:
+  - First, create an empty array of XElement. This is the tempArray.
+  - Next, for every child element of the 'this' XElement object, call a method, addSelfAndDescendantsElementsToTempArray, which is a helper method that will make the code easier to implement. addSelfAndDescendantsElementsToTempArray takes three arguments - the first is the tempArray, which is an array of XElement. The second, with the name of element, is an XElement object, to be added, along with its descendant elements to tempArray. The third is an XName object, named name. Elements are added to the tempArray if the element name === the name argument.
+  - Finally, return tempArray.
+
+Here is the algorithm for addSelfAndDescendantsElementsToTempArray:
+  - There are three arguments: the first is the tempArray, which is an array of XNode. The second, with the name of element, is an XElement object, to be added, along with its descendant elements to tempArray. The third is an XName object, named name. Elements are added to the tempArray if the element name is null, or if element name === the name argument.
+  - If the name argument is not specified, then add the element to tempArray.
+  - If the the name argument is specified, and if the name argument === the element's name property, then add the element to tempArray.
+  - Then, for every node, if the node is an XContainer, or if it derives from XContainer, then for every child element, call addSelfAndDescendantsElementsToTempArray recursively, passing the tempArray, the child element, and the name argument.
+  - Note that this same function is implemented for the XContainer class.  Change the access permissions so that XElement.descendantsAndSelf can call into addSelfAndDescendantsElementsToTempArray as implemented for XContainer.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

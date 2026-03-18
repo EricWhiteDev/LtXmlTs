@@ -438,7 +438,7 @@ export class XContainer extends XNode {
     return tempArray;
   }
 
-  private addSelfAndDescendantsElementsToTempArray(
+  protected addSelfAndDescendantsElementsToTempArray(
     tempArray: XElement[],
     element: XElement,
     name: XName | null,
@@ -628,6 +628,15 @@ export class XElement extends XContainer {
     for (const node of this.nodesArray) {
       this.addSelfAndDescendantsToTempArray(tempArray, node);
     }
+    return tempArray;
+  }
+
+  public descendantsAndSelf(): XElement[];
+  public descendantsAndSelf(name: XName | string): XElement[];
+  public descendantsAndSelf(name?: XName | string): XElement[] {
+    const tempArray: XElement[] = [];
+    const xname = name === undefined ? null : (typeof name === 'string' ? new XName(name) : name);
+    this.addSelfAndDescendantsElementsToTempArray(tempArray, this, xname);
     return tempArray;
   }
 
