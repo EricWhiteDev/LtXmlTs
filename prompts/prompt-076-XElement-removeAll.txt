@@ -1,0 +1,9 @@
+Enhance the XElement class as follows:
+- Add a removeAll() method to the class.
+- The removeAll method takes no arguments, and returns void.
+- It removes all nodes from the nodesArray, i.e. sets the nodesArray to an empty array. Set the parent property of all nodes to null, to avoid stale references.
+- It removes all attributes from the attributesArray, i.e. sets the attributesArray to an empty array. Set the parent property of all attributes to null to avoid stale references.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

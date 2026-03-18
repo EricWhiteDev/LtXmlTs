@@ -1017,6 +1017,30 @@ describe('XElement.ancestorsAndSelf', () => {
   });
 });
 
+describe('XElement.removeAttribute', () => {
+  it('removes the attribute from the element', () => {
+    const attr = new XAttribute('id', '42');
+    const el = new XElement('root', attr);
+    el.removeAttribute(attr);
+    expect([...el.attributes()]).not.toContain(attr);
+  });
+
+  it('nulls the parent of the removed attribute', () => {
+    const attr = new XAttribute('id', '42');
+    const el = new XElement('root', attr);
+    el.removeAttribute(attr);
+    expect(attr.parent).toBeNull();
+  });
+
+  it('leaves sibling attributes intact', () => {
+    const a1 = new XAttribute('id', '1');
+    const a2 = new XAttribute('class', 'foo');
+    const el = new XElement('root', a1, a2);
+    el.removeAttribute(a1);
+    expect([...el.attributes()]).toEqual([a2]);
+  });
+});
+
 describe('XElement.attributes(name)', () => {
   it('returns matching attribute by string name', () => {
     const a = new XAttribute('id', '1');
@@ -1049,5 +1073,56 @@ describe('XElement.attributes(name)', () => {
     const a2 = new XAttribute('class', 'foo');
     const e = new XElement('root', a1, a2);
     expect(e.attributes()).toHaveLength(2);
+  });
+});
+
+describe('XElement.removeAll', () => {
+  it('succeeds on empty element with no nodes or attributes', () => {
+    const e = new XElement('root');
+    expect(() => e.removeAll()).not.toThrow();
+  });
+
+  it('clears all child nodes', () => {
+    const e = new XElement('root', new XElement('a'), new XElement('b'));
+    e.removeAll();
+    expect(e.nodes()).toHaveLength(0);
+  });
+
+  it('nulls parent of removed nodes', () => {
+    const child1 = new XElement('a');
+    const child2 = new XElement('b');
+    const e = new XElement('root', child1, child2);
+    e.removeAll();
+    expect(child1.parent).toBeNull();
+    expect(child2.parent).toBeNull();
+  });
+
+  it('clears all attributes', () => {
+    const e = new XElement('root', new XAttribute('id', '1'), new XAttribute('class', 'foo'));
+    e.removeAll();
+    expect(e.attributes()).toHaveLength(0);
+  });
+
+  it('nulls parent of removed attributes', () => {
+    const a1 = new XAttribute('id', '1');
+    const a2 = new XAttribute('class', 'foo');
+    const e = new XElement('root', a1, a2);
+    e.removeAll();
+    expect(a1.parent).toBeNull();
+    expect(a2.parent).toBeNull();
+  });
+
+  it('clears both nodes and attributes together', () => {
+    const child = new XElement('child');
+    const attr = new XAttribute('id', '1');
+    const e = new XElement('root', attr, child);
+    e.removeAll();
+    expect(e.nodes()).toHaveLength(0);
+    expect(e.attributes()).toHaveLength(0);
+  });
+
+  it('returns void', () => {
+    const e = new XElement('root', new XAttribute('id', '1'), new XElement('child'));
+    expect(e.removeAll()).toBeUndefined();
   });
 });

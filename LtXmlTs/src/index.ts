@@ -660,6 +660,15 @@ export class XElement extends XContainer {
       ...this.attributesArray.slice(0, idx),
       ...this.attributesArray.slice(idx + 1),
     ];
+    attr.parent = null;
+  }
+
+  public removeAll(): void {
+    for (const attr of this.attributesArray) {
+      attr.parent = null;
+    }
+    this.attributesArray = [];
+    this.removeNodes();
   }
 
   protected addAttributeContentObject(content: unknown): void {
