@@ -110,14 +110,14 @@ describe('XNamespace namespaceName property', () => {
 });
 
 describe('XNamespace.toString', () => {
-  it('standard URI returns the URI wrapped in braces', () => {
+  it('returns the URI without braces', () => {
     const ns = new XNamespace('urn:test:tostring:standard');
-    expect(ns.toString()).toBe('{urn:test:tostring:standard}');
+    expect(ns.toString()).toBe('urn:test:tostring:standard');
   });
 
-  it('empty URI returns empty braces', () => {
+  it('empty URI returns empty string', () => {
     const ns = new XNamespace('');
-    expect(ns.toString()).toBe('{}');
+    expect(ns.toString()).toBe('');
   });
 
   it('template literal interpolation produces the same result as explicit toString()', () => {

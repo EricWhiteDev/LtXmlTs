@@ -1,0 +1,3 @@
+Fix the XNamespace class as follows:
+- Currently, the toString() method prepends an open curly brace before the uri, and appends a close curly brace after the uri. This is not the right behavior. Calling toString() on an XNamespace object should simply return the uri, no braces before or after.
+- Fix the toString() method, and then fix any unit tests that are broken because of this change in behavior.
