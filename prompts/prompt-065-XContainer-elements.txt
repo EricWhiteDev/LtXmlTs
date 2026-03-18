@@ -1,0 +1,11 @@
+Enhance the XContainer class as follows:
+- Add an elements() method. It returns an array of XElement objects.
+- There are two overloads of the elements() method:
+  - The first overload of the elements() method takes no arguments. It returns an array containing each and every child XElement object, in document order.
+  - The second overload takes one argument, named name, which is of type XName. In this case, the method returns an array of each and every child XElement object where the name === the specified name argument.
+- Here is the alorithm:
+  - Filter the nodesArray for type is XElement. If the name argument is specified, then filter for a name match. Then return the filtered array.
+
+For the unit tests, don't call elements directly on an XContainer object. Instead, call the elements method on an XElement object, which inherits the implementation from the XContainer class. Also, in other tests, call the elements method on an XDocument object, which also inherits the implementation from the XContainer class.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

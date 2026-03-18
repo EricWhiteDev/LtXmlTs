@@ -538,3 +538,43 @@ describe('XDocument.descendants', () => {
     expect(result[1]).toBe(target2);
   });
 });
+
+describe('XDocument.elements', () => {
+  it('returns empty array for an empty document', () => {
+    const doc = new XDocument();
+    expect(doc.elements()).toHaveLength(0);
+  });
+
+  it('returns the root element', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    const result = doc.elements();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(root);
+  });
+
+  it('skips document-level comment nodes', () => {
+    const comment = new XComment('preamble');
+    const root = new XElement('root');
+    const doc = new XDocument(comment, root);
+    const result = doc.elements();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(root);
+  });
+
+  it('does not include descendants of root', () => {
+    const child = new XElement('child');
+    const root = new XElement('root', child);
+    const doc = new XDocument(root);
+    const result = doc.elements();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(root);
+  });
+
+  it('filters by name', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(doc.elements('root')).toHaveLength(1);
+    expect(doc.elements('other')).toHaveLength(0);
+  });
+});

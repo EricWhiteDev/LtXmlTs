@@ -574,3 +574,64 @@ describe('XElement.descendants', () => {
     expect(result[2]).toBe(sibling);
   });
 });
+
+describe('XElement.elements', () => {
+  it('returns empty array for an element with no children', () => {
+    const e = new XElement('root');
+    expect(e.elements()).toHaveLength(0);
+  });
+
+  it('returns direct child elements in document order', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    const result = e.elements();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(a);
+    expect(result[1]).toBe(b);
+  });
+
+  it('skips non-element nodes', () => {
+    const t = new XText('hello');
+    const c = new XComment('note');
+    const child = new XElement('child');
+    const e = new XElement('root', t, c, child);
+    const result = e.elements();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(child);
+  });
+
+  it('does not include grandchildren', () => {
+    const grandchild = new XElement('gc');
+    const child = new XElement('child', grandchild);
+    const e = new XElement('root', child);
+    const result = e.elements();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(child);
+  });
+
+  it('filters by XName', () => {
+    const a1 = new XElement('a');
+    const a2 = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a1, b, a2);
+    const result = e.elements(XName.get('a'));
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(a1);
+    expect(result[1]).toBe(a2);
+  });
+
+  it('filters by string name', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    const result = e.elements('a');
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(a);
+  });
+
+  it('returns empty array when no elements match the filter', () => {
+    const e = new XElement('root', new XElement('a'), new XElement('b'));
+    expect(e.elements('z')).toHaveLength(0);
+  });
+});

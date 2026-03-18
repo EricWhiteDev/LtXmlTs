@@ -378,6 +378,15 @@ export class XContainer extends XNode {
     this.insertContentItems(...content);
   }
 
+  public elements(): XElement[];
+  public elements(name: XName | string): XElement[];
+  public elements(name?: XName | string): XElement[] {
+    const xname = name === undefined ? undefined : (typeof name === 'string' ? new XName(name) : name);
+    return this.nodesArray.filter(
+      (n): n is XElement => n instanceof XElement && (xname === undefined || n.name === xname),
+    );
+  }
+
   public descendantNodes(): XNode[] {
     const tempArray: XNode[] = [];
     for (const node of this.nodesArray) {
