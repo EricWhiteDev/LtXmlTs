@@ -1208,6 +1208,85 @@ describe('XElement.setAttributeValue', () => {
   });
 });
 
+describe('XElement.setElementValue', () => {
+  it('null + element exists → removes it', () => {
+    const child = new XElement('child', new XText('hello'));
+    const parent = new XElement('root', child);
+    parent.setElementValue('child', null);
+    expect([...parent.nodes()]).toHaveLength(0);
+    expect(child.parent).toBeNull();
+  });
+
+  it('null + element missing → no-op', () => {
+    const parent = new XElement('root');
+    expect(() => parent.setElementValue('child', null)).not.toThrow();
+    expect([...parent.nodes()]).toHaveLength(0);
+  });
+
+  it('non-null + element exists → replaces node contents with XText', () => {
+    const child = new XElement('child', new XText('old'));
+    const parent = new XElement('root', child);
+    parent.setElementValue('child', 'new');
+    const childNodes = [...child.nodes()];
+    expect(childNodes).toHaveLength(1);
+    expect(childNodes[0]).toBeInstanceOf(XText);
+    expect((childNodes[0] as XText).value).toBe('new');
+    expect(parent.element('child')).toBe(child);
+  });
+
+  it('non-null + element exists → preserves element\'s attributes', () => {
+    const child = new XElement('child', new XAttribute('id', '42'), new XText('old'));
+    const parent = new XElement('root', child);
+    parent.setElementValue('child', 'new');
+    expect(child.attribute('id')?.value).toBe('42');
+  });
+
+  it('non-null + element missing → creates new child XElement', () => {
+    const parent = new XElement('root');
+    parent.setElementValue('child', 'hello');
+    const found = parent.element('child');
+    expect(found).not.toBeNull();
+    const childNodes = [...found!.nodes()];
+    expect(childNodes).toHaveLength(1);
+    expect(childNodes[0]).toBeInstanceOf(XText);
+    expect((childNodes[0] as XText).value).toBe('hello');
+    expect(found!.parent).toBe(parent);
+  });
+
+  it('works with plain string name', () => {
+    const parent = new XElement('root');
+    parent.setElementValue('child', 'val');
+    expect(parent.element('child')).not.toBeNull();
+  });
+
+  it('works with XName instance', () => {
+    const parent = new XElement('root');
+    parent.setElementValue(XName.get('child'), 'val');
+    expect(parent.element(XName.get('child'))).not.toBeNull();
+  });
+
+  it('does not affect sibling elements', () => {
+    const sibling = new XElement('sibling', new XText('keep'));
+    const child = new XElement('child', new XText('old'));
+    const parent = new XElement('root', sibling, child);
+    parent.setElementValue('child', 'new');
+    const siblingNodes = [...sibling.nodes()];
+    expect(siblingNodes).toHaveLength(1);
+    expect((siblingNodes[0] as XText).value).toBe('keep');
+  });
+
+  it('does not affect parent\'s attributes', () => {
+    const parent = new XElement('root', new XAttribute('id', '99'));
+    parent.setElementValue('child', 'val');
+    expect(parent.attribute('id')?.value).toBe('99');
+  });
+
+  it('returns void', () => {
+    const parent = new XElement('root');
+    expect(parent.setElementValue('child', 'val')).toBeUndefined();
+  });
+});
+
 describe('XElement.attributes(name)', () => {
   it('returns matching attribute by string name', () => {
     const a = new XAttribute('id', '1');

@@ -1,0 +1,11 @@
+Enhance the XElement class as follows:
+- Add an setElementValue() method.
+- The first argument to setElementValue is name, with type XName | string
+- The second argument is value, with type string
+- The element is removed if the value is null. In this case, set the parent property of the removed element to null.
+- If value is not null, and the element doesn't exist, then setElementValue creates a new XElement object and adds it to the parent element.
+- If value is not null, and the element does exist, then setElementValue removes the child element's node contents, creates a new XText object with the contents of the value parameter, and adds the XText object to the child element's nodesArray.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

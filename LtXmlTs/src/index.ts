@@ -688,6 +688,20 @@ export class XElement extends XContainer {
     }
   }
 
+  public setElementValue(name: XName | string, value: string | null): void {
+    const existing = this.element(name);
+    if (value === null) {
+      if (existing !== null) {
+        existing.remove();
+      }
+    } else if (existing !== null) {
+      existing.removeNodes();
+      existing.addContentList(new XText(value));
+    } else {
+      this.addContentList(new XElement(name, new XText(value)));
+    }
+  }
+
   public removeAll(): void {
     for (const attr of this.attributesArray) {
       attr.parent = null;
