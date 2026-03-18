@@ -401,3 +401,49 @@ describe('XElement.addFirst', () => {
     expect(e.nodes()[0]).toBe(c);
   });
 });
+
+describe('XElement.replaceNodes', () => {
+  it('replaces existing content with a text node', () => {
+    const e = new XElement('root', 'old');
+    e.replaceNodes('new');
+    const nodes = e.nodes();
+    expect(nodes).toHaveLength(1);
+    expect((nodes[0] as XText).value).toBe('new');
+  });
+
+  it('clears all existing nodes when called with no arguments', () => {
+    const e = new XElement('root', 'a', 'b');
+    e.replaceNodes();
+    expect(e.nodes()).toHaveLength(0);
+  });
+
+  it('replaces with multiple items in one call', () => {
+    const e = new XElement('root', 'old');
+    e.replaceNodes('x', 'y');
+    const nodes = e.nodes();
+    expect(nodes).toHaveLength(2);
+    expect((nodes[0] as XText).value).toBe('x');
+    expect((nodes[1] as XText).value).toBe('y');
+  });
+
+  it('sets parent on new nodes', () => {
+    const e = new XElement('root', 'old');
+    const child = new XElement('child');
+    e.replaceNodes(child);
+    expect(child.parent).toBe(e);
+  });
+
+  it('nulls parent on removed nodes', () => {
+    const child = new XElement('child');
+    const e = new XElement('root', child);
+    e.replaceNodes('replacement');
+    expect(child.parent).toBeNull();
+  });
+
+  it('replaces content of an empty element', () => {
+    const e = new XElement('root');
+    e.replaceNodes('hello');
+    expect(e.nodes()).toHaveLength(1);
+    expect((e.nodes()[0] as XText).value).toBe('hello');
+  });
+});

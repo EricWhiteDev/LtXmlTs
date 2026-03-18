@@ -1,0 +1,11 @@
+Enhance the XContainer class as follows:
+- Add an replaceNodes() method.
+- The replaceNodes() method has a rest parameter. The array type of the rest parameter is explicitly unknown.
+- Here is the alorithm:
+  - First, set the nodesArray to an empty array of XNode.
+  - Next, call insertContentItems, passing the rest parameter that was passed into addFirst. This adds all of the content that was passed in the rest parameter.
+  - This algorithm clears out the existing content in the nodesArray, and then adds the content that is passed in the rest parameter. This is the defined behavior of the replaceNodes method.
+
+For the unit tests, don't call replaceNodes directly on an XContainer object. Instead, call the replaceNodes method on an XElement object, which inherits the implementation from the XContainer class. Also, in other tests, call the replaceNodes method on an XDocument object, which also inherits the implementation from the XContainer class.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

@@ -409,3 +409,43 @@ describe('XDocument.addFirst', () => {
     expect(() => doc.addFirst(new XAttribute('id', '1'))).toThrow();
   });
 });
+
+describe('XDocument.replaceNodes', () => {
+  it('replaces existing root element with a new one', () => {
+    const doc = new XDocument(new XElement('old'));
+    doc.replaceNodes(new XElement('new'));
+    expect(doc.nodes()).toHaveLength(1);
+    expect((doc.nodes()[0] as XElement).name.toString()).toBe('new');
+  });
+
+  it('clears all nodes when called with no arguments', () => {
+    const doc = new XDocument(new XElement('root'));
+    doc.replaceNodes();
+    expect(doc.nodes()).toHaveLength(0);
+  });
+
+  it('replaces with comment followed by element', () => {
+    const doc = new XDocument(new XElement('old'));
+    doc.replaceNodes(new XComment('preamble'), new XElement('root'));
+    expect(doc.nodes()).toHaveLength(2);
+    expect(doc.nodes()[0]).toBeInstanceOf(XComment);
+    expect(doc.nodes()[1]).toBeInstanceOf(XElement);
+  });
+
+  it('nulls parent on removed nodes', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    doc.replaceNodes(new XElement('new'));
+    expect(root.parent).toBeNull();
+  });
+
+  it('throws when two root elements are provided', () => {
+    const doc = new XDocument(new XElement('old'));
+    expect(() => doc.replaceNodes(new XElement('a'), new XElement('b'))).toThrow();
+  });
+
+  it('throws when an XAttribute is provided', () => {
+    const doc = new XDocument(new XElement('root'));
+    expect(() => doc.replaceNodes(new XAttribute('id', '1'))).toThrow();
+  });
+});

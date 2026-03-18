@@ -370,6 +370,14 @@ export class XContainer extends XNode {
     this.insertContentItems(...content);
   }
 
+  public replaceNodes(...content: unknown[]): void {
+    for (const node of this.nodesArray) {
+      node.parent = null;
+    }
+    this.nodesArray = [];
+    this.insertContentItems(...content);
+  }
+
   public addFirst(...content: unknown[]): void {
     const copy = [...this.nodesArray];
     this.nodesArray = copy; // let XDocument see existing nodes for constraint checks
