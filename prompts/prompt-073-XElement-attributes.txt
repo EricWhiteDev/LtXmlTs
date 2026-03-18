@@ -1,0 +1,9 @@
+Enhance the XElement class as follows:
+- Add an attributes() method. It returns an array of XAttribute objects.
+- There are two overloads of the attributes() method:
+  - The first overload of the attributes() method takes no arguments. It returns an array containing each and every XAttribute object in the attributesArray.
+  - The second overload takes one argument, named name, which is of type XName | string. In this case, the method returns an array of each XAttribute object where the name === the specified name argument.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

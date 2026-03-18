@@ -596,8 +596,11 @@ export class XElement extends XContainer {
   public readonly name: XName;
   private attributesArray: XAttribute[] = [];
 
-  public attributes(): XAttribute[] {
-    return [...this.attributesArray];
+  public attributes(): XAttribute[];
+  public attributes(name: XName | string): XAttribute[];
+  public attributes(name?: XName | string): XAttribute[] {
+    const xname = name === undefined ? undefined : (typeof name === 'string' ? new XName(name) : name);
+    return this.attributesArray.filter((a) => xname === undefined || a.name === xname);
   }
 
   public attribute(name: XName | string): XAttribute | null {

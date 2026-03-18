@@ -886,3 +886,38 @@ describe('XElement.ancestorsAndSelf', () => {
     });
   });
 });
+
+describe('XElement.attributes(name)', () => {
+  it('returns matching attribute by string name', () => {
+    const a = new XAttribute('id', '1');
+    const e = new XElement('root', a, new XAttribute('class', 'foo'));
+    const result = e.attributes('id');
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(a);
+  });
+
+  it('returns matching attribute by XName', () => {
+    const a = new XAttribute('id', '1');
+    const e = new XElement('root', a, new XAttribute('class', 'foo'));
+    const result = e.attributes(XName.get('id'));
+    expect(result).toHaveLength(1);
+    expect(result[0].value).toBe('1');
+  });
+
+  it('returns empty array when name does not match', () => {
+    const e = new XElement('root', new XAttribute('id', '1'));
+    expect(e.attributes('missing')).toHaveLength(0);
+  });
+
+  it('returns empty array on element with no attributes', () => {
+    const e = new XElement('root');
+    expect(e.attributes('id')).toHaveLength(0);
+  });
+
+  it('no-arg form still returns all attributes', () => {
+    const a1 = new XAttribute('id', '1');
+    const a2 = new XAttribute('class', 'foo');
+    const e = new XElement('root', a1, a2);
+    expect(e.attributes()).toHaveLength(2);
+  });
+});
