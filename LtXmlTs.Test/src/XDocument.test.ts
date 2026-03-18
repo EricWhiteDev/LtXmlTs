@@ -488,3 +488,53 @@ describe('XDocument.descendantNodes', () => {
     expect(result[2]).toBe(grandchild);
   });
 });
+
+describe('XDocument.descendants', () => {
+  it('returns empty array for an empty document', () => {
+    const doc = new XDocument();
+    expect(doc.descendants()).toHaveLength(0);
+  });
+
+  it('returns root element and its descendants', () => {
+    const child = new XElement('child');
+    const root = new XElement('root', child);
+    const doc = new XDocument(root);
+    const result = doc.descendants();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(root);
+    expect(result[1]).toBe(child);
+  });
+
+  it('skips document-level comment nodes', () => {
+    const comment = new XComment('preamble');
+    const root = new XElement('root');
+    const doc = new XDocument(comment, root);
+    const result = doc.descendants();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(root);
+  });
+
+  it('returns deeply nested descendants in document order', () => {
+    const grandchild = new XElement('gc');
+    const child = new XElement('child', grandchild);
+    const root = new XElement('root', child);
+    const doc = new XDocument(root);
+    const result = doc.descendants();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBe(root);
+    expect(result[1]).toBe(child);
+    expect(result[2]).toBe(grandchild);
+  });
+
+  it('filters by name across the whole document tree', () => {
+    const target1 = new XElement('target');
+    const target2 = new XElement('target');
+    const child = new XElement('child', target1);
+    const root = new XElement('root', child, target2);
+    const doc = new XDocument(root);
+    const result = doc.descendants('target');
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(target1);
+    expect(result[1]).toBe(target2);
+  });
+});

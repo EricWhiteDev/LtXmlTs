@@ -499,3 +499,78 @@ describe('XElement.descendantNodes', () => {
     expect(result[2]).toBe(t);
   });
 });
+
+describe('XElement.descendants', () => {
+  it('returns empty array for an element with no children', () => {
+    const e = new XElement('root');
+    expect(e.descendants()).toHaveLength(0);
+  });
+
+  it('returns flat child elements in order', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    const result = e.descendants();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(a);
+    expect(result[1]).toBe(b);
+  });
+
+  it('returns nested descendants in depth-first pre-order', () => {
+    const grandchild = new XElement('gc');
+    const child = new XElement('child', grandchild);
+    const e = new XElement('root', child);
+    const result = e.descendants();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(child);
+    expect(result[1]).toBe(grandchild);
+  });
+
+  it('skips non-element nodes', () => {
+    const t = new XText('hello');
+    const c = new XComment('note');
+    const child = new XElement('child');
+    const e = new XElement('root');
+    e.add(t, c, child);
+    const result = e.descendants();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(child);
+  });
+
+  it('filters by XName', () => {
+    const a1 = new XElement('a');
+    const a2 = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a1, b, a2);
+    const result = e.descendants(XName.get('a'));
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(a1);
+    expect(result[1]).toBe(a2);
+  });
+
+  it('filters by string name', () => {
+    const match = new XElement('target');
+    const other = new XElement('other', match);
+    const e = new XElement('root', other);
+    const result = e.descendants('target');
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(match);
+  });
+
+  it('returns empty array when no elements match the filter', () => {
+    const e = new XElement('root', new XElement('a'), new XElement('b'));
+    expect(e.descendants('z')).toHaveLength(0);
+  });
+
+  it('returns correct document order for deeply mixed content', () => {
+    const inner = new XElement('inner');
+    const child = new XElement('child', inner);
+    const sibling = new XElement('sibling');
+    const e = new XElement('root', child, sibling);
+    const result = e.descendants();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBe(child);
+    expect(result[1]).toBe(inner);
+    expect(result[2]).toBe(sibling);
+  });
+});
