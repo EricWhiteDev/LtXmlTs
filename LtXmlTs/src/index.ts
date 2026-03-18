@@ -695,6 +695,20 @@ export class XElement extends XContainer {
     }
   }
 
+  public ancestorsAndSelf(): XElement[];
+  public ancestorsAndSelf(name: XName | string): XElement[];
+  public ancestorsAndSelf(name?: XName | string): XElement[] {
+    const result: XElement[] = [this];
+    let current: XObject | null = this.parent;
+    while (current instanceof XElement) {
+      result.push(current);
+      current = current.parent;
+    }
+    if (name === undefined) return result;
+    const xname = typeof name === 'string' ? new XName(name) : name;
+    return result.filter(e => e.name === xname);
+  }
+
   public override equals(other: XElement): boolean {
     if (!this.name.equals(other.name)) return false;
     if (this.attributesArray.length !== other.attributesArray.length) return false;
