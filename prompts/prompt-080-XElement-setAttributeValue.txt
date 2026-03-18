@@ -1,0 +1,11 @@
+Enhance the XElement class as follows:
+- Add an setAttributeValue() method.
+- The first argument to setAttributeValue is name, with type XName | string
+- The second argument is value, with type string
+- The attribute is removed if the value is null. In this case, set the parent property of the removed attribute to null.
+- If value is not null, and the attribute doesn't exist, then setAttributeValue creates a new XAttribute object and adds it to the element.
+- Otherwise, the value is assigned to the value property of the attribute.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

@@ -1142,6 +1142,72 @@ describe('XElement.replaceAttributes', () => {
   });
 });
 
+describe('XElement.setAttributeValue', () => {
+  it('null + attribute exists → removes it', () => {
+    const a = new XAttribute('id', '1');
+    const el = new XElement('root', a);
+    el.setAttributeValue('id', null);
+    expect([...el.attributes()]).toHaveLength(0);
+    expect(a.parent).toBeNull();
+  });
+
+  it('null + attribute missing → no-op', () => {
+    const el = new XElement('root');
+    expect(() => el.setAttributeValue('id', null)).not.toThrow();
+    expect([...el.attributes()]).toHaveLength(0);
+  });
+
+  it('non-null + attribute exists → updates value', () => {
+    const a = new XAttribute('id', '1');
+    const el = new XElement('root', a);
+    el.setAttributeValue('id', '42');
+    expect(el.attribute('id')).toBe(a);
+    expect(a.value).toBe('42');
+  });
+
+  it('non-null + attribute missing → creates new attribute', () => {
+    const el = new XElement('root');
+    el.setAttributeValue('id', '1');
+    const a = el.attribute('id');
+    expect(a).not.toBeNull();
+    expect(a!.value).toBe('1');
+    expect(a!.parent).toBe(el);
+  });
+
+  it('works with plain string name', () => {
+    const el = new XElement('root');
+    el.setAttributeValue('class', 'foo');
+    expect(el.attribute('class')?.value).toBe('foo');
+  });
+
+  it('works with XName instance', () => {
+    const el = new XElement('root');
+    el.setAttributeValue(XName.get('class'), 'bar');
+    expect(el.attribute('class')?.value).toBe('bar');
+  });
+
+  it('does not affect other attributes', () => {
+    const a2 = new XAttribute('class', 'foo');
+    const el = new XElement('root', new XAttribute('id', '1'), a2);
+    el.setAttributeValue('id', '99');
+    expect(el.attribute('class')).toBe(a2);
+    expect(a2.value).toBe('foo');
+  });
+
+  it('does not affect child nodes', () => {
+    const child = new XElement('child');
+    const el = new XElement('root', child, new XAttribute('id', '1'));
+    el.setAttributeValue('id', '2');
+    expect([...el.nodes()]).toHaveLength(1);
+    expect([...el.nodes()][0]).toBe(child);
+  });
+
+  it('returns void', () => {
+    const el = new XElement('root');
+    expect(el.setAttributeValue('id', '1')).toBeUndefined();
+  });
+});
+
 describe('XElement.attributes(name)', () => {
   it('returns matching attribute by string name', () => {
     const a = new XAttribute('id', '1');

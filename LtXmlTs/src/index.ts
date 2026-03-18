@@ -675,6 +675,19 @@ export class XElement extends XContainer {
     this.addAttributeContentList(...content);
   }
 
+  public setAttributeValue(name: XName | string, value: string | null): void {
+    const existing = this.attribute(name);
+    if (value === null) {
+      if (existing !== null) {
+        this.removeAttribute(existing);
+      }
+    } else if (existing !== null) {
+      existing.value = value;
+    } else {
+      this.addAttributeContentList(new XAttribute(name, value));
+    }
+  }
+
   public removeAll(): void {
     for (const attr of this.attributesArray) {
       attr.parent = null;
