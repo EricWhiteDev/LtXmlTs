@@ -670,6 +670,11 @@ export class XElement extends XContainer {
     this.attributesArray = [];
   }
 
+  public replaceAttributes(...content: unknown[]): void {
+    this.removeAttributes();
+    this.addAttributeContentList(...content);
+  }
+
   public removeAll(): void {
     for (const attr of this.attributesArray) {
       attr.parent = null;
