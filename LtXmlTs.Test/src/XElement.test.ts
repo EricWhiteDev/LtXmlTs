@@ -1041,6 +1041,41 @@ describe('XElement.removeAttribute', () => {
   });
 });
 
+describe('XElement.removeAttributes', () => {
+  it('no-op on element with no attributes', () => {
+    const el = new XElement('root');
+    expect(() => el.removeAttributes()).not.toThrow();
+  });
+
+  it('clears all attributes', () => {
+    const el = new XElement('root', new XAttribute('id', '1'), new XAttribute('class', 'foo'));
+    el.removeAttributes();
+    expect([...el.attributes()]).toHaveLength(0);
+  });
+
+  it('nulls parent of each removed attribute', () => {
+    const a1 = new XAttribute('id', '1');
+    const a2 = new XAttribute('class', 'foo');
+    const el = new XElement('root', a1, a2);
+    el.removeAttributes();
+    expect(a1.parent).toBeNull();
+    expect(a2.parent).toBeNull();
+  });
+
+  it('leaves child nodes intact', () => {
+    const child = new XElement('child');
+    const el = new XElement('root', new XAttribute('id', '1'), child);
+    el.removeAttributes();
+    expect([...el.nodes()]).toHaveLength(1);
+    expect([...el.nodes()][0]).toBe(child);
+  });
+
+  it('returns void', () => {
+    const el = new XElement('root', new XAttribute('id', '1'));
+    expect(el.removeAttributes()).toBeUndefined();
+  });
+});
+
 describe('XElement.attributes(name)', () => {
   it('returns matching attribute by string name', () => {
     const a = new XAttribute('id', '1');

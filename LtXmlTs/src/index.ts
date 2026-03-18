@@ -663,6 +663,13 @@ export class XElement extends XContainer {
     attr.parent = null;
   }
 
+  public removeAttributes(): void {
+    for (const attr of this.attributesArray) {
+      attr.parent = null;
+    }
+    this.attributesArray = [];
+  }
+
   public removeAll(): void {
     for (const attr of this.attributesArray) {
       attr.parent = null;
