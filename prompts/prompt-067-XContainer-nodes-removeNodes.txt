@@ -1,0 +1,9 @@
+Enhance the XContainer class as follows:
+- Add an nodes() method. It returns an array of XNode objects. This method can simply return the nodesArray.
+
+Enhance the XContainer class as follows:
+- Add a removeNodes() method. This method replaces the contents of nodesArray with an empty array. Unparent the nodes that have now been orphaned.
+
+For the unit tests, don't call nodes and removeNodes directly on an XContainer object. Instead, call the nodes and removeNodes method on an XElement object, which inherits the implementation from the XContainer class. Also, in other tests, call the nodes and removeNodes method on an XDocument object, which also inherits the implementation from the XContainer class.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

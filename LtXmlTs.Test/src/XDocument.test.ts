@@ -611,3 +611,75 @@ describe('XDocument.element', () => {
     expect(doc.element('child')).toBeNull();
   });
 });
+
+describe('XDocument.removeNodes', () => {
+  it('removes the root element from a document', () => {
+    const doc = new XDocument(new XElement('root'));
+    doc.removeNodes();
+    expect(doc.nodes()).toHaveLength(0);
+  });
+
+  it('nulls the parent of the removed root element', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    doc.removeNodes();
+    expect(root.parent).toBeNull();
+  });
+
+  it('is a no-op on an empty document', () => {
+    const doc = new XDocument();
+    doc.removeNodes();
+    expect(doc.nodes()).toHaveLength(0);
+  });
+
+  it('removes comment and root element together', () => {
+    const comment = new XComment('preamble');
+    const root = new XElement('root');
+    const doc = new XDocument(comment, root);
+    doc.removeNodes();
+    expect(doc.nodes()).toHaveLength(0);
+    expect(comment.parent).toBeNull();
+    expect(root.parent).toBeNull();
+  });
+});
+
+describe('XDocument.firstNode', () => {
+  it('returns null for an empty document', () => {
+    const doc = new XDocument();
+    expect(doc.firstNode).toBeNull();
+  });
+
+  it('returns the root element when it is the only node', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(doc.firstNode).toBe(root);
+  });
+
+  it('returns a leading comment when present', () => {
+    const comment = new XComment('preamble');
+    const root = new XElement('root');
+    const doc = new XDocument(comment, root);
+    expect(doc.firstNode).toBe(comment);
+  });
+});
+
+describe('XDocument.lastNode', () => {
+  it('returns null for an empty document', () => {
+    const doc = new XDocument();
+    expect(doc.lastNode).toBeNull();
+  });
+
+  it('returns the root element when it is the only node', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(doc.lastNode).toBe(root);
+  });
+
+  it('returns the root element when a comment precedes it', () => {
+    const comment = new XComment('preamble');
+    const root = new XElement('root');
+    const doc = new XDocument(comment, root);
+    expect(doc.lastNode).toBe(root);
+    expect(doc.lastNode).not.toBe(comment);
+  });
+});

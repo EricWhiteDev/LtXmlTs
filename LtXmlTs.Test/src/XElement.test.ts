@@ -681,3 +681,86 @@ describe('XElement.element', () => {
     expect(e.element('child')).toBe(child);
   });
 });
+
+describe('XElement.removeNodes', () => {
+  it('removes all child nodes from an element', () => {
+    const e = new XElement('root', new XElement('a'), new XElement('b'));
+    e.removeNodes();
+    expect(e.nodes()).toHaveLength(0);
+  });
+
+  it('nulls the parent of each removed node', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    e.removeNodes();
+    expect(a.parent).toBeNull();
+    expect(b.parent).toBeNull();
+  });
+
+  it('is a no-op on an element with no children', () => {
+    const e = new XElement('root');
+    e.removeNodes();
+    expect(e.nodes()).toHaveLength(0);
+  });
+
+  it('removes mixed-type child nodes', () => {
+    const e = new XElement('root', new XText('hi'), new XComment('note'), new XElement('child'));
+    e.removeNodes();
+    expect(e.nodes()).toHaveLength(0);
+  });
+});
+
+describe('XElement.firstNode', () => {
+  it('returns null when element has no children', () => {
+    const e = new XElement('root');
+    expect(e.firstNode).toBeNull();
+  });
+
+  it('returns the only child node', () => {
+    const child = new XElement('a');
+    const e = new XElement('root', child);
+    expect(e.firstNode).toBe(child);
+  });
+
+  it('returns the first of multiple children', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    expect(e.firstNode).toBe(a);
+    expect(e.firstNode).not.toBe(b);
+  });
+
+  it('returns a text node when it is first', () => {
+    const t = new XText('hello');
+    const e = new XElement('root', t, new XElement('child'));
+    expect(e.firstNode).toBe(t);
+  });
+});
+
+describe('XElement.lastNode', () => {
+  it('returns null when element has no children', () => {
+    const e = new XElement('root');
+    expect(e.lastNode).toBeNull();
+  });
+
+  it('returns the only child node', () => {
+    const child = new XElement('a');
+    const e = new XElement('root', child);
+    expect(e.lastNode).toBe(child);
+  });
+
+  it('returns the last of multiple children', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    expect(e.lastNode).toBe(b);
+    expect(e.lastNode).not.toBe(a);
+  });
+
+  it('returns a text node when it is last', () => {
+    const t = new XText('world');
+    const e = new XElement('root', new XElement('child'), t);
+    expect(e.lastNode).toBe(t);
+  });
+});

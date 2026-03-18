@@ -283,6 +283,16 @@ export class XContainer extends XNode {
     return [...this.nodesArray];
   }
 
+  public get firstNode(): XNode | null {
+    return this.nodesArray.length > 0 ? this.nodesArray[0] : null;
+  }
+
+  public get lastNode(): XNode | null {
+    return this.nodesArray.length > 0
+      ? this.nodesArray[this.nodesArray.length - 1]
+      : null;
+  }
+
   protected addContentList(...items: unknown[]): void {
     for (const item of items) {
       this.addContentObject(item);
@@ -376,6 +386,10 @@ export class XContainer extends XNode {
     }
     this.nodesArray = [];
     this.insertContentItems(...content);
+  }
+
+  public removeNodes(): void {
+    this.replaceNodes();
   }
 
   public elements(): XElement[];

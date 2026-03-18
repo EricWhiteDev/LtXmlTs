@@ -1,0 +1,7 @@
+Enhance the XContainer class as follows:
+- Add a firstNode property. This property returns the first XNode object in the nodesArray, if there are any XNode objects in the nodesArray. If nodesArray is empty, then return null.
+- Add a lastNode property. This property returns the last XNode object in the nodesArray, if there are any XNode objects in the nodesArray. If nodesArray is empty, then return null.
+
+Add unit tests for all of this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
