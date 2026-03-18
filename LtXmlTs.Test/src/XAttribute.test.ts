@@ -239,6 +239,24 @@ describe('XAttribute.isNamespaceDeclaration', () => {
   });
 });
 
+describe('XAttribute.toString', () => {
+  it("serializes a no-namespace attribute as name='value'", () => {
+    const a = new XAttribute('id', 'abc');
+    expect(a.toString()).toBe("id='abc'");
+  });
+
+  it("serializes a namespaced attribute as p:name='value'", () => {
+    const ns = new XNamespace('urn:test:attr:tostring:ns');
+    const a = new XAttribute(new XName(ns, 'lang'), 'en');
+    expect(a.toString()).toBe("p:lang='en'");
+  });
+
+  it("handles an empty value", () => {
+    const a = new XAttribute('class', '');
+    expect(a.toString()).toBe("class=''");
+  });
+});
+
 describe('XAttribute.nextAttribute and previousAttribute', () => {
   it('nextAttribute returns the next sibling for a middle attribute', () => {
     const el = new XElement('root',

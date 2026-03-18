@@ -473,6 +473,10 @@ export class XAttribute extends XObject {
     return this.name.toString() === other.name.toString() && this.value === other.value;
   }
 
+  public toString(): string {
+    return `${this.name.getPrefixedName(this)}='${this.value}'`;
+  }
+
   public get nextAttribute(): XAttribute | null {
     if (!(this.parent instanceof XElement)) return null;
     const attrs = (this.parent as XElement).attributes();
@@ -823,6 +827,10 @@ export class XNamespace {
     return this === other;
   }
 
+  public getPrefix(_contextObject: XObject): string {
+    return 'p';
+  }
+
   constructor(uri: string, preferredPrefix: string | null = null) {
     this.uri = uri;
 
@@ -899,5 +907,10 @@ export class XName {
 
   public equals(other: XName): boolean {
     return this === other;
+  }
+
+  public getPrefixedName(contextObject: XObject): string {
+    if (this.namespace === XNamespace.none) return this.localName;
+    return `${this.namespace.getPrefix(contextObject)}:${this.localName}`;
   }
 }

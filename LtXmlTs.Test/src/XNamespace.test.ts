@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { XNamespace } from 'ltxmlts';
+import { XAttribute, XNamespace } from 'ltxmlts';
 
 describe('XNamespace constructor', () => {
   it('different URIs produce different object references', () => {
@@ -257,6 +257,27 @@ describe('XNamespace.xmlns', () => {
 
   it('is the same object reference as XNamespace.getXmlns()', () => {
     expect(XNamespace.xmlns).toBe(XNamespace.getXmlns());
+  });
+});
+
+describe('XNamespace.getPrefix', () => {
+  const ctx = new XAttribute('ctx', 'val');
+
+  it('returns "p" for a plain namespace', () => {
+    const ns = new XNamespace('urn:test:getprefix:plain');
+    expect(ns.getPrefix(ctx)).toBe('p');
+  });
+
+  it('returns "p" for XNamespace.xml', () => {
+    expect(XNamespace.xml.getPrefix(ctx)).toBe('p');
+  });
+
+  it('returns "p" for XNamespace.xmlns', () => {
+    expect(XNamespace.xmlns.getPrefix(ctx)).toBe('p');
+  });
+
+  it('returns "p" for XNamespace.none', () => {
+    expect(XNamespace.none.getPrefix(ctx)).toBe('p');
   });
 });
 

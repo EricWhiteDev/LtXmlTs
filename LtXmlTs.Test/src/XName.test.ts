@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { XName, XNamespace } from 'ltxmlts';
+import { XAttribute, XName, XNamespace } from 'ltxmlts';
 
 describe('XName constructor — overload 1: XNamespace + localName', () => {
   it('stores the namespace property correctly', () => {
@@ -247,6 +247,28 @@ describe('XName cross-checks', () => {
     const a = new XName(ns1, 'shared');
     const b = new XName(ns2, 'shared');
     expect(a).not.toBe(b);
+  });
+});
+
+describe('XName.getPrefixedName', () => {
+  const ctx = new XAttribute('ctx', 'val');
+
+  it('returns localName when namespace is XNamespace.none', () => {
+    const name = new XName('bare');
+    expect(name.getPrefixedName(ctx)).toBe('bare');
+  });
+
+  it('prepends "p:" when namespace is non-none', () => {
+    const ns = new XNamespace('urn:test:prefixedname:ns');
+    const name = new XName(ns, 'elem');
+    expect(name.getPrefixedName(ctx)).toBe('p:elem');
+  });
+
+  it('uses the namespace returned by getPrefix (i.e. "p")', () => {
+    const ns = new XNamespace('urn:test:prefixedname:getprefix');
+    const name = new XName(ns, 'child');
+    const prefix = ns.getPrefix(ctx);
+    expect(name.getPrefixedName(ctx)).toBe(`${prefix}:child`);
   });
 });
 

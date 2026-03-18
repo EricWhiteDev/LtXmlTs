@@ -1,0 +1,19 @@
+Enhance the XNamespace class as follows:
+- Add a public function, getPrefix. This function takes a parameter, contextObject, which is of type XObject.
+- For now, the contextObject is not used; it will be used when functionality is enhanced in the future.
+- For now, getPrefix returns the string 'p'. This functionality will be enhanced in the future.
+
+Enhance the XName class as follows:
+- Add a public function, getPrefixedName. This function takes a parameter, contextObject, which is of type XObject.
+- If the 'this' XName object has the namespace of XNamespace.none, then return the localName.
+- If the 'this' XName object has a namespace other than XNamespace.none, then call the getPrefix method of the XNamespace object, passing the contextObject to getPrefix. Then concatenate the prefix returned by getPrefix, a ':', and the localName, and return the result.
+
+Enhance the XAttribute class as follows:
+- Add a public function, toString(). The implementation is:
+  - First, call the getPrefixedName on the name property of the XAttribute object.
+  - Then, concatenate the prefixed name, a '=', and the value property. The value property is surrounded by single quotes.
+  - Return the concatenated value.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
