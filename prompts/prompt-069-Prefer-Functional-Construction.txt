@@ -1,0 +1,53 @@
+(NOTE: I DECIDED TO NOT DO THIS)
+
+Make the following enhancements to the unit test:
+- Prefer using functional construction over XML tree construction DOMParser style.
+
+So, for example, if the unit test code for constructing an XElement looks like this:
+
+const a = new XAttribute(XName.get('id'), '1');
+const e = new XElement(XName.get('root'), a);
+
+Rewrite it to look like this:
+
+const e = new XElement(XName.get('root'),
+    new XAttribute(XName.get('id'), '1')
+);
+
+When rewriting, put calls to constructors on their own line in the source code.  So, for example, don't rewrite like this:
+
+const e = new XElement(XName.get('root'), new XAttribute(XName.get('id'), '1'));
+
+But instead, do it like this:
+
+const e = new XElement(XName.get('root'),
+    new XAttribute(XName.get('id'), '1')
+);
+
+Here is another example, where the depth is greater.  If the code looks like this:
+
+const grandchild = new XElement('gc');
+const child = new XElement('child', grandchild);
+const e = new XElement('root', child);
+
+Then rewrite it to look like this:
+
+const e = new XElement('root',
+    new XElement('child',
+        new XElement('gc')
+    )
+);
+
+Treat other node types in the same way. For example, rewrite the following code:
+
+const t = new XText('hello');
+const c = new XComment('note');
+const child = new XElement('child');
+const e = new XElement('root', t, c, child);
+
+to look like this:
+
+const e = new XElement('root',
+    new XText('hello'),
+    new XComment('note'),
+    new XElement('child'));
