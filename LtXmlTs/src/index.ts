@@ -187,6 +187,10 @@ export class XComment extends XNode {
   public equals(other: XComment): boolean {
     return this.value === other.value;
   }
+
+  public toString(): string {
+    return `<!--${this.value}-->`;
+  }
 }
 
 export class XText extends XNode {

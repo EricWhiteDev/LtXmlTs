@@ -45,3 +45,22 @@ describe('XComment.equals', () => {
     expect(new XComment('').equals(new XComment(''))).toBe(true);
   });
 });
+
+describe('XComment.toString', () => {
+  it("serializes a comment as <!--value-->", () => {
+    expect(new XComment('hello').toString()).toBe('<!--hello-->');
+  });
+
+  it("handles an empty value", () => {
+    expect(new XComment('').toString()).toBe('<!---->');
+  });
+
+  it("handles a value containing spaces", () => {
+    expect(new XComment('hello world').toString()).toBe('<!--hello world-->');
+  });
+
+  it("template literal interpolation produces the same result as explicit toString()", () => {
+    const c = new XComment('test');
+    expect(`${c}`).toBe(c.toString());
+  });
+});

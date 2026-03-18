@@ -1,0 +1,9 @@
+Enhance the XComment class as follows:
+- Add a public toString() method to the class.
+- The implementation is:
+  - Concatenate '<!--', the value property of the XComment object, and '-->'
+  - Return the concatenated string.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
