@@ -370,6 +370,15 @@ export class XContainer extends XNode {
     this.insertContentItems(...content);
   }
 
+  public addFirst(...content: unknown[]): void {
+    const copy = [...this.nodesArray];
+    this.nodesArray = copy; // let XDocument see existing nodes for constraint checks
+    const priorLen = this.nodesArray.length;
+    this.insertContentItems(...content);
+    const newNodes = this.nodesArray.splice(priorLen);
+    this.nodesArray = [...newNodes, ...copy];
+  }
+
   public insertBeforeChild(child: XNode, ...content: unknown[]): void {
     const copy = [...this.nodesArray];
     const idx = copy.indexOf(child);

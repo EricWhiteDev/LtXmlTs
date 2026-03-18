@@ -1,0 +1,21 @@
+Enhance the XContainer class as follows:
+- Add an addFirst() method.
+- The addFirst() method has a rest parameter. The array type of the rest parameter is explicitly unknown.
+- Replace the nodesArray of the XContainer object as follows:
+  - First, Make a shallow copy of the nodesArray.
+  - Next, set the nodesArray to an empty array of XNode.
+  - Next, call addContentList, passing the rest parameter that was passed into addFirst. This adds all of the content that was passed in the rest parameter.
+  - Next, add all of the nodes from the shallow copy of the nodesArray.
+  - This algorithm adds the content that is passed in the rest parameter to the beginning of the content that is already in the XContainer object. This is the defined behavior of the addFirst method.
+
+For the unit tests, don't call addFirst directly on an XContainer object. Instead, call the addFirst method on an XElement object, which inherits the implementation from the XContainer class. Also, in other tests, call the addFirst method on an XDocument object, which also inherits the implementation from the XContainer class.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
+
+
+                                                                                                                                                                                        
+⏺ User answered Claude's questions:                                                                                                                                                       
+  ⎿  · Your spec says addFirst() should call addContentList directly. However, addContentList bypasses XDocument's override of insertContentItems, which enforces document-level          
+     constraints (single root element, no XAttribute, etc.). The existing add() method calls insertContentItems precisely so XDocument's constraints are respected. Should addFirst() also
+      call insertContentItems (consistent with add()), or should it call addContentList directly as specified, accepting that XDocument constraints won't be enforced through addFirst()? 
+     → Call insertContentItems                          

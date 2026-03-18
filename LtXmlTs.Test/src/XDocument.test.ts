@@ -382,3 +382,30 @@ describe('XDocument.add', () => {
     expect(() => doc.add(new XAttribute('id', '1'))).toThrow();
   });
 });
+
+describe('XDocument.addFirst', () => {
+  it('prepends a root element to an empty document', () => {
+    const doc = new XDocument();
+    doc.addFirst(new XElement('root'));
+    expect(doc.nodes()).toHaveLength(1);
+    expect(doc.nodes()[0]).toBeInstanceOf(XElement);
+  });
+
+  it('prepends a comment before existing content', () => {
+    const doc = new XDocument(new XElement('root'));
+    doc.addFirst(new XComment('preamble'));
+    expect(doc.nodes()).toHaveLength(2);
+    expect(doc.nodes()[0]).toBeInstanceOf(XComment);
+    expect(doc.nodes()[1]).toBeInstanceOf(XElement);
+  });
+
+  it('throws when a second root element is added', () => {
+    const doc = new XDocument(new XElement('root'));
+    expect(() => doc.addFirst(new XElement('other'))).toThrow();
+  });
+
+  it('throws when an XAttribute is added', () => {
+    const doc = new XDocument();
+    expect(() => doc.addFirst(new XAttribute('id', '1'))).toThrow();
+  });
+});

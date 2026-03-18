@@ -351,3 +351,53 @@ describe('XElement.add', () => {
     expect(e.nodes()[0]).toBe(c);
   });
 });
+
+describe('XElement.addFirst', () => {
+  it('prepends a text node to an empty element', () => {
+    const e = new XElement('root');
+    e.addFirst('hello');
+    const nodes = e.nodes();
+    expect(nodes).toHaveLength(1);
+    expect((nodes[0] as XText).value).toBe('hello');
+  });
+
+  it('prepends before existing content', () => {
+    const e = new XElement('root', 'second');
+    e.addFirst('first');
+    const nodes = e.nodes();
+    expect(nodes).toHaveLength(2);
+    expect((nodes[0] as XText).value).toBe('first');
+    expect((nodes[1] as XText).value).toBe('second');
+  });
+
+  it('prepends multiple items in one call', () => {
+    const e = new XElement('root', 'c');
+    e.addFirst('a', 'b');
+    const nodes = e.nodes();
+    expect(nodes).toHaveLength(3);
+    expect((nodes[0] as XText).value).toBe('a');
+    expect((nodes[1] as XText).value).toBe('b');
+    expect((nodes[2] as XText).value).toBe('c');
+  });
+
+  it('prepends a child element', () => {
+    const parent = new XElement('root', new XElement('second'));
+    const first = new XElement('first');
+    parent.addFirst(first);
+    expect(parent.nodes()[0]).toBe(first);
+    expect(first.parent).toBe(parent);
+  });
+
+  it('ignores null and undefined', () => {
+    const e = new XElement('root', 'x');
+    e.addFirst(null, undefined);
+    expect(e.nodes()).toHaveLength(1);
+  });
+
+  it('prepends a comment node', () => {
+    const e = new XElement('root', 'text');
+    const c = new XComment('note');
+    e.addFirst(c);
+    expect(e.nodes()[0]).toBe(c);
+  });
+});
