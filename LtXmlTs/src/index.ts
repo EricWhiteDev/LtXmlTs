@@ -378,6 +378,23 @@ export class XContainer extends XNode {
     this.insertContentItems(...content);
   }
 
+  public descendantNodes(): XNode[] {
+    const tempArray: XNode[] = [];
+    for (const node of this.nodesArray) {
+      this.addSelfAndDescendantsToTempArray(tempArray, node);
+    }
+    return tempArray;
+  }
+
+  private addSelfAndDescendantsToTempArray(tempArray: XNode[], node: XNode): void {
+    tempArray.push(node);
+    if (node instanceof XContainer) {
+      for (const child of node.nodesArray) {
+        this.addSelfAndDescendantsToTempArray(tempArray, child);
+      }
+    }
+  }
+
   public addFirst(...content: unknown[]): void {
     const copy = [...this.nodesArray];
     this.nodesArray = copy; // let XDocument see existing nodes for constraint checks

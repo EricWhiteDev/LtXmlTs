@@ -447,3 +447,55 @@ describe('XElement.replaceNodes', () => {
     expect((e.nodes()[0] as XText).value).toBe('hello');
   });
 });
+
+describe('XElement.descendantNodes', () => {
+  it('returns empty array for an element with no children', () => {
+    const e = new XElement('root');
+    expect(e.descendantNodes()).toHaveLength(0);
+  });
+
+  it('returns flat children in order', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    const result = e.descendantNodes();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(a);
+    expect(result[1]).toBe(b);
+  });
+
+  it('returns nested descendants in depth-first pre-order', () => {
+    const grandchild = new XElement('gc');
+    const child = new XElement('child', grandchild);
+    const e = new XElement('root', child);
+    const result = e.descendantNodes();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(child);
+    expect(result[1]).toBe(grandchild);
+  });
+
+  it('includes text and comment nodes', () => {
+    const t = new XText('hello');
+    const c = new XComment('note');
+    const child = new XElement('child');
+    const e = new XElement('root');
+    e.add(t, c, child);
+    const result = e.descendantNodes();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBeInstanceOf(XText);
+    expect(result[1]).toBeInstanceOf(XComment);
+    expect(result[2]).toBe(child);
+  });
+
+  it('returns correct document order for mixed nested content', () => {
+    const inner = new XElement('inner');
+    const child = new XElement('child', inner);
+    const t = new XElement('sibling');
+    const e = new XElement('root', child, t);
+    const result = e.descendantNodes();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBe(child);
+    expect(result[1]).toBe(inner);
+    expect(result[2]).toBe(t);
+  });
+});

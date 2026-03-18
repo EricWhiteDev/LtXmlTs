@@ -449,3 +449,42 @@ describe('XDocument.replaceNodes', () => {
     expect(() => doc.replaceNodes(new XAttribute('id', '1'))).toThrow();
   });
 });
+
+describe('XDocument.descendantNodes', () => {
+  it('returns empty array for an empty document', () => {
+    const doc = new XDocument();
+    expect(doc.descendantNodes()).toHaveLength(0);
+  });
+
+  it('returns root element and its descendants', () => {
+    const child = new XElement('child');
+    const root = new XElement('root', child);
+    const doc = new XDocument(root);
+    const result = doc.descendantNodes();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(root);
+    expect(result[1]).toBe(child);
+  });
+
+  it('includes comment nodes at the document level', () => {
+    const comment = new XComment('preamble');
+    const root = new XElement('root');
+    const doc = new XDocument(comment, root);
+    const result = doc.descendantNodes();
+    expect(result).toHaveLength(2);
+    expect(result[0]).toBe(comment);
+    expect(result[1]).toBe(root);
+  });
+
+  it('returns document-level comment and deeply nested descendants', () => {
+    const grandchild = new XElement('gc');
+    const child = new XElement('child', grandchild);
+    const root = new XElement('root', child);
+    const doc = new XDocument(root);
+    const result = doc.descendantNodes();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBe(root);
+    expect(result[1]).toBe(child);
+    expect(result[2]).toBe(grandchild);
+  });
+});
