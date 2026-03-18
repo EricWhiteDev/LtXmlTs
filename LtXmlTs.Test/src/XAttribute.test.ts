@@ -238,3 +238,61 @@ describe('XAttribute.isNamespaceDeclaration', () => {
     expect(a.isNamespaceDeclaration).toBe(false);
   });
 });
+
+describe('XAttribute.nextAttribute and previousAttribute', () => {
+  it('nextAttribute returns the next sibling for a middle attribute', () => {
+    const el = new XElement('root',
+      new XAttribute('a', '1'),
+      new XAttribute('b', '2'),
+      new XAttribute('c', '3'),
+    );
+    const attrs = el.attributes();
+    expect(attrs[1].nextAttribute).toBe(attrs[2]);
+  });
+
+  it('previousAttribute returns the previous sibling for a middle attribute', () => {
+    const el = new XElement('root',
+      new XAttribute('a', '1'),
+      new XAttribute('b', '2'),
+      new XAttribute('c', '3'),
+    );
+    const attrs = el.attributes();
+    expect(attrs[1].previousAttribute).toBe(attrs[0]);
+  });
+
+  it('previousAttribute returns null for the first attribute', () => {
+    const el = new XElement('root',
+      new XAttribute('a', '1'),
+      new XAttribute('b', '2'),
+    );
+    expect(el.firstAttribute!.previousAttribute).toBeNull();
+  });
+
+  it('nextAttribute returns null for the last attribute', () => {
+    const el = new XElement('root',
+      new XAttribute('a', '1'),
+      new XAttribute('b', '2'),
+    );
+    expect(el.lastAttribute!.nextAttribute).toBeNull();
+  });
+
+  it('nextAttribute returns null for the only attribute', () => {
+    const el = new XElement('root', new XAttribute('a', '1'));
+    expect(el.firstAttribute!.nextAttribute).toBeNull();
+  });
+
+  it('previousAttribute returns null for the only attribute', () => {
+    const el = new XElement('root', new XAttribute('a', '1'));
+    expect(el.firstAttribute!.previousAttribute).toBeNull();
+  });
+
+  it('nextAttribute returns null for an attribute with no parent', () => {
+    const a = new XAttribute('a', '1');
+    expect(a.nextAttribute).toBeNull();
+  });
+
+  it('previousAttribute returns null for an attribute with no parent', () => {
+    const a = new XAttribute('a', '1');
+    expect(a.previousAttribute).toBeNull();
+  });
+});

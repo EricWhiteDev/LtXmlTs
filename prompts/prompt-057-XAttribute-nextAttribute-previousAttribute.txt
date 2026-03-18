@@ -1,0 +1,17 @@
+Enhance the XAttribute class as follows:
+- Add a nextAttribute property. This property finds the attribute following 'this' XAttribute object from its parent's attributesArray. The type of this property is XAttribute | null.
+- First, get the parent object.
+- Find 'this' attribute in the parent's attributesArray.
+- Return the XAttribute after 'this' attribute.
+- If 'this' attribute is the last attribute in the parent's attributesArray, then return null.
+
+Enhance the XAttribute class as follows:
+- Add a previousAttribute property. This property finds the attribute preceding 'this' XAttribute object from its parent's attributesArray. The type of this property is XAttribute | null.
+- First, get the parent object.
+- Find 'this' attribute in the parent's attributesArray.
+- Return the XAttribute before 'this' attribute.
+- If 'this' attribute is the first attribute in the parent's attributesArray, then return null.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

@@ -472,6 +472,20 @@ export class XAttribute extends XObject {
   public equals(other: XAttribute): boolean {
     return this.name.toString() === other.name.toString() && this.value === other.value;
   }
+
+  public get nextAttribute(): XAttribute | null {
+    if (!(this.parent instanceof XElement)) return null;
+    const attrs = (this.parent as XElement).attributes();
+    const idx = attrs.indexOf(this);
+    return idx < attrs.length - 1 ? attrs[idx + 1] : null;
+  }
+
+  public get previousAttribute(): XAttribute | null {
+    if (!(this.parent instanceof XElement)) return null;
+    const attrs = (this.parent as XElement).attributes();
+    const idx = attrs.indexOf(this);
+    return idx > 0 ? attrs[idx - 1] : null;
+  }
 }
 
 export class XElement extends XContainer {
