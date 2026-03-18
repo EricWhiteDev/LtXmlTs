@@ -600,6 +600,11 @@ export class XElement extends XContainer {
     return [...this.attributesArray];
   }
 
+  public attribute(name: XName | string): XAttribute | null {
+    const xname = typeof name === 'string' ? new XName(name) : name;
+    return this.attributesArray.find((a) => a.name === xname) ?? null;
+  }
+
   public get firstAttribute(): XAttribute | null {
     return this.attributesArray.length > 0 ? this.attributesArray[0] : null;
   }

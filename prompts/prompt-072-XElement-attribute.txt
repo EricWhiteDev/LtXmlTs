@@ -1,0 +1,9 @@
+Enhance the XElement class as follows:
+- Add an attribute() method. It returns a single XElement object, or null.
+- The attribute method takes one argument, named name, which is of type XName | string. The method returns an XAttribute object where the name === the specified name argument. If no attribute has a name that matches the name argument, attribute returns null.
+- Here is the alorithm:
+  - Filter the attributesArray for a name match. If one exists, then return it, otherwise return null.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

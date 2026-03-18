@@ -231,6 +231,38 @@ describe('XElement', () => {
     expect(e.hasAttributes).toBe(true);
   });
 
+  // attribute
+  it('attribute returns matching attribute by string name', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    expect(e.attribute('id')).toBe(a);
+  });
+
+  it('attribute returns matching attribute by XName', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    expect(e.attribute(XName.get('id'))).toBe(a);
+  });
+
+  it('attribute returns null when no match', () => {
+    const a = new XAttribute(XName.get('id'), '1');
+    const e = new XElement(XName.get('root'), a);
+    expect(e.attribute('missing')).toBeNull();
+  });
+
+  it('attribute returns null on element with no attributes', () => {
+    const e = new XElement(XName.get('root'));
+    expect(e.attribute('id')).toBeNull();
+  });
+
+  it('attribute returns correct attribute among multiple', () => {
+    const a1 = new XAttribute(XName.get('a'), '1');
+    const a2 = new XAttribute(XName.get('b'), '2');
+    const e = new XElement(XName.get('root'), a1, a2);
+    expect(e.attribute('a')).toBe(a1);
+    expect(e.attribute('b')).toBe(a2);
+  });
+
   // hasElements
   it('hasElements returns false when nodesArray is empty', () => {
     const e = new XElement(XName.get('root'));
