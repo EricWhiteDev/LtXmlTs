@@ -1,0 +1,9 @@
+Enhance the XContainer class as follows:
+- Add an element() method. It returns a single XElement object, or null.
+- The element method takes one argument, named name, which is of type XName. The method returns an XElement object where the name === the specified name argument. If no child element has a name that matches the name argument, element returns null.
+- Here is the alorithm:
+  - Filter the nodesArray for type is XElement and there is a name match. If one exists, then return it, otherwise return null.
+
+For the unit tests, don't call element directly on an XContainer object. Instead, call the element method on an XElement object, which inherits the implementation from the XContainer class. Also, in other tests, call the element method on an XDocument object, which also inherits the implementation from the XContainer class.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

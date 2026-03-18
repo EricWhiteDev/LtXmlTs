@@ -387,6 +387,13 @@ export class XContainer extends XNode {
     );
   }
 
+  public element(name: XName | string): XElement | null {
+    const xname = typeof name === 'string' ? new XName(name) : name;
+    return this.nodesArray.find(
+      (n): n is XElement => n instanceof XElement && n.name === xname,
+    ) ?? null;
+  }
+
   public descendantNodes(): XNode[] {
     const tempArray: XNode[] = [];
     for (const node of this.nodesArray) {

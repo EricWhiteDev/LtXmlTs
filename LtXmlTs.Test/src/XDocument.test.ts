@@ -578,3 +578,36 @@ describe('XDocument.elements', () => {
     expect(doc.elements('other')).toHaveLength(0);
   });
 });
+
+describe('XDocument.element', () => {
+  it('returns null for an empty document', () => {
+    const doc = new XDocument();
+    expect(doc.element('root')).toBeNull();
+  });
+
+  it('returns the root element when the name matches', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(doc.element('root')).toBe(root);
+  });
+
+  it('returns null when the name does not match the root', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(doc.element('other')).toBeNull();
+  });
+
+  it('skips document-level comment nodes', () => {
+    const comment = new XComment('preamble');
+    const root = new XElement('root');
+    const doc = new XDocument(comment, root);
+    expect(doc.element('root')).toBe(root);
+  });
+
+  it('does not return descendants of root', () => {
+    const child = new XElement('child');
+    const root = new XElement('root', child);
+    const doc = new XDocument(root);
+    expect(doc.element('child')).toBeNull();
+  });
+});

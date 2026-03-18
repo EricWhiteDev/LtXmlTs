@@ -635,3 +635,49 @@ describe('XElement.elements', () => {
     expect(e.elements('z')).toHaveLength(0);
   });
 });
+
+describe('XElement.element', () => {
+  it('returns null when the element has no children', () => {
+    const e = new XElement('root');
+    expect(e.element('child')).toBeNull();
+  });
+
+  it('returns null when no child element matches the name', () => {
+    const e = new XElement('root', new XElement('a'), new XElement('b'));
+    expect(e.element('z')).toBeNull();
+  });
+
+  it('returns the first matching child element', () => {
+    const a1 = new XElement('a');
+    const a2 = new XElement('a');
+    const e = new XElement('root', a1, a2);
+    expect(e.element('a')).toBe(a1);
+  });
+
+  it('skips non-element nodes', () => {
+    const t = new XText('hello');
+    const c = new XComment('note');
+    const child = new XElement('child');
+    const e = new XElement('root', t, c, child);
+    expect(e.element('child')).toBe(child);
+  });
+
+  it('does not search grandchildren', () => {
+    const grandchild = new XElement('gc');
+    const child = new XElement('child', grandchild);
+    const e = new XElement('root', child);
+    expect(e.element('gc')).toBeNull();
+  });
+
+  it('accepts an XName argument', () => {
+    const child = new XElement('child');
+    const e = new XElement('root', child);
+    expect(e.element(XName.get('child'))).toBe(child);
+  });
+
+  it('accepts a string argument', () => {
+    const child = new XElement('child');
+    const e = new XElement('root', child);
+    expect(e.element('child')).toBe(child);
+  });
+});
