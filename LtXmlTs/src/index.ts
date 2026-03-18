@@ -678,6 +678,12 @@ export class XElement extends XContainer {
     this.removeNodes();
   }
 
+  public replaceAll(...content: unknown[]): void {
+    this.removeAll();
+    this.addContentList(...content);
+    this.addAttributeContentList(...content);
+  }
+
   protected addAttributeContentObject(content: unknown): void {
     if (content === null || content === undefined) {
       return;

@@ -1161,3 +1161,72 @@ describe('XElement.removeAll', () => {
     expect(e.removeAll()).toBeUndefined();
   });
 });
+
+describe('XElement.replaceAll', () => {
+  it('no-arg call behaves like removeAll', () => {
+    const e = new XElement('root', new XAttribute('id', '1'), new XElement('child'));
+    e.replaceAll();
+    expect(e.nodes()).toHaveLength(0);
+    expect(e.attributes()).toHaveLength(0);
+  });
+
+  it('replaces nodes', () => {
+    const old = new XElement('old');
+    const e = new XElement('root', old);
+    const newChild = new XElement('new');
+    e.replaceAll(newChild);
+    expect(e.nodes()).toHaveLength(1);
+    expect((e.nodes()[0] as XElement).name.localName).toBe('new');
+  });
+
+  it('replaces attributes', () => {
+    const e = new XElement('root', new XAttribute('id', '1'));
+    e.replaceAll(new XAttribute('class', 'foo'));
+    expect(e.attributes()).toHaveLength(1);
+    expect(e.attribute('class')?.value).toBe('foo');
+    expect(e.attribute('id')).toBeNull();
+  });
+
+  it('handles mixed content', () => {
+    const e = new XElement('root');
+    const newChild = new XElement('child');
+    const newAttr = new XAttribute('id', '42');
+    e.replaceAll(newChild, newAttr);
+    expect(e.nodes()).toHaveLength(1);
+    expect(e.attributes()).toHaveLength(1);
+    expect(e.attribute('id')?.value).toBe('42');
+  });
+
+  it('nulls parent of removed nodes', () => {
+    const old = new XElement('old');
+    const e = new XElement('root', old);
+    e.replaceAll();
+    expect(old.parent).toBeNull();
+  });
+
+  it('nulls parent of removed attributes', () => {
+    const attr = new XAttribute('id', '1');
+    const e = new XElement('root', attr);
+    e.replaceAll();
+    expect(attr.parent).toBeNull();
+  });
+
+  it('sets parent of new nodes', () => {
+    const e = new XElement('root');
+    const newChild = new XElement('child');
+    e.replaceAll(newChild);
+    expect(newChild.parent).toBe(e);
+  });
+
+  it('sets parent of new attributes', () => {
+    const e = new XElement('root');
+    const newAttr = new XAttribute('id', '1');
+    e.replaceAll(newAttr);
+    expect(newAttr.parent).toBe(e);
+  });
+
+  it('returns void', () => {
+    const e = new XElement('root', new XAttribute('id', '1'), new XElement('child'));
+    expect(e.replaceAll(new XElement('new'))).toBeUndefined();
+  });
+});

@@ -1,0 +1,12 @@
+Enhance the XElement class as follows:
+- Add an replaceAll() method.
+- The replaceAll() method has a rest parameter. The array type of the rest parameter is explicitly unknown.
+- Here is the alorithm:
+  - First, call removeAll, which removes all nodes and attributes, and nulls out the parent property of the orphaned nodes and attributes.
+  - Next, call addContentList, passing the rest parameter that was passed into replaceAll. This adds all of the content that was passed in the rest parameter.
+  - This algorithm clears out the existing content in the nodesArray and attributesArray, and then adds the content that is passed in the rest parameter. This is the defined behavior of the replaceAll method.
+  - It should leave no orphaned attributes are nodes that do not have their parent property nulled.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
