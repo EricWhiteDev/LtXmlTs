@@ -792,6 +792,10 @@ export class XDocument extends XContainer {
     return super.equals(other);
   }
 
+  public get root(): XElement | null {
+    return (this.nodesArray.find(n => n instanceof XElement) as XElement) ?? null;
+  }
+
   protected override insertContentItems(...items: unknown[]): void {
     this.addDocumentContentList(...items);
   }

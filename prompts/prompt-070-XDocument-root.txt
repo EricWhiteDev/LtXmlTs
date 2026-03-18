@@ -1,0 +1,7 @@
+Enhance the XDocument class as follows:
+- Add a root property that returns the root XElement object or null.
+- To implement this, search for the first XElement object in the nodesArray. There will be either zero or one XElement object in that array.
+
+Add unit tests for this functionality.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

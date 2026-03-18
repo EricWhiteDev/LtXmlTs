@@ -683,3 +683,31 @@ describe('XDocument.lastNode', () => {
     expect(doc.lastNode).not.toBe(comment);
   });
 });
+
+describe('XDocument.root', () => {
+  it('returns null for an empty document', () => {
+    const doc = new XDocument();
+    expect(doc.root).toBeNull();
+  });
+
+  it('returns the root element when it is the only node', () => {
+    const root = new XElement('root');
+    const doc = new XDocument(root);
+    expect(doc.root).toBe(root);
+  });
+
+  it('returns the root element when a leading comment is present', () => {
+    const comment = new XComment('preamble');
+    const root = new XElement('root');
+    const doc = new XDocument(comment, root);
+    expect(doc.root).toBe(root);
+    expect(doc.root).not.toBe(comment);
+  });
+
+  it('returns the root element when a trailing comment is present', () => {
+    const root = new XElement('root');
+    const comment = new XComment('epilogue');
+    const doc = new XDocument(root, comment);
+    expect(doc.root).toBe(root);
+  });
+});
