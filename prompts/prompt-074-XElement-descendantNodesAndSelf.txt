@@ -1,0 +1,18 @@
+Enhance the XElement class as follows:
+- Add an descendantNodesAndSelf() method.
+- The descendantNodesAndSelf() method takes no arguments. It returns an array of XNode objects.
+- Here is the alorithm:
+  - First, create an empty array of XNode. This is the tempArray.
+  - Next, add the 'this' XElement object to tempArray.
+  - Next, for every child node of the 'this' node, call a method, addSelfAndDescendantsToTempArray, which is a helper method that will make the code easier to implement. addSelfAndDescendantsToTempArray takes two arguments - the first is the tempArray, which is an array of XNode. The second, with the name of node, is an XNode object, to be added, along with its descendants to tempArray.
+  - Finally, return tempArray.
+
+Here is the algorithm for addSelfAndDescendantsToTempArray:
+  - There are two arguments: the first is the tempArray, which is an array of XNode. The second, with the name of node, is an XNode object, to be added, along with its descendants to tempArray.
+  - Add node to tempArray.
+  - Then, if the node is an XContainer, or if it derives from XContainer, then for every child node, call addSelfAndDescendantsToTempArray recursively, passing the tempArray and the child node.
+  - Note that this same function is implemented for the XContainer class.  Change the access permissions so that XElement.descendantNodesAndSelf call call into addSelfAndDescendantsToTempArray as implemented for XContainer.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

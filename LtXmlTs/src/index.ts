@@ -416,7 +416,7 @@ export class XContainer extends XNode {
     return tempArray;
   }
 
-  private addSelfAndDescendantsToTempArray(tempArray: XNode[], node: XNode): void {
+  protected addSelfAndDescendantsToTempArray(tempArray: XNode[], node: XNode): void {
     tempArray.push(node);
     if (node instanceof XContainer) {
       for (const child of node.nodesArray) {
@@ -620,6 +620,15 @@ export class XElement extends XContainer {
 
   public get hasAttributes(): boolean {
     return this.attributesArray.length > 0;
+  }
+
+  public descendantNodesAndSelf(): XNode[] {
+    const tempArray: XNode[] = [];
+    tempArray.push(this);
+    for (const node of this.nodesArray) {
+      this.addSelfAndDescendantsToTempArray(tempArray, node);
+    }
+    return tempArray;
   }
 
   public get hasElements(): boolean {

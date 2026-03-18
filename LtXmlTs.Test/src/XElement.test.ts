@@ -532,6 +532,59 @@ describe('XElement.descendantNodes', () => {
   });
 });
 
+describe('XElement.descendantNodesAndSelf', () => {
+  it('returns only the element itself for an empty element', () => {
+    const e = new XElement('root');
+    const result = e.descendantNodesAndSelf();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toBe(e);
+  });
+
+  it('self is always first', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    const result = e.descendantNodesAndSelf();
+    expect(result[0]).toBe(e);
+  });
+
+  it('returns self followed by flat children in order', () => {
+    const a = new XElement('a');
+    const b = new XElement('b');
+    const e = new XElement('root', a, b);
+    const result = e.descendantNodesAndSelf();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBe(e);
+    expect(result[1]).toBe(a);
+    expect(result[2]).toBe(b);
+  });
+
+  it('returns self followed by nested descendants in depth-first pre-order', () => {
+    const grandchild = new XElement('gc');
+    const child = new XElement('child', grandchild);
+    const e = new XElement('root', child);
+    const result = e.descendantNodesAndSelf();
+    expect(result).toHaveLength(3);
+    expect(result[0]).toBe(e);
+    expect(result[1]).toBe(child);
+    expect(result[2]).toBe(grandchild);
+  });
+
+  it('includes mixed node types (XText, XComment) alongside XElement children', () => {
+    const t = new XText('hello');
+    const c = new XComment('note');
+    const child = new XElement('child');
+    const e = new XElement('root');
+    e.add(t, c, child);
+    const result = e.descendantNodesAndSelf();
+    expect(result).toHaveLength(4);
+    expect(result[0]).toBe(e);
+    expect(result[1]).toBeInstanceOf(XText);
+    expect(result[2]).toBeInstanceOf(XComment);
+    expect(result[3]).toBe(child);
+  });
+});
+
 describe('XElement.descendants', () => {
   it('returns empty array for an element with no children', () => {
     const e = new XElement('root');
