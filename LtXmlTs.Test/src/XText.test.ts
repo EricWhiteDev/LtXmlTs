@@ -45,3 +45,30 @@ describe('XText.equals', () => {
     expect(new XText('').equals(new XText(''))).toBe(true);
   });
 });
+
+describe('XText.toString', () => {
+  it('returns the value unchanged when no special characters', () => {
+    expect(new XText('hello').toString()).toBe('hello');
+  });
+  it('returns empty string for empty value', () => {
+    expect(new XText('').toString()).toBe('');
+  });
+  it('escapes ampersand', () => {
+    expect(new XText('a & b').toString()).toBe('a &amp; b');
+  });
+  it('escapes less-than', () => {
+    expect(new XText('a < b').toString()).toBe('a &lt; b');
+  });
+  it('escapes greater-than', () => {
+    expect(new XText('a > b').toString()).toBe('a &gt; b');
+  });
+  it('escapes double quote', () => {
+    expect(new XText('say "hi"').toString()).toBe('say &quot;hi&quot;');
+  });
+  it('escapes single quote', () => {
+    expect(new XText("it's").toString()).toBe('it&apos;s');
+  });
+  it('escapes multiple special characters in one value', () => {
+    expect(new XText('<a & "b">').toString()).toBe('&lt;a &amp; &quot;b&quot;&gt;');
+  });
+});

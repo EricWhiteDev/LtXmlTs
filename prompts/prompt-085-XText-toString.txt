@@ -1,0 +1,7 @@
+Enhance the XText class as follows:
+- Add a toString() method.
+- This method simply returns the value property.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

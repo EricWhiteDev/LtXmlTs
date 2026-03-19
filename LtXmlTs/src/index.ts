@@ -194,6 +194,15 @@ export class XComment extends XNode {
   }
 }
 
+function xmlEscapeText(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 export class XText extends XNode {
   public readonly value: string;
 
@@ -211,6 +220,10 @@ export class XText extends XNode {
 
   public equals(other: XText): boolean {
     return this.value === other.value;
+  }
+
+  public toString(): string {
+    return xmlEscapeText(this.value);
   }
 }
 
