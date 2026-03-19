@@ -22,6 +22,7 @@ export class XObject {
   protected annotationsArray: any[] = [];
   public nodeType: XmlNodeType = null;
   public parent: XObject | null = null;
+  public namespacePrefixInfo: NamespacePrefixInfo | null = null;
 
   addAnnotation(obj: any): void {
     this.annotationsArray.push(obj);
@@ -1053,6 +1054,26 @@ export class XNamespace {
     }
 
     XNamespace.namespaceCache.set(uri, new XNamespaceCacheEntry(this, preferredPrefix));
+  }
+}
+
+export class NamespacePrefixPair {
+  public readonly namespace: XNamespace;
+  public readonly prefix: string;
+
+  constructor(namespace: XNamespace, prefix: string) {
+    this.namespace = namespace;
+    this.prefix = prefix;
+  }
+}
+
+export class NamespacePrefixInfo {
+  public readonly defaultNamespace: XNamespace;
+  public readonly namespacePrefixPairs: NamespacePrefixPair[];
+
+  constructor(defaultNamespace: XNamespace, namespacePrefixPairs: NamespacePrefixPair[]) {
+    this.defaultNamespace = defaultNamespace;
+    this.namespacePrefixPairs = namespacePrefixPairs;
   }
 }
 

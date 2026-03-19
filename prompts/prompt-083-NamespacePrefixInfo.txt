@@ -1,0 +1,17 @@
+Add a new class to the module:
+- This class is named NamespacePrefixPair
+- It has two public properties:
+  - namespace, of type XNamespace
+  - prefix, of type string
+
+Add a new class to the module:
+- Named NamespacePrefixInfo
+- It has a public field, defaultNamespace, of type XNamespace
+- It has a public array of NamespacePrefixPair
+
+Enhance the XObject class:
+- Add a public reference to NamespacePrefixInfo
+
+This is an implementation in progress, no unit tests are needed yet.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
