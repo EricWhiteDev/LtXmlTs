@@ -596,6 +596,18 @@ export class XElement extends XContainer {
   public readonly name: XName;
   private attributesArray: XAttribute[] = [];
 
+  public get value(): string {
+    return this.descendantNodes()
+      .filter((n): n is XText => n instanceof XText)
+      .map(n => n.value)
+      .join('');
+  }
+
+  public set value(value: string) {
+    this.removeNodes();
+    this.addContentList(new XText(value));
+  }
+
   public attributes(): XAttribute[];
   public attributes(name: XName | string): XAttribute[];
   public attributes(name?: XName | string): XAttribute[] {

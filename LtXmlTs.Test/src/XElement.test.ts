@@ -304,6 +304,70 @@ describe('XElement', () => {
   });
 });
 
+describe('XElement.value', () => {
+  it('getter returns empty string for element with no nodes', () => {
+    const e = new XElement('root');
+    expect(e.value).toBe('');
+  });
+
+  it('getter returns value of single direct XText child', () => {
+    const e = new XElement('root', new XText('hello'));
+    expect(e.value).toBe('hello');
+  });
+
+  it('getter concatenates multiple direct XText children in order', () => {
+    const e = new XElement('root', new XText('foo'), new XText('bar'));
+    expect(e.value).toBe('foobar');
+  });
+
+  it('getter traverses descendant elements to collect XText values', () => {
+    const inner = new XElement('child', new XText('world'));
+    const e = new XElement('root', new XText('hello '), inner);
+    expect(e.value).toBe('hello world');
+  });
+
+  it('getter ignores XComment nodes', () => {
+    const e = new XElement('root', new XComment('ignored'), new XText('visible'));
+    expect(e.value).toBe('visible');
+  });
+
+  it('getter ignores XElement node names — only XText values are concatenated', () => {
+    const e = new XElement('root', new XElement('child', new XText('text')));
+    expect(e.value).toBe('text');
+  });
+
+  it('setter replaces all child nodes with a single XText', () => {
+    const e = new XElement('root', new XText('old'));
+    e.value = 'new';
+    const nodes = e.nodes();
+    expect(nodes.length).toBe(1);
+    expect(nodes[0]).toBeInstanceOf(XText);
+    expect((nodes[0] as XText).value).toBe('new');
+  });
+
+  it('setter removes prior nodes and sets their parent to null', () => {
+    const old = new XText('old');
+    const e = new XElement('root', old);
+    e.value = 'new';
+    expect(old.parent).toBeNull();
+  });
+
+  it('setter works with empty string', () => {
+    const e = new XElement('root', new XText('content'));
+    e.value = '';
+    const nodes = e.nodes();
+    expect(nodes.length).toBe(1);
+    expect((nodes[0] as XText).value).toBe('');
+  });
+
+  it('setter returns void', () => {
+    const e = new XElement('root');
+    const result = (e.value = 'test');
+    expect(result).toBe('test'); // assignment expression returns the assigned value in JS
+    expect(e.value).toBe('test');
+  });
+});
+
 describe('XElement.equals', () => {
   it('returns true for two elements with same name and no children', () => {
     expect(new XElement('foo').equals(new XElement('foo'))).toBe(true);

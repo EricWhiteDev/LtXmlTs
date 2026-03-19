@@ -1,0 +1,11 @@
+Enhance the XElement class as follows:
+- Add a value property. The type of the property is string.
+- Getting the value property returns the concatenated strings of the value of all descendant XText nodes.
+- Setting the value property does the following:
+  - Removes the existing nodes. Set the parent property of any nodes to null.
+  - Creates an XText object with the value that was set.
+  - Adds the XText object as content to the 'this' element.
+
+Add unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
