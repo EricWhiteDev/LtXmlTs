@@ -1,0 +1,17 @@
+Enhance the module as follows:
+- Add a new unit test file, Serialization.test.ts
+- This is going to be a new class of unit tests where we test serialization in detail, including with various namespaces and prefixes. As such, it doesn't consist of tests associated with any class in LtXmlTs; it consists of wide ranging, generalized tests associated with serialization.
+- Add a comment to the top of Serialization.test.ts that describes the purpose of this module.
+- Import all exported classes from 'ltxmlts' in Serialization.test.ts. This test file will be testing a wide range of functionality of LtXmlTs, so we need all the entire public api accessible in it.
+
+Here is the first test to go in Serialization.test.ts.  Add this test.  Note that this test will succeed because serialization is not implemented yet. Next, going to implement serialization, which will then cause the test to fail, and then will adjust the test.
+
+Title of test: Basic serialization
+
+Code:
+
+const parent = new XElement('root',
+  new XElement('child', 'hello')
+);
+expect(parent.toString()).not.toBe(`<root><child>hello</child></root>`);
+
