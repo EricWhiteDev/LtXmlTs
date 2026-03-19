@@ -1505,3 +1505,10 @@ describe('XElement.replaceAll', () => {
     expect(e.replaceAll(new XElement('new'))).toBeUndefined();
   });
 });
+
+describe('XElement.toString', () => {
+  it('serializes root with child element containing a text node', () => {
+    const root = new XElement('root', new XElement('child', 'hello'));
+    expect(root.toString()).toBe('<root><child>hello</child></root>');
+  });
+});

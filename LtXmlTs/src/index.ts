@@ -823,6 +823,19 @@ export class XElement extends XContainer {
     }
     return super.equals(other);
   }
+
+  public toString(): string {
+    const prefixedName = this.name.getPrefixedName(this);
+    const attrs = this.attributesArray.map(a => a.toString()).join(' ');
+    const attrsStr = attrs.length > 0 ? ' ' + attrs : '';
+
+    if (this.nodesArray.length === 0) {
+      return `<${prefixedName}${attrsStr} />`;
+    }
+
+    const content = this.nodesArray.map(n => n.toString()).join('');
+    return `<${prefixedName}${attrsStr}>${content}</${prefixedName}>`;
+  }
 }
 
 export class XDeclaration {

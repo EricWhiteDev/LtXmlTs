@@ -40,7 +40,7 @@ describe('Serialization', () => {
     const parent = new XElement('root',
       new XElement('child', 'hello')
     );
-    expect(parent.toString()).not.toBe(`<root><child>hello</child></root>`);
+    expect(parent.toString()).toBe(`<root><child>hello</child></root>`);
   });
 
 });

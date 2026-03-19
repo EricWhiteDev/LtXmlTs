@@ -1,0 +1,20 @@
+Enhance the XElement class as follows:
+- Add a toString() method.
+- The implementation is as follows:
+  - If the 'this' XElement has no nodes, i.e. the nodesArray is empty, then serialize as a self-closing element. For example, an element named root, with no attributes, and no nodes, serializes as '<root />'. To do this serialization,
+    - First, call the getPrefixedName method on the name property, to get the prefixed name.
+    - Start assembling the resulting string as '<{prefixedName} '
+    - Then add all attributes to the string, by calling toString() on the attributes.
+    - Then add a space and the self closing markup, ' />' to the string.
+    - And return the string.
+  - If the 'this' XElement has nodes, i.e. there are nodes in the nodesArray, then serialize with an opening tag and a closing tag. For example, an element named root, with no attributes, and with a child XText object with the text of "Hello", serializes as '<root>Hello</root>'. To do this serialization,
+    - First, call the getPrefixedName method on the name property, to get the prefixed name.
+    - Start assembling the resulting string with the opening tag '<{prefixedName}>'
+    - Then add all attributes to the string, by calling toString() on the attributes.
+    - Then call toString() on all child nodes, adding the text to the result string.
+    - Then add the closing tag '</{prefixedName}>'
+    - And return the string.
+
+Make one unit test - create a root element with a child element, with a grandchild text node. Call toString() on the root element, and validate that it produces the right output.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
