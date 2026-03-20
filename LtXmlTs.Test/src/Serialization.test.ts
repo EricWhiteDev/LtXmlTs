@@ -43,4 +43,14 @@ describe('Serialization', () => {
     expect(parent.toString()).toBe(`<root><child>hello</child></root>`);
   });
 
+  it('Serialization with namespace and prefix', () => {
+    const w = new XNamespace('urn:www');
+    const parent = new XElement(w + 'root',
+      new XAttribute(XNamespace.xmlns + 'w', 'urn:www'),
+      new XAttribute('foo', 'bar'),
+      new XElement(w + 'child', 'hello')
+    );
+    expect(parent.toString()).not.toBe(`<w:root xmlns:w='urn:www' foo='bar'><w:child>hello</w:child></w:root>`);
+  });
+
 });

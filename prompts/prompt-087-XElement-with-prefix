@@ -1,0 +1,17 @@
+Enhance the Serialization.test.ts as follows:
+- Add a new unit test that serializes with a namespace and prefix
+
+Here is the test to go in Serialization.test.ts.  Add this test.  Note that this test will succeed because serialization is not implemented properly yet. Next, going to implement serialization with a namespace and prefix, which will then cause the test to fail, and then will adjust the test.
+
+Title of test: Serialization with namespace and prefix
+
+Code:
+
+const w = new XNamespace('urn:www');
+const parent = new XElement(w + 'root',
+  new XAttribute(XNamespace.xmlns + 'w', 'urn:www');
+  new XAttribute('foo', bar),
+  new XElement(w + 'child', 'hello')
+);
+expect(parent.toString()).not.toBe(`<w:root xmlns:w='urn:www'><w:child>hello</w:child></w:root>`);
+
