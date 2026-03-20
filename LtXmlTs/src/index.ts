@@ -1053,7 +1053,7 @@ export class XNamespace {
   }
 
   public toString(): string {
-    return this.uri;
+    return this.uri === '' ? '' : `{${this.uri}}`;
   }
 
   public getName(localName: string): XName {

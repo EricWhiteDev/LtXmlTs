@@ -1,0 +1,3 @@
+Fix the XNamespace class as follows:
+- Currently, the toString() method just returns the uri. The idiom of concatenating a namespace to a local name by using the + operator would work much better if XNamespace.toString() surrounded the uri with { and }.  While previously, I had corrected the behavior of XNamespace.toString() to return just the uri, I have changed my mind, and now I want it to surround the results with { and }.  What this means is that adding a XObject to a string results in a fully qualified name in clark notation.
+- Fix the toString() method, and then fix any unit tests that are broken because of this change in behavior.

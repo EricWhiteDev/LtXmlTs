@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { XAttribute, XNamespace } from 'ltxmlts';
+import { XAttribute, XNamespace, XName } from 'ltxmlts';
 
 describe('XNamespace constructor', () => {
   it('different URIs produce different object references', () => {
@@ -64,6 +64,12 @@ describe('XNamespace preferredPrefix property', () => {
     new XNamespace('urn:test:prefix:unchanged', 'stable');
     expect(first.preferredPrefix).toBe('stable');
   });
+
+  it('adding a namespace to a local name gives a fully qualified name', () => {
+    const t = new XNamespace('urn:test', 't');
+    const n = new XName(t + 'local');
+    expect(n.toString()).toBe('{urn:test}local');
+  });
 });
 
 describe('XNamespace.get', () => {
@@ -110,9 +116,9 @@ describe('XNamespace namespaceName property', () => {
 });
 
 describe('XNamespace.toString', () => {
-  it('returns the URI without braces', () => {
+  it('returns the URI surrounded by braces', () => {
     const ns = new XNamespace('urn:test:tostring:standard');
-    expect(ns.toString()).toBe('urn:test:tostring:standard');
+    expect(ns.toString()).toBe('{urn:test:tostring:standard}');
   });
 
   it('empty URI returns empty string', () => {
