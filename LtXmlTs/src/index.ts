@@ -848,7 +848,12 @@ export class XElement extends XContainer {
         info.defaultNamespace = XNamespace.get(attr.value);
       } else {
         const ns = XNamespace.get(attr.value);
-        info.namespacePrefixPairs.push(new NamespacePrefixPair(ns, attr.name.localName));
+        const newPrefix = attr.name.localName;
+        const existing = info.namespacePrefixPairs.find(p => p.prefix === newPrefix);
+        if (existing !== undefined) {
+          existing.prefix = `p${NamespacePrefixInfo.pHashCount++}`;
+        }
+        info.namespacePrefixPairs.push(new NamespacePrefixPair(ns, newPrefix));
       }
     }
     element.namespacePrefixInfo = info;
@@ -1114,7 +1119,7 @@ export class XNamespace {
 
 export class NamespacePrefixPair {
   public readonly namespace: XNamespace;
-  public readonly prefix: string;
+  public prefix: string;
 
   constructor(namespace: XNamespace, prefix: string) {
     this.namespace = namespace;
@@ -1123,6 +1128,7 @@ export class NamespacePrefixPair {
 }
 
 export class NamespacePrefixInfo {
+  public static pHashCount: number = 0;
   public defaultNamespace: XNamespace;
   public readonly namespacePrefixPairs: NamespacePrefixPair[];
 
