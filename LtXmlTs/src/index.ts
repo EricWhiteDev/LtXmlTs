@@ -958,6 +958,7 @@ export class XElement extends XContainer {
         el.removeAttribute(attr);
       }
     }
+    NamespacePrefixInfo.pHashCount = 0;
   }
 }
 

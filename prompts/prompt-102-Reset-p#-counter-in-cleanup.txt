@@ -1,0 +1,4 @@
+Fix the following issue:
+- In the NamespacePrefixInfo class, there is a static pHashCount property.
+- In the XElement.cleanupAfterSerialization method, reset pHashCount to 0.
+- There is code in the unit tests that reset pHashCount between serializations. Remove that code, to test that serialization happens identically when called twice.

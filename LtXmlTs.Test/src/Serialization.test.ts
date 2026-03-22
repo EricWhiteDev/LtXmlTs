@@ -29,8 +29,6 @@ import {
   XDeclaration,
   XDocument,
   XNamespace,
-  NamespacePrefixPair,
-  NamespacePrefixInfo,
   XName,
 } from 'ltxmlts';
 
@@ -54,14 +52,12 @@ describe('Serialization', () => {
   });
 
   it('auto-generates a p# prefix for an element in an undeclared namespace', () => {
-    NamespacePrefixInfo.pHashCount = 0;
     const foo = new XNamespace('urn:test:autogen:element');
     const root = new XElement(foo + 'root');
     expect(root.toString()).toBe("<p0:root xmlns:p0='urn:test:autogen:element' />");
   });
 
   it('auto-generates a p# prefix for an attribute in an undeclared namespace', () => {
-    NamespacePrefixInfo.pHashCount = 0;
     const bar = new XNamespace('urn:test:autogen:attr');
     const root = new XElement('root',
       new XAttribute(bar + 'lang', 'en')
@@ -70,7 +66,6 @@ describe('Serialization', () => {
   });
 
   it('auto-generates distinct p# prefixes for element and attribute in different undeclared namespaces', () => {
-    NamespacePrefixInfo.pHashCount = 0;
     const ns1 = new XNamespace('urn:test:autogen:multi1');
     const ns2 = new XNamespace('urn:test:autogen:multi2');
     const root = new XElement(ns1 + 'root',
@@ -82,7 +77,6 @@ describe('Serialization', () => {
   });
 
   it('generates only one p# declaration when element and attribute share the same undeclared namespace', () => {
-    NamespacePrefixInfo.pHashCount = 0;
     const ns = new XNamespace('urn:test:autogen:shared');
     const root = new XElement(ns + 'root',
       new XAttribute(ns + 'attr', 'val')
@@ -95,9 +89,7 @@ describe('Serialization', () => {
   it('calling toString() twice produces the same result after cleanup', () => {
     const foo = new XNamespace('urn:test:autogen:idempotent');
     const root = new XElement(foo + 'root');
-    NamespacePrefixInfo.pHashCount = 0;
     const first = root.toString();
-    NamespacePrefixInfo.pHashCount = 0;
     const second = root.toString();
     expect(first).toBe(second);
   });
