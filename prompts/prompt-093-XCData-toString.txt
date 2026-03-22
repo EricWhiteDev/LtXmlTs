@@ -1,0 +1,3 @@
+Enhance the XCData.toStringInternal method:
+- Generate the XCData serialization.  If an XCData object has a value of 'foo', then the serialization will by <![CDATA[foo]]>.
+- The XCData class probably needs a toString method, which calls toStringInternal.

@@ -277,6 +277,14 @@ export class XCData extends XNode {
   public equals(other: XCData): boolean {
     return this.value === other.value;
   }
+
+  public toStringInternal(): string {
+    return `<![CDATA[${this.value}]]>`;
+  }
+
+  public toString(): string {
+    return this.toStringInternal();
+  }
 }
 
 export class XProcessingInstruction extends XNode {
