@@ -1,3 +1,11 @@
+Here is the prompt:
+
+Please examine the code in detail, and find any areas where serialization of the XML tree is incorrect.  Are there any
+problems with the code?  
+
+And here are the results:
+  
+  
   ---
   Bug 1 — Prefixed namespace declaration attributes serialize incorrectly (Critical)
 
