@@ -1,0 +1,7 @@
+Fix the following bug:
+- Right now, when serializing an XML tree, if some namespaces needed to have a prefix automatically generated for them (a p# prefix), then there is no XAttribute object for that namespace / prefix, so the p# namespace will not get declared.
+- To fix this, do the following:
+  - Add a boolean property to the XAttribute named pHashNamespace.
+  - When adding a p# namespace to the namespacePrefixPairs, add a namespace XAttribute to the XElement that declares this namespace. Set the pHashNamespace property to true.
+  - Write a new method for the XElement class, cleanupAfterSerialization. This method iterates through every XElement in the XML tree, and removes any namespace XAttributes where pHashNamespace is set to true.
+  - In every toString method where the code calls XElement.populateNamespacePrefixInfo, modify the methods to save the results of serialization, then call cleanupAfterSerialization, and then finally return the results of serialization.

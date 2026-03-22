@@ -1,0 +1,3 @@
+Fix the following bug in the code:
+ - When serializing an XElement object, the element's own namespace is not auto-registered.
+ - After iterating through the attributes to see if any namespaces need to be registered in the namespacePrefixPairs, make sure that there is an entry for the namespace that the XElement itself is in.  If it is in a namespace, and if there is an entry in namespacePrefixPairs for the namespace, nothing needs to be done.  If it is in a namespace, and if there is no namespace in the namespacePrefixPairs, then create a p# entry.

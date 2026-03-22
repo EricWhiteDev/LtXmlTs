@@ -566,6 +566,7 @@ export class XContainer extends XNode {
 export class XAttribute extends XObject {
   public readonly name: XName;
   public value: string;
+  public pHashNamespace: boolean = false;
 
   public get isNamespaceDeclaration(): boolean {
     return this.name.namespace === XNamespace.xmlns;
@@ -580,6 +581,7 @@ export class XAttribute extends XObject {
     if (nameOrOther instanceof XAttribute) {
       this.name = nameOrOther.name;
       this.value = nameOrOther.value;
+      this.pHashNamespace = nameOrOther.pHashNamespace;
     } else {
       const name = typeof nameOrOther === 'string' ? new XName(nameOrOther) : nameOrOther;
       this.name = name;
@@ -629,7 +631,11 @@ export class XAttribute extends XObject {
     if (this.parent instanceof XElement) {
       XElement.populateNamespacePrefixInfo(this.parent);
     }
-    return this.toStringInternal();
+    const result = this.toStringInternal();
+    if (this.parent instanceof XElement) {
+      XElement.cleanupAfterSerialization(this.parent);
+    }
+    return result;
   }
 
   public get nextAttribute(): XAttribute | null {
@@ -880,7 +886,9 @@ export class XElement extends XContainer {
 
   public toString(): string {
     XElement.populateNamespacePrefixInfo(this);
-    return this.toStringInternal();
+    const result = this.toStringInternal();
+    XElement.cleanupAfterSerialization(this);
+    return result;
   }
 
   public static populateNamespacePrefixInfoRecurse(
@@ -907,9 +915,21 @@ export class XElement extends XContainer {
       if (attr.name.namespace === XNamespace.none) continue;
       const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === attr.name.namespace);
       if (!alreadyMapped) {
-        info.namespacePrefixPairs.push(
-          new NamespacePrefixPair(attr.name.namespace, `p${NamespacePrefixInfo.pHashCount++}`)
-        );
+        const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
+        info.namespacePrefixPairs.push(new NamespacePrefixPair(attr.name.namespace, pPrefix));
+        const decl = new XAttribute(XNamespace.xmlns + pPrefix, attr.name.namespace.uri);
+        decl.pHashNamespace = true;
+        element.addAttributeContentObject(decl);
+      }
+    }
+    if (element.name.namespace !== XNamespace.none) {
+      const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === element.name.namespace);
+      if (!alreadyMapped) {
+        const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
+        info.namespacePrefixPairs.push(new NamespacePrefixPair(element.name.namespace, pPrefix));
+        const decl = new XAttribute(XNamespace.xmlns + pPrefix, element.name.namespace.uri);
+        decl.pHashNamespace = true;
+        element.addAttributeContentObject(decl);
       }
     }
     element.namespacePrefixInfo = info;
@@ -925,6 +945,19 @@ export class XElement extends XContainer {
     }
     const info = new NamespacePrefixInfo(XNamespace.none, []);
     XElement.populateNamespacePrefixInfoRecurse(info, root);
+  }
+
+  public static cleanupAfterSerialization(element: XElement): void {
+    let root: XElement = element;
+    while (root.parent instanceof XElement) {
+      root = root.parent;
+    }
+    for (const el of root.descendantsAndSelf()) {
+      const toRemove = el.attributes().filter(a => a.pHashNamespace);
+      for (const attr of toRemove) {
+        el.removeAttribute(attr);
+      }
+    }
   }
 }
 
@@ -1098,7 +1131,11 @@ export class XDocument extends XContainer {
     if (this.root !== null) {
       XElement.populateNamespacePrefixInfo(this.root);
     }
-    return this.toStringInternal();
+    const result = this.toStringInternal();
+    if (this.root !== null) {
+      XElement.cleanupAfterSerialization(this.root);
+    }
+    return result;
   }
 }
 
