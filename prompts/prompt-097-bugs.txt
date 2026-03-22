@@ -1,0 +1,74 @@
+  ---
+  Bug 1 — Prefixed namespace declaration attributes serialize incorrectly (Critical)
+
+  Location: XAttribute.toStringInternal() (line ~618) + XName.getPrefixedName()
+
+  An attribute like xmlns:w='urn:www' has name {http://www.w3.org/2000/xmlns/}w (namespace = XNamespace.xmlns, localName = w). When getPrefixedName(this) is called:
+
+  1. namespace !== XNamespace.none, so getPrefix(attr) is invoked
+  2. The attr's own namespace is XNamespace.xmlns, not XNamespace.none, so we don't return '' immediately — we fall through to contextObject = contextObject.parent as XElement
+  3. We look up XNamespace.xmlns in namespacePrefixPairs — it's never there
+  4. getPrefix returns '' → getPrefixedName returns just the localName: w
+  5. Result: w='urn:www' instead of xmlns:w='urn:www'
+
+  Note: The default namespace declaration xmlns='urn:foo' happens to serialize correctly by accident — its localName is 'xmlns' and the prefix lookup returns '', so getPrefixedName
+  returns 'xmlns', giving xmlns='urn:foo'.
+
+  The existing serialization test confirms this — it asserts .not.toBe(...) rather than .toBe(...).
+
+  ---
+  Bug 2 — Element's own namespace is not auto-registered (Critical)
+
+  Location: populateNamespacePrefixInfoRecurse() second loop (line ~899–908)
+
+  The second attribute-scanning loop auto-generates p# entries for namespaced attributes with no declared prefix. But it only iterates element.attributes() — it never checks whether
+  the element's own name namespace is covered.
+
+  For {urn:foo}root with no xmlns:foo='urn:foo' attribute anywhere in scope:
+  - namespacePrefixPairs will not contain urn:foo
+  - getPrefix returns ''
+  - getPrefixedName returns bare root — the namespace is silently dropped
+
+  ---
+  Bug 3 — Auto-generated p# prefix mappings are never emitted (Critical)
+
+  Location: populateNamespacePrefixInfoRecurse() and XElement.toStringInternal()
+
+  When populateNamespacePrefixInfoRecurse auto-generates a p# prefix (e.g., p0 → urn:foo), it adds the pair to namespacePrefixInfo.namespacePrefixPairs in memory. getPrefix then
+  correctly returns 'p0' for that namespace, and elements/attributes serialize as p0:name. But the xmlns:p0='urn:foo' declaration is never written into the output XML —
+  XElement.toStringInternal() only serializes the existing attributesArray. There is no step that synthesizes new xmlns:p#='...' attributes from the auto-generated pairs.
+
+  The result is XML that references undeclared prefixes — not well-formed.
+
+  ---
+  Bug 4 — Shallow copy of NamespacePrefixPair objects causes prefix mutation to bleed into parent (Moderate)
+
+  Location: NamespacePrefixInfo copy constructor (line ~1213–1215) + prefix-collision renaming in populateNamespacePrefixInfoRecurse (line ~892–894)
+
+  The copy constructor does:
+  this.namespacePrefixPairs = [...other.namespacePrefixPairs];
+  This creates a new array but the NamespacePrefixPair objects inside are shared references. When the collision-renaming code does:
+  existing.prefix = `p${NamespacePrefixInfo.pHashCount++}`;
+  …it mutates the NamespacePrefixPair object that is still referenced in the parent element's namespacePrefixInfo. After the child is processed, the parent's prefix mapping has been
+  silently renamed. Subsequent serialization of the parent would use the wrong (p#) prefix.
+
+  Fix: The copy constructor needs to copy the pair objects themselves:
+  this.namespacePrefixPairs = other.namespacePrefixPairs.map(p => new NamespacePrefixPair(p.namespace, p.prefix));
+
+  ---
+  Bug 5 — Attribute values are not XML-escaped (Moderate)
+
+  Location: XAttribute.toStringInternal() (line ~618)
+
+  return `${this.name.getPrefixedName(this)}='${this.value}'`;
+
+  The value is emitted raw. If an attribute value contains &, <, or ' (the quote character used), the output is not valid XML. xmlEscapeText exists and is used correctly for XText, but
+   it's not called here. A dedicated attribute-value escape function that handles &, <, and ' (or " depending on quote style) is needed.
+
+  ---
+  Minor note — pHashCount is never reset
+
+  NamespacePrefixInfo.pHashCount is a static field that increments across all serializations. The counter grows monotonically across calls, so repeated serializations produce p5:elem
+  instead of p0:elem. This doesn't affect correctness (prefixes just need to be unique within one tree), but it may produce surprising output.
+
+✻ Brewed for 2m 26s
