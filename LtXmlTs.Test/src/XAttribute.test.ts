@@ -255,6 +255,23 @@ describe('XAttribute.toString', () => {
     const a = new XAttribute('class', '');
     expect(a.toString()).toBe("class=''");
   });
+
+  it("serializes a default namespace declaration as xmlns='uri'", () => {
+    const a = new XAttribute(XNamespace.xmlns + 'xmlns', 'urn:test:default');
+    expect(a.toString()).toBe("xmlns='urn:test:default'");
+  });
+
+  it("serializes a prefixed namespace declaration as xmlns:prefix='uri'", () => {
+    const a = new XAttribute(XNamespace.xmlns + 'w', 'urn:test:prefixed');
+    expect(a.toString()).toBe("xmlns:w='urn:test:prefixed'");
+  });
+
+  it("serializes a prefixed namespace declaration on an element correctly", () => {
+    const el = new XElement('root',
+      new XAttribute(XNamespace.xmlns + 'w', 'urn:test:w'),
+    );
+    expect(el.toString()).toBe("<root xmlns:w='urn:test:w' />");
+  });
 });
 
 describe('XAttribute.nextAttribute and previousAttribute', () => {

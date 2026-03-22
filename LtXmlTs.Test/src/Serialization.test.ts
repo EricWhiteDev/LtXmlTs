@@ -50,7 +50,7 @@ describe('Serialization', () => {
       new XAttribute('foo', 'bar'),
       new XElement(w + 'child', 'hello')
     );
-    expect(parent.toString()).not.toBe(`<w:root xmlns:w='urn:www' foo='bar'><w:child>hello</w:child></w:root>`);
+    expect(parent.toString()).toBe(`<w:root xmlns:w='urn:www' foo='bar'><w:child>hello</w:child></w:root>`);
   });
 
 });

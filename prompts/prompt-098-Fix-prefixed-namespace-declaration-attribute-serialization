@@ -1,0 +1,6 @@
+Fix the prefixed namespace declaration attributes serialization.
+- The serialization should be xmlns:{prefix}='{namespace}'
+
+Add unit tests.
+
+Ask me questions to clarify the technical requirements.

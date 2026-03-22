@@ -616,6 +616,12 @@ export class XAttribute extends XObject {
   }
 
   public toStringInternal(): string {
+    if (this.isNamespaceDeclaration) {
+      if (this.name.localName === 'xmlns') {
+        return `xmlns='${this.value}'`;
+      }
+      return `xmlns:${this.name.localName}='${this.value}'`;
+    }
     return `${this.name.getPrefixedName(this)}='${this.value}'`;
   }
 
