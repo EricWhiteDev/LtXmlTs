@@ -1,0 +1,2 @@
+Add an implementation for XProcessingInstruction.toString and toStringInternal:
+- An XProcessingInstruction with the target property set to 'target', and the data property set to 'data' serializes as follows: <?target data?>

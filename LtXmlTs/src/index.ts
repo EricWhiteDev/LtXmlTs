@@ -308,6 +308,14 @@ export class XProcessingInstruction extends XNode {
   public equals(other: XProcessingInstruction): boolean {
     return this.target === other.target && this.data === other.data;
   }
+
+  public toStringInternal(): string {
+    return `<?${this.target} ${this.data}?>`;
+  }
+
+  public toString(): string {
+    return this.toStringInternal();
+  }
 }
 
 export class XContainer extends XNode {
