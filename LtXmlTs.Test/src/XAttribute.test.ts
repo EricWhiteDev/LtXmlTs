@@ -245,10 +245,10 @@ describe('XAttribute.toString', () => {
     expect(a.toString()).toBe("id='abc'");
   });
 
-  it("serializes a namespaced attribute as p:name='value'", () => {
+  it("serializes a namespaced detached attribute using localName when no prefix context", () => {
     const ns = new XNamespace('urn:test:attr:tostring:ns');
     const a = new XAttribute(new XName(ns, 'lang'), 'en');
-    expect(a.toString()).toBe("p:lang='en'");
+    expect(a.toString()).toBe("lang='en'");
   });
 
   it("handles an empty value", () => {

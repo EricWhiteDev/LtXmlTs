@@ -1,0 +1,9 @@
+Modify the XNamespace.getPrefix method as follows:
+- Currently, this method is stubbed out with a bogus implementation, where it always returns 'p'.
+- Now we are going to give it its real implementation:
+  - Rename _contextObject to contextObject, because we are now going to use this argument in the method.
+  - If the contextObject is an XAttribute object, and if the attribute is in no namespace, then the namespace prefix returned by this method will always be the empty string, as attributes by default are always in no namespace.
+  - If contextObject is an XAttribute object, and if the attribute is in a namespace, then use its parent XElement for the following logic.
+  - Otherwise, contextObject will be an XElement.
+  - When this method is called, the namespacePrefixInfo property will be set for all XElement objects in the XML tree.
+  - Therefore, the proper implementation of getPrefix is to get the namespacePrefixInfo property for the XElement, then look up the namespace in the namespacePrefixPairs array, and return the given prefix.

@@ -1159,8 +1159,19 @@ export class XNamespace {
     return this === other;
   }
 
-  public getPrefix(_contextObject: XObject): string {
-    return 'p';
+  public getPrefix(contextObject: XObject): string {
+    if (contextObject instanceof XAttribute) {
+      if (contextObject.name.namespace === XNamespace.none) {
+        return '';
+      }
+      contextObject = contextObject.parent as XElement;
+      if (contextObject === null) return '';
+    }
+    const element = contextObject as XElement;
+    const info = element.namespacePrefixInfo;
+    if (info === null) return '';
+    const pair = info.namespacePrefixPairs.find(p => p.namespace === this);
+    return pair?.prefix ?? '';
   }
 
   constructor(uri: string, preferredPrefix: string | null = null) {
@@ -1274,6 +1285,8 @@ export class XName {
 
   public getPrefixedName(contextObject: XObject): string {
     if (this.namespace === XNamespace.none) return this.localName;
-    return `${this.namespace.getPrefix(contextObject)}:${this.localName}`;
+    const prefix = this.namespace.getPrefix(contextObject);
+    if (prefix === '') return this.localName;
+    return `${prefix}:${this.localName}`;
   }
 }

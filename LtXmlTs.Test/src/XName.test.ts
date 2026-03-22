@@ -258,17 +258,18 @@ describe('XName.getPrefixedName', () => {
     expect(name.getPrefixedName(ctx)).toBe('bare');
   });
 
-  it('prepends "p:" when namespace is non-none', () => {
+  it('returns localName when namespace is non-none but prefix is empty (no context)', () => {
     const ns = new XNamespace('urn:test:prefixedname:ns');
     const name = new XName(ns, 'elem');
-    expect(name.getPrefixedName(ctx)).toBe('p:elem');
+    expect(name.getPrefixedName(ctx)).toBe('elem');
   });
 
-  it('uses the namespace returned by getPrefix (i.e. "p")', () => {
+  it('returns localName when getPrefix returns empty string', () => {
     const ns = new XNamespace('urn:test:prefixedname:getprefix');
     const name = new XName(ns, 'child');
     const prefix = ns.getPrefix(ctx);
-    expect(name.getPrefixedName(ctx)).toBe(`${prefix}:child`);
+    expect(prefix).toBe('');
+    expect(name.getPrefixedName(ctx)).toBe('child');
   });
 });
 

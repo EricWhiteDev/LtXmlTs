@@ -269,21 +269,21 @@ describe('XNamespace.xmlns', () => {
 describe('XNamespace.getPrefix', () => {
   const ctx = new XAttribute('ctx', 'val');
 
-  it('returns "p" for a plain namespace', () => {
+  it('returns "" for a plain namespace when context attribute has no namespace', () => {
     const ns = new XNamespace('urn:test:getprefix:plain');
-    expect(ns.getPrefix(ctx)).toBe('p');
+    expect(ns.getPrefix(ctx)).toBe('');
   });
 
-  it('returns "p" for XNamespace.xml', () => {
-    expect(XNamespace.xml.getPrefix(ctx)).toBe('p');
+  it('returns "" for XNamespace.xml when context attribute has no namespace', () => {
+    expect(XNamespace.xml.getPrefix(ctx)).toBe('');
   });
 
-  it('returns "p" for XNamespace.xmlns', () => {
-    expect(XNamespace.xmlns.getPrefix(ctx)).toBe('p');
+  it('returns "" for XNamespace.xmlns when context attribute has no namespace', () => {
+    expect(XNamespace.xmlns.getPrefix(ctx)).toBe('');
   });
 
-  it('returns "p" for XNamespace.none', () => {
-    expect(XNamespace.none.getPrefix(ctx)).toBe('p');
+  it('returns "" for XNamespace.none when context attribute has no namespace', () => {
+    expect(XNamespace.none.getPrefix(ctx)).toBe('');
   });
 });
 
