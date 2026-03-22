@@ -856,6 +856,16 @@ export class XElement extends XContainer {
         info.namespacePrefixPairs.push(new NamespacePrefixPair(ns, newPrefix));
       }
     }
+    for (const attr of element.attributes()) {
+      if (attr.isNamespaceDeclaration) continue;
+      if (attr.name.namespace === XNamespace.none) continue;
+      const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === attr.name.namespace);
+      if (!alreadyMapped) {
+        info.namespacePrefixPairs.push(
+          new NamespacePrefixPair(attr.name.namespace, `p${NamespacePrefixInfo.pHashCount++}`)
+        );
+      }
+    }
     element.namespacePrefixInfo = info;
     for (const child of element.nodes().filter((n): n is XElement => n instanceof XElement)) {
       XElement.populateNamespacePrefixInfoRecurse(info, child);

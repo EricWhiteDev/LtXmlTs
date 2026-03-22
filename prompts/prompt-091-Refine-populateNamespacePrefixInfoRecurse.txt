@@ -1,0 +1,4 @@
+Further refine the populateNamespacePrefixInfoRecurse method:
+- After determining the values for the NamespacePrefixInfo object, but before calling it recursively for child XElement objects, look at the attributes for the current XElement object. There is a possibility that one of the attributes is in a namespace, but that namespace isn't in the namespacePrefixPairs array in the NamespacePrefixInfo object, and it needs to be. In this case, generate a p# prefix for that namespace, and add it to the namespacePrefixPairs array.
+- When generating a p# prefix, replace the # with the value in pHashCount, and then increment pHashCount.
+

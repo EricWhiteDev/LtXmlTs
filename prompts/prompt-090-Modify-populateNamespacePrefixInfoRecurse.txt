@@ -1,3 +1,4 @@
 Modify the populateNamespacePrefixInfoRecurse method:
 - Add a static integer property named pHashCount to NamespacePrefixInfo. This integer is used to generate the p# prefix, where the # is replaced by pHashCount, and then pHashCount is incremented.
 - Before adding a prefix/namespace pair to namespacePrefixPairs, check for the existence of that specific prefix.  If that prefix is already in the array, then first, change that prefix to a p# prefix, and then add the prefix/namespace pair to namespacePrefixPairs. When changing a prefix to a p# prefix, replace the # with the value in pHashCount, and then increment pHashCount.
+
