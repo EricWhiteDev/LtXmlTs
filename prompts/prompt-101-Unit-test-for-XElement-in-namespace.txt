@@ -1,0 +1,5 @@
+Add a unit test for the case where:
+- An XElement is in a namespace
+- There is no namespace declaration for that namespace, so we will generate a p# prefix for the namespace.
+
+Add unit tests for other cases where the prefix is auto generated.
