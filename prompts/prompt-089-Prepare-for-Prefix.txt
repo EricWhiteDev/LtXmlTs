@@ -1,0 +1,26 @@
+Enhance the NamespacePrefixInfo class as follows:
+- Create a copy contructor. This creates a deep copy, where the constructor creates a copy of the namespacePrefixPairs.
+- Note that it isn't necessary to do a deep copy of each XNamespace object, as XNamespace objects are atomized. But it is necessary to create a copy of the namespacePrefixPairs array.
+
+Enhance the XElement class as follows:
+- Write a new method, populateNamespacePrefixInfoRecurse.
+- This method takes two arguments.
+  - The first argument is a NamespacePrefixInfo object.
+  - The second argument is an XElement object.
+- The NamespacePrefixInfo is the state of namespace to prefix pairing at this location in the tree.
+- Before processing all namespace declarations, call the copy constructor for NamespacePrefixInfo.
+- The first thing is to process all namespace declarations applied to this XElement.
+  - If a namespace declaration is a default namespace declaration, then get the value of the namespace declaration, instantiate the XNamespace object, and set the defaultNamespace property of the NamespacePrefixInfo to that XNamespace object. A default namespace declaration is an attribute that has a local name of "xmlns". The value of the attribute is the namespace that is the default namespace.
+  - If a namespace declaration is not a default namespace declaration, then get the prefix and the namespace. If a namespace declaration is not a default namespace declaration, then the name of the attribute will be in the XNamespace.xmlns namespace, and the local name of the attribute will be the prefix. The value of the attribute is the namespace name. In this case, instantiate the namespace declaration, then create an instance of the NamespacePrefixPair with the prefix and the XNamespace object. Then add the pair to the namespacePrefixPairs array in the NamespacePrefixInfo object.
+- After processing all attributes that have isNamespaceDeclaration property == true, then call populateNamespacePrefixInfoRecurse on all child elements.
+
+Enhance the XElement class as follows:
+- Write a new method, populateNamespacePrefixInfo
+- This method takes one argument element, of type XElement.
+- This method finds the root XElement by traversing up the tree.
+- It then creates a new NamespacePrefixInfo object, with no default namespace, and with an empty namespacePrefixPairs array.
+- It then calls populateNamespacePrefixInfoRecurse, passing the newly initiated NamespacePrefixInfo object, and the root XElement object.  populateNamespacePrefixInfoRecurse will then recursively process all XElement objects in the XML tree.
+
+No unit tests right now.  We'll add them later.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

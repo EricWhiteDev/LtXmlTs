@@ -836,6 +836,35 @@ export class XElement extends XContainer {
     const content = this.nodesArray.map(n => n.toString()).join('');
     return `<${prefixedName}${attrsStr}>${content}</${prefixedName}>`;
   }
+
+  public static populateNamespacePrefixInfoRecurse(
+    namespacePrefixInfo: NamespacePrefixInfo,
+    element: XElement
+  ): void {
+    const info = new NamespacePrefixInfo(namespacePrefixInfo);
+    for (const attr of element.attributes()) {
+      if (!attr.isNamespaceDeclaration) continue;
+      if (attr.name.localName === 'xmlns') {
+        info.defaultNamespace = XNamespace.get(attr.value);
+      } else {
+        const ns = XNamespace.get(attr.value);
+        info.namespacePrefixPairs.push(new NamespacePrefixPair(ns, attr.name.localName));
+      }
+    }
+    element.namespacePrefixInfo = info;
+    for (const child of element.nodes().filter((n): n is XElement => n instanceof XElement)) {
+      XElement.populateNamespacePrefixInfoRecurse(info, child);
+    }
+  }
+
+  public static populateNamespacePrefixInfo(element: XElement): void {
+    let root: XElement = element;
+    while (root.parent instanceof XElement) {
+      root = root.parent;
+    }
+    const info = new NamespacePrefixInfo(XNamespace.none, []);
+    XElement.populateNamespacePrefixInfoRecurse(info, root);
+  }
 }
 
 export class XDeclaration {
@@ -1094,12 +1123,22 @@ export class NamespacePrefixPair {
 }
 
 export class NamespacePrefixInfo {
-  public readonly defaultNamespace: XNamespace;
+  public defaultNamespace: XNamespace;
   public readonly namespacePrefixPairs: NamespacePrefixPair[];
 
-  constructor(defaultNamespace: XNamespace, namespacePrefixPairs: NamespacePrefixPair[]) {
-    this.defaultNamespace = defaultNamespace;
-    this.namespacePrefixPairs = namespacePrefixPairs;
+  constructor(defaultNamespace: XNamespace, namespacePrefixPairs: NamespacePrefixPair[]);
+  constructor(other: NamespacePrefixInfo);
+  constructor(
+    defaultNamespaceOrOther: XNamespace | NamespacePrefixInfo,
+    namespacePrefixPairs?: NamespacePrefixPair[]
+  ) {
+    if (defaultNamespaceOrOther instanceof NamespacePrefixInfo) {
+      this.defaultNamespace = defaultNamespaceOrOther.defaultNamespace;
+      this.namespacePrefixPairs = [...defaultNamespaceOrOther.namespacePrefixPairs];
+    } else {
+      this.defaultNamespace = defaultNamespaceOrOther;
+      this.namespacePrefixPairs = namespacePrefixPairs!;
+    }
   }
 }
 
