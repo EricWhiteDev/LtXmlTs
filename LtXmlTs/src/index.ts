@@ -168,6 +168,10 @@ export class XNode extends XObject {
   public static deepEquals(a: XNode, b: XNode): boolean {
     return a.deepEquals(b);
   }
+
+  public toStringInternal(): string {
+    return this.toString();
+  }
 }
 
 export class XComment extends XNode {
@@ -189,8 +193,12 @@ export class XComment extends XNode {
     return this.value === other.value;
   }
 
-  public toString(): string {
+  public toStringInternal(): string {
     return `<!--${this.value}-->`;
+  }
+
+  public toString(): string {
+    return this.toStringInternal();
   }
 }
 
@@ -222,8 +230,12 @@ export class XText extends XNode {
     return this.value === other.value;
   }
 
-  public toString(): string {
+  public toStringInternal(): string {
     return xmlEscapeText(this.value);
+  }
+
+  public toString(): string {
+    return this.toStringInternal();
   }
 }
 
@@ -587,8 +599,15 @@ export class XAttribute extends XObject {
     return this.name.toString() === other.name.toString() && this.value === other.value;
   }
 
-  public toString(): string {
+  public toStringInternal(): string {
     return `${this.name.getPrefixedName(this)}='${this.value}'`;
+  }
+
+  public toString(): string {
+    if (this.parent instanceof XElement) {
+      XElement.populateNamespacePrefixInfo(this.parent);
+    }
+    return this.toStringInternal();
   }
 
   public get nextAttribute(): XAttribute | null {
@@ -824,17 +843,22 @@ export class XElement extends XContainer {
     return super.equals(other);
   }
 
-  public toString(): string {
+  public toStringInternal(): string {
     const prefixedName = this.name.getPrefixedName(this);
-    const attrs = this.attributesArray.map(a => a.toString()).join(' ');
+    const attrs = this.attributesArray.map(a => a.toStringInternal()).join(' ');
     const attrsStr = attrs.length > 0 ? ' ' + attrs : '';
 
     if (this.nodesArray.length === 0) {
       return `<${prefixedName}${attrsStr} />`;
     }
 
-    const content = this.nodesArray.map(n => n.toString()).join('');
+    const content = this.nodesArray.map(n => n.toStringInternal()).join('');
     return `<${prefixedName}${attrsStr}>${content}</${prefixedName}>`;
+  }
+
+  public toString(): string {
+    XElement.populateNamespacePrefixInfo(this);
+    return this.toStringInternal();
   }
 
   public static populateNamespacePrefixInfoRecurse(
@@ -1042,6 +1066,17 @@ export class XDocument extends XContainer {
       }
       return;
     }
+  }
+
+  public toStringInternal(): string {
+    return this.nodesArray.map(n => n.toStringInternal()).join('');
+  }
+
+  public toString(): string {
+    if (this.root !== null) {
+      XElement.populateNamespacePrefixInfo(this.root);
+    }
+    return this.toStringInternal();
   }
 }
 

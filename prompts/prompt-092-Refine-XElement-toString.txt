@@ -1,0 +1,16 @@
+Modify the XElement.toString() method as follows:
+- When the code that is using the LtXmlTs module calls the toString method for any XObject that requires namespace serialization, we want to set up the NamespacePrefixInfo properties for all XElement objects in the XML tree. However, we want to do this one time and one time only for a given serialization.
+- Therefore, for each XObject that has a toString method, make another method, toStringInternal. The toStringInternal methods are called only when the NamespacePrefixInfo properties for all XElement objects are already set up.
+- Then modify the toString method for the XElement object, as follows:
+  - First call populateNamespacePrefixInfo, which does the population of the NamespacePrefixInfo properties for the XML tree.
+  - Then call toStringInternal to actually produce the serialized XML.
+- Note that toStringInternal iterates through all child nodes for XContainer objects. toStringInternal should only call child node toStringInternal methods, not toString methods.
+
+Modify the XAttribute.toString() method as follows:
+  - First call populateNamespacePrefixInfo, which does the population of the NamespacePrefixInfo properties for the XML tree.
+  - Then call toStringInternal to actually produce the serialized XML.
+
+Modify the XDocument.toString() method as follows:
+  - First call populateNamespacePrefixInfo, which does the population of the NamespacePrefixInfo properties for the XML tree.
+  - Then call toStringInternal to actually produce the serialized XML.
+
