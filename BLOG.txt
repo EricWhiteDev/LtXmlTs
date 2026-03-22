@@ -1,0 +1,18 @@
+Justification for this project:
+- XML manipulation and transformation is a serious business. It needs to be very exact and precise.
+- JavaScript add-ins for Word are compelling:
+  - It is the only way to write an add-in for MacOs and for Word on-line.
+  - They can be updated on-the-fly as functionality improves. In contrast, VSTO add-ins are cumbersome to update.
+- Very often, the only way to implement certain functionality in a JavaScript add-in is by manipulation and transformation of Open XML markup. Sometimes devs resort to techniques such as farming out the functionality to a dotnet or pythonnet service. I'd rather not do such antics.
+- Therefore, we need to do some really fun XML transformation and modification in JavaScript / TypeScript.
+- But DOMDocument sucks.  LINQ to XML is better because:
+  - Functional construction is easier to reason about.
+  - Recursive pure functional transformations are the only way to implement certain areas of functionality, except for XSLX (just say no), and nasty, nasty, nasty DOMDocument code, (I'm not going to do it, no amount of money can convince me.)
+  - Years later, I can read LINQ to XML code and my original intent is clear and on-the-surface. The nesting hierarchy of the code reflects the XML that my code is producing.  In contrast, revisiting DOMDocument code involves matching up variable names up and down the code page - and deducing / spelunking / dredging up the intent of the code.
+
+- Therefore, I NEED LINQ to XML for TypeScript.
+
+I decided to build this using Claude Code.  But the process didn't really feel like casual 'vibing'.  Instead, it felt like highly specific, highly accurate (of necessity) AI assisted engineering.  I didn't write a single prompt and then generate the LtXmlTs library.  Instead, it was more than 100 prompts, one after another, fleshing out the library a class at a time - an area of functionality at a time - having Claude write unit tests, and examining the code and unit tests in detail as the code was built up.
+
+Nevertheless, it was a far, far more productive way to build this library compared to writing code by hand, character by character.  This is far faster, and in fact, the code quality is higher.  It was really fun.
+
