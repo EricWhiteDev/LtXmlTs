@@ -211,6 +211,13 @@ function xmlEscapeText(value: string): string {
     .replace(/'/g, '&apos;');
 }
 
+function xmlEscapeAttrValue(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/'/g, '&apos;');
+}
+
 export class XText extends XNode {
   public readonly value: string;
 
@@ -620,11 +627,11 @@ export class XAttribute extends XObject {
   public toStringInternal(): string {
     if (this.isNamespaceDeclaration) {
       if (this.name.localName === 'xmlns') {
-        return `xmlns='${this.value}'`;
+        return `xmlns='${xmlEscapeAttrValue(this.value)}'`;
       }
-      return `xmlns:${this.name.localName}='${this.value}'`;
+      return `xmlns:${this.name.localName}='${xmlEscapeAttrValue(this.value)}'`;
     }
-    return `${this.name.getPrefixedName(this)}='${this.value}'`;
+    return `${this.name.getPrefixedName(this)}='${xmlEscapeAttrValue(this.value)}'`;
   }
 
   public toString(): string {

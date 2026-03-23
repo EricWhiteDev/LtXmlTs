@@ -1,0 +1,6 @@
+There is a bug: Attribute values are not XML-escaped
+Fix this.
+
+Write some unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

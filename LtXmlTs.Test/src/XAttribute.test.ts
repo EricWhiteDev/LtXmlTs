@@ -331,3 +331,31 @@ describe('XAttribute.nextAttribute and previousAttribute', () => {
     expect(a.previousAttribute).toBeNull();
   });
 });
+
+describe('XAttribute value escaping', () => {
+  it('escapes ampersand in attribute value', () => {
+    expect(new XAttribute('attr', 'a & b').toString()).toBe("attr='a &amp; b'");
+  });
+
+  it('escapes less-than in attribute value', () => {
+    expect(new XAttribute('attr', 'a < b').toString()).toBe("attr='a &lt; b'");
+  });
+
+  it('escapes single quote (the delimiter) in attribute value', () => {
+    expect(new XAttribute('attr', "it's").toString()).toBe("attr='it&apos;s'");
+  });
+
+  it('does not escape double quote in single-quoted attribute value', () => {
+    expect(new XAttribute('attr', 'say "hi"').toString()).toBe(`attr='say "hi"'`);
+  });
+
+  it('does not escape greater-than in attribute value', () => {
+    expect(new XAttribute('attr', 'a > b').toString()).toBe("attr='a > b'");
+  });
+
+  it('escapes all required characters in a mixed value', () => {
+    expect(new XAttribute('attr', `a & b < c > 'd' "e"`).toString()).toBe(
+      `attr='a &amp; b &lt; c > &apos;d&apos; "e"'`
+    );
+  });
+});
