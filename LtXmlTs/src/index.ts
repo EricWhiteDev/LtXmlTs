@@ -318,6 +318,12 @@ export class XProcessingInstruction extends XNode {
     if (typeof targetOrOther === 'string') {
       this.target = targetOrOther;
       this.data = data!;
+      if (/\s/.test(this.target)) {
+        throw new Error(`XProcessingInstruction target must not contain whitespace: ${JSON.stringify(this.target)}`);
+      }
+      if (this.target.includes('?>')) {
+        throw new Error(`XProcessingInstruction target must not contain '?>': ${JSON.stringify(this.target)}`);
+      }
       if (this.data.includes('?>')) {
         throw new Error(`XProcessingInstruction data must not contain '?>': ${JSON.stringify(this.data)}`);
       }

@@ -1,0 +1,22 @@
+Here is a bug:
+
+XProcessingInstruction target is not validated
+
+  Line 319 — data is validated (throws if it contains ?>), but target is not validated at all. The XML spec requires the PI target to be a valid Name token — no spaces, no ?>, and no
+  other illegal characters.
+
+  this.target = targetOrOther;  // no check
+  this.data = data!;
+  if (this.data.includes('?>')) { throw … }  // only data is checked
+
+  Two concrete problems:
+
+  - Space in target — new XProcessingInstruction('bad target', 'data') → <?bad target data?>. The parser treats bad as the target and target data as the data. The semantic meaning is
+  completely wrong.
+  - ?> in target — new XProcessingInstruction('x?>', 'data') → <?x?> data?>. The PI terminates after x, and  data?> is emitted as raw text, producing malformed XML.
+
+  Fix: add the same style of validation that data already has, throwing if target contains ?> or whitespace.
+
+Fix the bug.
+
+Write unit tests.

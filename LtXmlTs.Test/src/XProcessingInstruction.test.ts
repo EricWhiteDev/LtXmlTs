@@ -48,6 +48,26 @@ describe('XProcessingInstruction construction validation', () => {
   it('does not throw for ? alone in data', () => {
     expect(() => new XProcessingInstruction('t', 'x?y')).not.toThrow();
   });
+
+  it('throws when target contains a space', () => {
+    expect(() => new XProcessingInstruction('bad target', 'data')).toThrow();
+  });
+
+  it('throws when target contains a tab', () => {
+    expect(() => new XProcessingInstruction('bad\ttarget', 'data')).toThrow();
+  });
+
+  it('throws when target contains a newline', () => {
+    expect(() => new XProcessingInstruction('bad\ntarget', 'data')).toThrow();
+  });
+
+  it('throws when target contains ?>', () => {
+    expect(() => new XProcessingInstruction('x?>', '')).toThrow();
+  });
+
+  it('does not throw for a valid target with no whitespace or ?>', () => {
+    expect(() => new XProcessingInstruction('xml-stylesheet', '')).not.toThrow();
+  });
 });
 
 describe('XProcessingInstruction.toString', () => {

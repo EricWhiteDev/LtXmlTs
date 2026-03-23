@@ -1,0 +1,9 @@
+Here is a bug:
+- pHashNamespace is public (internal detail leak)
+
+- Line 593: public pHashNamespace: boolean = false; — this flag is an internal serialization marker. Any user who accidentally sets it to true will have their attribute silently deleted
+  by cleanupAfterSerialization. It has no place in the public API.
+
+Provide a proposed fix.
+
+(Note: I didn't like the fix, did not apply it.)
