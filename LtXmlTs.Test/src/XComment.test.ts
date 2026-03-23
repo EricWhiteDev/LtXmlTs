@@ -46,6 +46,20 @@ describe('XComment.equals', () => {
   });
 });
 
+describe('XComment construction validation', () => {
+  it('throws when value contains --', () => {
+    expect(() => new XComment('bad--value')).toThrow();
+  });
+
+  it('throws when value is exactly --', () => {
+    expect(() => new XComment('--')).toThrow();
+  });
+
+  it('does not throw for a single hyphen', () => {
+    expect(() => new XComment('-ok')).not.toThrow();
+  });
+});
+
 describe('XComment.toString', () => {
   it("serializes a comment as <!--value-->", () => {
     expect(new XComment('hello').toString()).toBe('<!--hello-->');

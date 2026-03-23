@@ -40,6 +40,28 @@ describe('XProcessingInstruction', () => {
   });
 });
 
+describe('XProcessingInstruction construction validation', () => {
+  it('throws when data contains ?>', () => {
+    expect(() => new XProcessingInstruction('t', 'bad?>')).toThrow();
+  });
+
+  it('does not throw for ? alone in data', () => {
+    expect(() => new XProcessingInstruction('t', 'x?y')).not.toThrow();
+  });
+});
+
+describe('XProcessingInstruction.toString', () => {
+  it('serializes with non-empty data including a separating space', () => {
+    expect(new XProcessingInstruction('xml-stylesheet', 'type="text/css"').toString())
+      .toBe('<?xml-stylesheet type="text/css"?>');
+  });
+
+  it('serializes with empty data omitting the space', () => {
+    expect(new XProcessingInstruction('xml-stylesheet', '').toString())
+      .toBe('<?xml-stylesheet?>');
+  });
+});
+
 describe('XProcessingInstruction.equals', () => {
   it('returns true when target and data are equal', () => {
     expect(new XProcessingInstruction('xml-stylesheet', 'type="text/css"')

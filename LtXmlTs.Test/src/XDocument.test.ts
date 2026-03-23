@@ -711,3 +711,26 @@ describe('XDocument.root', () => {
     expect(doc.root).toBe(root);
   });
 });
+
+describe('XDocument declaration serialization', () => {
+  it('serializes the XML declaration before the root element', () => {
+    const doc = new XDocument(
+      new XDeclaration('1.0', 'utf-8', ''),
+      new XElement('root')
+    );
+    expect(doc.toString()).toBe("<?xml version='1.0' encoding='utf-8'?><root />");
+  });
+
+  it('serializes without a declaration when none is set', () => {
+    const doc = new XDocument(new XElement('root'));
+    expect(doc.toString()).toBe('<root />');
+  });
+
+  it('serializes declaration with standalone when present', () => {
+    const doc = new XDocument(
+      new XDeclaration('1.0', 'utf-8', 'yes'),
+      new XElement('root')
+    );
+    expect(doc.toString()).toBe("<?xml version='1.0' encoding='utf-8' standalone='yes'?><root />");
+  });
+});

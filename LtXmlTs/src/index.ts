@@ -184,6 +184,9 @@ export class XComment extends XNode {
     this.nodeType = 'Comment';
     if (typeof contentOrOther === 'string') {
       this.value = contentOrOther;
+      if (this.value.includes('--')) {
+        throw new Error(`XComment value must not contain '--': ${JSON.stringify(this.value)}`);
+      }
     } else {
       this.value = contentOrOther.value;
     }
@@ -264,6 +267,14 @@ export class XEntity extends XNode {
   public equals(other: XEntity): boolean {
     return this.value === other.value;
   }
+
+  public toStringInternal(): string {
+    return `&${this.value};`;
+  }
+
+  public toString(): string {
+    return this.toStringInternal();
+  }
 }
 
 export class XCData extends XNode {
@@ -276,6 +287,9 @@ export class XCData extends XNode {
     this.nodeType = 'CDATA';
     if (typeof valueOrOther === 'string') {
       this.value = valueOrOther;
+      if (this.value.includes(']]>')) {
+        throw new Error(`XCData value must not contain ']]>': ${JSON.stringify(this.value)}`);
+      }
     } else {
       this.value = valueOrOther.value;
     }
@@ -306,6 +320,9 @@ export class XProcessingInstruction extends XNode {
     if (typeof targetOrOther === 'string') {
       this.target = targetOrOther;
       this.data = data!;
+      if (this.data.includes('?>')) {
+        throw new Error(`XProcessingInstruction data must not contain '?>': ${JSON.stringify(this.data)}`);
+      }
     } else {
       this.target = targetOrOther.target;
       this.data = targetOrOther.data;
@@ -317,7 +334,9 @@ export class XProcessingInstruction extends XNode {
   }
 
   public toStringInternal(): string {
-    return `<?${this.target} ${this.data}?>`;
+    return this.data.length > 0
+      ? `<?${this.target} ${this.data}?>`
+      : `<?${this.target}?>`;
   }
 
   public toString(): string {
@@ -993,6 +1012,14 @@ export class XDeclaration {
       this.encoding === other.encoding &&
       this.standalone === other.standalone;
   }
+
+  public toString(): string {
+    let result = `<?xml version='${this.version}'`;
+    if (this.encoding.length > 0) result += ` encoding='${this.encoding}'`;
+    if (this.standalone.length > 0) result += ` standalone='${this.standalone}'`;
+    result += '?>';
+    return result;
+  }
 }
 
 export class XDocument extends XContainer {
@@ -1132,7 +1159,8 @@ export class XDocument extends XContainer {
   }
 
   public toStringInternal(): string {
-    return this.nodesArray.map(n => n.toStringInternal()).join('');
+    const decl = this.declaration !== null ? this.declaration.toString() : '';
+    return decl + this.nodesArray.map(n => n.toStringInternal()).join('');
   }
 
   public toString(): string {

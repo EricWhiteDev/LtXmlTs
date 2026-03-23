@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { XEntity } from 'ltxmlts';
+import { XEntity, XElement } from 'ltxmlts';
 
 describe('XEntity', () => {
   it('constructs from a string and sets value', () => {
@@ -31,6 +31,25 @@ describe('XEntity', () => {
     const original = new XEntity('original entity');
     const copy = new XEntity(original);
     expect(copy).not.toBe(original);
+  });
+});
+
+describe('XEntity.toString', () => {
+  it('serializes as &name;', () => {
+    expect(new XEntity('amp').toString()).toBe('&amp;');
+  });
+
+  it('serializes a named entity', () => {
+    expect(new XEntity('nbsp').toString()).toBe('&nbsp;');
+  });
+
+  it('serializes a numeric entity', () => {
+    expect(new XEntity('#160').toString()).toBe('&#160;');
+  });
+
+  it('appears correctly in element content', () => {
+    const el = new XElement('root', new XEntity('amp'));
+    expect(el.toString()).toBe('<root>&amp;</root>');
   });
 });
 

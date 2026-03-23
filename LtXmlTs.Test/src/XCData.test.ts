@@ -34,6 +34,20 @@ describe('XCData', () => {
   });
 });
 
+describe('XCData construction validation', () => {
+  it('throws when value contains ]]>', () => {
+    expect(() => new XCData('bad]]>value')).toThrow();
+  });
+
+  it('does not throw for a single ]', () => {
+    expect(() => new XCData(']ok')).not.toThrow();
+  });
+
+  it('does not throw for ]] without >', () => {
+    expect(() => new XCData('ok]]')).not.toThrow();
+  });
+});
+
 describe('XCData.equals', () => {
   it('returns true when values are equal', () => {
     expect(new XCData('hello').equals(new XCData('hello'))).toBe(true);

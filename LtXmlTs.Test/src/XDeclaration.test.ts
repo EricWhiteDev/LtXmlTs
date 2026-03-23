@@ -51,6 +51,23 @@ describe('XDeclaration', () => {
   });
 });
 
+describe('XDeclaration.toString', () => {
+  it('serializes a full declaration with version, encoding, and standalone', () => {
+    expect(new XDeclaration('1.0', 'utf-8', 'yes').toString())
+      .toBe("<?xml version='1.0' encoding='utf-8' standalone='yes'?>");
+  });
+
+  it('omits encoding and standalone when both are empty', () => {
+    expect(new XDeclaration('1.0', '', '').toString())
+      .toBe("<?xml version='1.0'?>");
+  });
+
+  it('omits standalone when empty but includes encoding', () => {
+    expect(new XDeclaration('1.0', 'utf-8', '').toString())
+      .toBe("<?xml version='1.0' encoding='utf-8'?>");
+  });
+});
+
 describe('XDeclaration.equals', () => {
   it('returns true when all three properties are equal', () => {
     expect(new XDeclaration('1.0', 'utf-8', 'yes')
