@@ -1,0 +1,40 @@
+Implement parsing of a string via the sax-js parser
+- Establish a dependency on the sax-js parser
+- Write an internal class (not exported) that uses the sax-js parser to populate a LtXmlTs xml tree, including population of the following classes:
+  - XDocument
+  - XElement
+  - XAttribute
+  - XComment
+  - XText
+  - XCData
+  - XProcessingInstruction
+  - XDeclaration
+- Put this class in a separate file.
+
+Note that while LtXmlTs has an XEntity class, for now we are not going to populate the tree with XEntity objects.
+
+XElement.parse and XDocument.parse are static methods.
+
+When parsing <foo:bar xmlns:foo="http://example.com">, xmlns:foo namespace declarations should be surfaced as XAttribute nodes in the tree (mirroring how they're serialized)
+
+The parsed element's name should be a fully-qualified XName (with XNamespace) based on resolved prefixes — e.g. XName.get("{http://example.com}bar")
+
+whitespace-only text nodes between elements (indentation/newlines) should be discarded.
+
+When parsing via XDocument.parse, <?xml version="1.0" encoding="UTF-8"?> should be captured as an XDeclaration attached to the XDocument.  When parsing via XElement.parse, should a declaration should be silently ignored.
+
+On malformed XML — throw a typed error class (e.g. XmlParseError). It should include position info (line/column).
+
+If the input has no XML declaration, XDocument.parse should return a document with declaration: null.
+
+XElement.parse should return only the root element (ignoring any surrounding comments/PIs).
+
+Enhance the XElement class as follows:
+- Create an XElement.parse method that uses the implementation of the sax-js parser.  It parses a string, and instantiates a tree of LtXmlTs objects.
+
+Enhance the XDocument class as follows:
+- Create an XDocument.parse method that uses the implementation of the sax-js parser.  It parses a string, and instantiates a tree of LtXmlTs objects.
+
+Write some unit tests to validate that parsing XML works.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

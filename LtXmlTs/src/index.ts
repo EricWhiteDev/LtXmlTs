@@ -7,6 +7,9 @@
  * Licensed under the MIT License
  */
 
+import { SaxParser } from './sax-parser.js';
+export { XmlParseError } from './sax-parser.js';
+
 export type XmlNodeType =
   | 'Element'
   | 'Text'
@@ -1073,6 +1076,10 @@ export class XElement extends XContainer {
     }
     NamespacePrefixInfo.pHashCount = 0;
   }
+
+  public static parse(xml: string): XElement {
+    return new SaxParser().parseElement(xml);
+  }
 }
 
 export class XDeclaration {
@@ -1265,6 +1272,10 @@ export class XDocument extends XContainer {
 
   public toStringWithIndentation(): string {
     return indentXml(this.toString());
+  }
+
+  public static parse(xml: string): XDocument {
+    return new SaxParser().parseDocument(xml);
   }
 }
 
