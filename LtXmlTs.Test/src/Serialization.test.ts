@@ -94,6 +94,30 @@ describe('Serialization', () => {
     expect(first).toBe(second);
   });
 
+  it('pHashCount resets between independent serializations', () => {
+    // Two separate elements in the same undeclared namespace, serialized independently.
+    // Without the try/finally fix, a previous exception (or even just prior calls that bump
+    // pHashCount) could cause the second element to use p1 instead of p0.
+    // This test verifies that pHashCount is always reset so both produce identical output.
+    const ns = new XNamespace('urn:test:phash-reset');
+    const s1 = new XElement(ns + 'root').toString();
+    const s2 = new XElement(ns + 'root').toString();
+    expect(s1).toBe(s2);
+  });
+
+  it('pHashCount is reset even when toStringInternal throws', () => {
+    // Monkey-patch toStringInternal on an element to simulate a mid-serialization throw,
+    // then verify that a subsequent normal serialization still starts from p0.
+    const ns = new XNamespace('urn:test:phash-exception');
+    const bad = new XElement(ns + 'bad');
+    (bad as any).toStringInternal = () => { throw new Error('simulated'); };
+    expect(() => bad.toString()).toThrow('simulated');
+
+    // After the exception, a fresh element in the same namespace should still get p0.
+    const good = new XElement(ns + 'good');
+    expect(good.toString()).toBe("<p0:good xmlns:p0='urn:test:phash-exception' />");
+  });
+
   it('prefix collision in child does not corrupt parent element prefix', () => {
     // Parent declares xmlns:w for urn:collision-test:parent.
     // Child re-declares the same prefix w for a different namespace, triggering the collision

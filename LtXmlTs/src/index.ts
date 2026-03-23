@@ -657,11 +657,13 @@ export class XAttribute extends XObject {
     if (this.parent instanceof XElement) {
       XElement.populateNamespacePrefixInfo(this.parent);
     }
-    const result = this.toStringInternal();
-    if (this.parent instanceof XElement) {
-      XElement.cleanupAfterSerialization(this.parent);
+    try {
+      return this.toStringInternal();
+    } finally {
+      if (this.parent instanceof XElement) {
+        XElement.cleanupAfterSerialization(this.parent);
+      }
     }
-    return result;
   }
 
   public get nextAttribute(): XAttribute | null {
@@ -912,9 +914,11 @@ export class XElement extends XContainer {
 
   public toString(): string {
     XElement.populateNamespacePrefixInfo(this);
-    const result = this.toStringInternal();
-    XElement.cleanupAfterSerialization(this);
-    return result;
+    try {
+      return this.toStringInternal();
+    } finally {
+      XElement.cleanupAfterSerialization(this);
+    }
   }
 
   public static populateNamespacePrefixInfoRecurse(
@@ -1167,11 +1171,13 @@ export class XDocument extends XContainer {
     if (this.root !== null) {
       XElement.populateNamespacePrefixInfo(this.root);
     }
-    const result = this.toStringInternal();
-    if (this.root !== null) {
-      XElement.cleanupAfterSerialization(this.root);
+    try {
+      return this.toStringInternal();
+    } finally {
+      if (this.root !== null) {
+        XElement.cleanupAfterSerialization(this.root);
+      }
     }
-    return result;
   }
 }
 

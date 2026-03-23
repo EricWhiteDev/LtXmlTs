@@ -1,0 +1,77 @@
+Please examine the code in detail, and find any areas where serialization of the XML tree is incorrect.  Are there any                                                                  
+problems with the code?                
+
+ ---                                                                                                                                                                                     
+  Remaining Issues Found                                                                                                                                                                  
+                                                                                                                                                                                          
+  1. pHashCount not reset if serialization throws (bug)                                                                                                                                   
+                                                                                                                                                                                          
+  XElement.toString, XDocument.toString, and XAttribute.toString all follow this pattern:                                                                                                 
+                                                                                                                                                                                          
+  XElement.populateNamespacePrefixInfo(this);                                                                                                                                             
+  const result = this.toStringInternal();       // ← if this throws...
+  XElement.cleanupAfterSerialization(this);     // ← this never runs                                                                                                                      
+                                                                                                                                                                                          
+  cleanupAfterSerialization resets pHashCount to zero and removes generated p# namespace declarations. If toStringInternal throws for any reason, the static pHashCount is left elevated  
+  and any auto-generated xmlns:p# attributes are left dangling on the tree. The next call to toString will produce p1:…, p2:…, etc. instead of starting from p0.                          
+                                                                                                                                                                                          
+  Fix: wrap toStringInternal in try/finally in all three toString methods.                                                                                                                
+   
+  ---                                                                                                                                                                                     
+  2. xmlEscapeText over-escapes " and ' in text nodes (spec compliance)
+                                                                                                                                                                                          
+  function xmlEscapeText(value: string): string {
+    return value                                                                                                                                                                          
+      .replace(/&/g, '&amp;')                               
+      .replace(/</g, '&lt;')                                                                                                                                                              
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')  // ← unnecessary in text content                                                                                                                          
+      .replace(/'/g, '&apos;'); // ← unnecessary in text content                                                                                                                          
+  }
+                                                                                                                                                                                          
+  The XML 1.0 spec (§2.4) requires only & and < to be escaped in text content. > is only required inside ]]>. Double and single quotes have no special meaning in text nodes and do not   
+  need escaping.
+                                                                                                                                                                                          
+  new XText('say "hi"').toString()                          
+  // Current:  say &quot;hi&quot;                                                                                                                                                         
+  // Correct:  say "hi"
+                                                                                                                                                                                          
+  The output is valid XML — parsers will interpret &quot; correctly — but it's noisier than it should be and diverges from what every other XML library produces. A LINQ-to-XML consumer  
+  round-tripping text through this library will get different bytes than expected.
+                                                                                                                                                                                          
+  ---                                                       
+  3. XDeclaration.toString doesn't escape attribute values (edge case)
+                                                                      
+  public toString(): string {
+    let result = `<?xml version='${this.version}'`;                                                                                                                                       
+    if (this.encoding.length > 0) result += ` encoding='${this.encoding}'`;                                                                                                               
+    if (this.standalone.length > 0) result += ` standalone='${this.standalone}'`;                                                                                                         
+    result += '?>';                                                                                                                                                                       
+    return result;                                          
+  }                                                                                                                                                                                       
+                                                            
+  If any of the three values contain a single quote, the declaration will be malformed. In practice version, encoding, and standalone are constrained strings that won't contain quotes,  
+  but the same xmlEscapeAttrValue helper used for regular attributes should be applied here for consistency and safety.
+                                                                                                                                                                                          
+  ---                                                       
+  Non-issues confirmed
+                      
+  ┌─────────────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │                 Suspected issue                 │                                                             Verdict                                                             │   
+  ├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ XNamespace constructor caching broken           │ Not a bug. TypeScript/JS constructors that return an object reference do return that reference from new. Caching works          │   
+  │                                                 │ correctly; identity comparison === in getPrefix is safe.                                                                        │
+  ├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤   
+  │ XDocument copy constructor stealing nodes       │ Not a bug. All nodes in a document always have a non-null parent (the document itself), so the if (node.parent === null) branch │
+  │                                                 │  that reuses the original node is never reached.                                                                                │   
+  ├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ getPrefixedName returning bare local name when  │ Not an issue in the normal flow. populateNamespacePrefixInfoRecurse always adds a p# entry for unmapped element/attribute       │   
+  │ namespace unmapped                              │ namespaces before serialization proceeds.                                                                                       │   
+  ├─────────────────────────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+  │ xmlEscapeText escaping >                        │ Within spec. > may be escaped; the requirement is only strict inside ]]>, but escaping it everywhere is permitted.              │   
+  └─────────────────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘   
+   
+  ---                                                                                                                                                                                     
+  Summary: two real issues worth fixing — the missing try/finally around serialization (which leaves persistent dirty state on exception), and the over-escaping of quotes in text nodes.
+  The declaration escaping is a minor defensive hardening item.                                                                                                                           
+   

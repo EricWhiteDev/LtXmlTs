@@ -1,0 +1,4 @@
+Here is a bug:
+- pHashCount not reset if serialization throws (bug)
+
+Fix: wrap toStringInternal in try/finally in all three toString methods.      
