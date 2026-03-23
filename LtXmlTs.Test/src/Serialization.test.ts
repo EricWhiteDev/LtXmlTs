@@ -185,7 +185,9 @@ describe('toStringWithIndentation', () => {
       new XElement('child', 'hello')
     );
     expect(root.toStringWithIndentation()).toBe(
-      '<root>\n  <child>\n    hello\n  </child>\n</root>'
+`<root>
+  <child>hello</child>
+</root>`
     );
   });
 
@@ -194,7 +196,9 @@ describe('toStringWithIndentation', () => {
       new XElement('empty')
     );
     expect(root.toStringWithIndentation()).toBe(
-      '<root>\n  <empty />\n</root>'
+`<root>
+  <empty />
+</root>`
     );
   });
 
@@ -204,7 +208,10 @@ describe('toStringWithIndentation', () => {
       new XElement('root', new XElement('child'))
     );
     expect(doc.toStringWithIndentation()).toBe(
-      "<?xml version='1.0' encoding='utf-8'?>\n<root>\n  <child />\n</root>"
+`<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <child />
+</root>`
     );
   });
 
@@ -213,7 +220,9 @@ describe('toStringWithIndentation', () => {
       new XComment('hello')
     );
     expect(root.toStringWithIndentation()).toBe(
-      '<root>\n  <!--hello-->\n</root>'
+`<root>
+  <!--hello-->
+</root>`
     );
   });
 
@@ -222,12 +231,71 @@ describe('toStringWithIndentation', () => {
       new XProcessingInstruction('xml-stylesheet', 'type="text/css"')
     );
     expect(root.toStringWithIndentation()).toBe(
-      '<root>\n  <?xml-stylesheet type="text/css"?>\n</root>'
+`<root>
+  <?xml-stylesheet type="text/css"?>
+</root>`
     );
   });
 
   it('calling toStringWithIndentation() twice produces the same result', () => {
     const root = new XElement('root', new XElement('child'));
     expect(root.toStringWithIndentation()).toBe(root.toStringWithIndentation());
+  });
+
+  it('text-only element is not split across lines', () => {
+    const root = new XElement('root',
+      new XElement('a', 'first'),
+      new XElement('b', 'second')
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root>
+  <a>first</a>
+  <b>second</b>
+</root>`
+    );
+  });
+
+  it('mixed-content element is kept compact', () => {
+    const root = new XElement('root',
+      new XElement('p',
+        new XText('Hello '),
+        new XElement('b', 'world')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root>
+  <p>Hello <b>world</b></p>
+</root>`
+    );
+  });
+
+  it('deeply nested text-only elements are each on one line', () => {
+    const root = new XElement('root',
+      new XElement('section',
+        new XElement('para', 'text')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root>
+  <section>
+    <para>text</para>
+  </section>
+</root>`
+    );
+  });
+
+  it('mixed-content subtree is emitted fully compact', () => {
+    const root = new XElement('root',
+      new XElement('outer',
+        new XText('before'),
+        new XElement('inner', 'inside'),
+        new XText('after')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root>
+  <outer>before<inner>inside</inner>after</outer>
+</root>`
+    );
   });
 });

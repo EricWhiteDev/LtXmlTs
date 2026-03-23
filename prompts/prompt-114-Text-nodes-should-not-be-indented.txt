@@ -1,0 +1,9 @@
+There is a bug with serializing with indentation:
+- When there is an XElement that contains only text nodes, the text should not be indented, and the textual content of the XElement object should not be modified.
+- When an element contains mixed content, i.e. text nodes intersperced with elements, the mixed content should not have its white space altered; it should not be indented.
+
+Write unit tests.
+
+alter the tests in Serialization.test.ts - when comparing the output against the expected output, use template literals, rather than embedding the newline character in a single line string. 
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
