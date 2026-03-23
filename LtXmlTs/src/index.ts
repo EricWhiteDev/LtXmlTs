@@ -219,6 +219,33 @@ function xmlEscapeAttrValue(value: string): string {
     .replace(/'/g, '&apos;');
 }
 
+function indentXml(xml: string): string {
+  const INDENT = '  ';
+  const TOKEN_RE =
+    /<!\[CDATA\[[\s\S]*?\]\]>|<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/[^>]+>|<[^>]+\/>|<[^>]+>|[^<]+/g;
+  const lines: string[] = [];
+  let level = 0;
+  let match: RegExpExecArray | null;
+  while ((match = TOKEN_RE.exec(xml)) !== null) {
+    const token = match[0].trim();
+    if (!token) continue;
+    if (token.startsWith('</')) {
+      level--;
+      lines.push(INDENT.repeat(level) + token);
+    } else if (token.startsWith('<?') || token.startsWith('<!--') || token.startsWith('<![CDATA[')) {
+      lines.push(INDENT.repeat(level) + token);
+    } else if (token.endsWith('/>')) {
+      lines.push(INDENT.repeat(level) + token);
+    } else if (token.startsWith('<')) {
+      lines.push(INDENT.repeat(level) + token);
+      level++;
+    } else {
+      lines.push(INDENT.repeat(level) + token);
+    }
+  }
+  return lines.join('\n');
+}
+
 export class XText extends XNode {
   public readonly value: string;
 
@@ -925,6 +952,10 @@ export class XElement extends XContainer {
     }
   }
 
+  public toStringWithIndentation(): string {
+    return indentXml(this.toString());
+  }
+
   public static populateNamespacePrefixInfoRecurse(
     namespacePrefixInfo: NamespacePrefixInfo,
     element: XElement
@@ -1183,6 +1214,10 @@ export class XDocument extends XContainer {
         XElement.cleanupAfterSerialization(this.root);
       }
     }
+  }
+
+  public toStringWithIndentation(): string {
+    return indentXml(this.toString());
   }
 }
 

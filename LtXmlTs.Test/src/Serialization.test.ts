@@ -178,3 +178,56 @@ describe('Default namespace serialization', () => {
     expect(root.toString()).toBe(root.toString());
   });
 });
+
+describe('toStringWithIndentation', () => {
+  it('formats a nested element tree with 2-space indentation', () => {
+    const root = new XElement('root',
+      new XElement('child', 'hello')
+    );
+    expect(root.toStringWithIndentation()).toBe(
+      '<root>\n  <child>\n    hello\n  </child>\n</root>'
+    );
+  });
+
+  it('formats a self-closing element on one line', () => {
+    const root = new XElement('root',
+      new XElement('empty')
+    );
+    expect(root.toStringWithIndentation()).toBe(
+      '<root>\n  <empty />\n</root>'
+    );
+  });
+
+  it('formats XDocument with declaration', () => {
+    const doc = new XDocument(
+      new XDeclaration('1.0', 'utf-8', ''),
+      new XElement('root', new XElement('child'))
+    );
+    expect(doc.toStringWithIndentation()).toBe(
+      "<?xml version='1.0' encoding='utf-8'?>\n<root>\n  <child />\n</root>"
+    );
+  });
+
+  it('formats a comment node', () => {
+    const root = new XElement('root',
+      new XComment('hello')
+    );
+    expect(root.toStringWithIndentation()).toBe(
+      '<root>\n  <!--hello-->\n</root>'
+    );
+  });
+
+  it('formats a processing instruction', () => {
+    const root = new XElement('root',
+      new XProcessingInstruction('xml-stylesheet', 'type="text/css"')
+    );
+    expect(root.toStringWithIndentation()).toBe(
+      '<root>\n  <?xml-stylesheet type="text/css"?>\n</root>'
+    );
+  });
+
+  it('calling toStringWithIndentation() twice produces the same result', () => {
+    const root = new XElement('root', new XElement('child'));
+    expect(root.toStringWithIndentation()).toBe(root.toStringWithIndentation());
+  });
+});
