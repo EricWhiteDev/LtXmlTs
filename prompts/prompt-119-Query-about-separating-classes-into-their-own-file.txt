@@ -1,0 +1,27 @@
+Should I separate each of the classes in LtXmlTs into their own source file? 
+
+--- answer
+
+The file is 1466 lines with ~17 classes — manageable, but splitting has real trade-offs worth weighing.                                                                                 
+                              
+  Argument for splitting:                                                                                                                                                                 
+  - Easier navigation (each class in its own named file)                                                                                                                                  
+  - Clearer separation of concerns                                                                                                                                                        
+  - Standard pattern for TypeScript libraries                                                                                                                                             
+                                                                                                                                                                                          
+  Argument against (or for caution):
+  - The inheritance chain creates tight coupling: XObject → XNode → XContainer → XElement, with XAttribute, XName, XNamespace, NamespacePrefixInfo all interdependent. Splitting would    
+  create a complex import graph with potential circular dependency issues.                                                                                                                
+  - The private helper functions (xmlEscapeText, xmlEscapeAttrValue, indentXml) are shared across classes — they'd need a shared utilities file.                                          
+  - The compiled/published output is the same either way — consumers see ltxmlts, not the source structure.                                                                               
+  - 1466 lines is still navigable. TypeScript IDEs handle "go to definition" well regardless of file layout.                                                                              
+                                                                                                                                                                                          
+  My recommendation: not yet. The coupling between classes is high enough that splitting now would add import boilerplate without much practical benefit. If the file grows past          
+  ~2500–3000 lines, or if you start adding features that are genuinely independent (e.g., a parser, LINQ query operators), that's a natural split point.                                  
+                                                                                                                                                                                          
+  If you do split eventually, the natural groupings would be:                                                                                                                             
+  - XName.ts + XNamespace.ts (plus cache classes)                                                                                                                                         
+  - XObject.ts, XNode.ts, XContainer.ts (base hierarchy)                                                                                                                                  
+  - XText.ts, XComment.ts, XCData.ts, XEntity.ts, XProcessingInstruction.ts                                                                                                               
+  - XAttribute.ts, XElement.ts, XDocument.ts, XDeclaration.ts                                                                                                                             
+  - utils.ts (escape helpers, indentXml)                            
