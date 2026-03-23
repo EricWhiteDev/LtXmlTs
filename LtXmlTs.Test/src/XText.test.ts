@@ -62,13 +62,13 @@ describe('XText.toString', () => {
   it('escapes greater-than', () => {
     expect(new XText('a > b').toString()).toBe('a &gt; b');
   });
-  it('escapes double quote', () => {
-    expect(new XText('say "hi"').toString()).toBe('say &quot;hi&quot;');
+  it('does not escape double quote', () => {
+    expect(new XText('say "hi"').toString()).toBe('say "hi"');
   });
-  it('escapes single quote', () => {
-    expect(new XText("it's").toString()).toBe('it&apos;s');
+  it('does not escape single quote', () => {
+    expect(new XText("it's").toString()).toBe("it's");
   });
   it('escapes multiple special characters in one value', () => {
-    expect(new XText('<a & "b">').toString()).toBe('&lt;a &amp; &quot;b&quot;&gt;');
+    expect(new XText('<a & "b">').toString()).toBe('&lt;a &amp; "b"&gt;');
   });
 });

@@ -1,0 +1,7 @@
+Here is a bug:
+- xmlEscapeText over-escapes " and ' in text nodes (spec compliance)
+-  The XML 1.0 spec (§2.4) requires only & and < to be escaped in text content. > is only required inside ]]>. Double and single quotes have no special meaning in text nodes and do not need escaping.
+- The output is valid XML — parsers will interpret &quot; correctly — but it's noisier than it should be and diverges from what every other XML library produces. A LINQ-to-XML consumer round-tripping text through this library will get different bytes than expected.
+- Fix this bug.
+
+Write unit tests.
