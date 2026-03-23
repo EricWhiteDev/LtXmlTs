@@ -1,0 +1,2 @@
+There are a number of tests in Serialization.test.ts that test the method toStringWithIndentation.
+Generate corresponding tests for every test that exercises toStringWithIndentation - these new tests use toString, rather than toStringWithIndentation.

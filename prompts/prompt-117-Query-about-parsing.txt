@@ -1,0 +1,24 @@
+Would it be better for claude to write a streaming parser from scratch, or to use sax-js?
+
+-- here is the answer:
+
+Neither option is clearly better — it depends on what you value most. Here are the key considerations for this specific project:                                                        
+                                                                                                                                                                                          
+  Against sax-js:                                                                                                                                                                         
+  - Breaks the zero-dependency philosophy (significant for a library)
+  - sax-js is a CommonJS module — ESM interop in an "type": "module" package is awkward                                                                                                   
+  - It's largely unmaintained (no meaningful commits in years)                         
+  - You still need a full translation layer to build XElement/XText/etc. from the SAX events, so you don't save much code                                                                 
+  - Adds ~28KB for capabilities you don't need (streaming gigabyte files, SAX event model)                                                                                                
+                                                                                                                                                                                          
+  Against writing a streaming parser from scratch:                                                                                                                                        
+  - XML is deceptively hard — character encoding, entity expansion, external DTD references, namespace resolution on re-read all have sharp edges                                         
+  - "Streaming" specifically adds complexity around partial token state across chunks                                                                                                     
+  - Maintenance burden is entirely yours                                                                                                                                                  
+                                                                                                                                                                                          
+  The better framing:                                       
+  LtXmlTs doesn't actually need a streaming parser. It needs a parser that reads a complete XML string and returns an XDocument. That's a batch pull parser, which is substantially       
+  simpler than a streaming one. The tokenizer regex already in indentXml is essentially the first pass of such a parser.                                                                  
+                                                                                                                                                                                          
+  A scoped batch parser that only handles what LtXmlTs can serialize (elements, attributes, text, comments, CDATA, PIs, declarations, namespaces) — nothing more — is probably 300–400    
+  lines of TypeScript and stays zero-dependency. That's the approach I'd recommend if parsing is needed.
