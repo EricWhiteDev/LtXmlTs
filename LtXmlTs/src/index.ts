@@ -1256,7 +1256,9 @@ export class NamespacePrefixInfo {
   ) {
     if (defaultNamespaceOrOther instanceof NamespacePrefixInfo) {
       this.defaultNamespace = defaultNamespaceOrOther.defaultNamespace;
-      this.namespacePrefixPairs = [...defaultNamespaceOrOther.namespacePrefixPairs];
+      this.namespacePrefixPairs = defaultNamespaceOrOther.namespacePrefixPairs.map(
+        p => new NamespacePrefixPair(p.namespace, p.prefix)
+      );
     } else {
       this.defaultNamespace = defaultNamespaceOrOther;
       this.namespacePrefixPairs = namespacePrefixPairs!;

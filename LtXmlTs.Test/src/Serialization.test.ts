@@ -94,4 +94,22 @@ describe('Serialization', () => {
     expect(first).toBe(second);
   });
 
+  it('prefix collision in child does not corrupt parent element prefix', () => {
+    // Parent declares xmlns:w for urn:collision-test:parent.
+    // Child re-declares the same prefix w for a different namespace, triggering the collision
+    // path in populateNamespacePrefixInfoRecurse. Before the fix, the shallow-copied
+    // NamespacePrefixPair was shared, so mutating its prefix bled into the parent's info,
+    // causing the parent element to serialize with the wrong prefix.
+    const urnParent = new XNamespace('urn:collision-test:parent');
+    const root = new XElement(urnParent + 'root',
+      new XAttribute(XNamespace.xmlns + 'w', 'urn:collision-test:parent'),
+      new XElement('child',
+        new XAttribute(XNamespace.xmlns + 'w', 'urn:collision-test:child')
+      )
+    );
+    expect(root.toString()).toBe(
+      "<w:root xmlns:w='urn:collision-test:parent'><child xmlns:w='urn:collision-test:child' /></w:root>"
+    );
+  });
+
 });

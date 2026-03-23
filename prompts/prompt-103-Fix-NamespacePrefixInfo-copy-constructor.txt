@@ -1,0 +1,12 @@
+Fix the following bug:
+- Shallow copy of NamespacePrefixPair objects causes prefix mutation to bleed into parent.
+- The copy constructor needs to copy the pair objects themselves.
+
+Like this:
+
+this.namespacePrefixPairs = other.namespacePrefixPairs.map(p => new NamespacePrefixPair(p.namespace, p.prefix));
+
+Make unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
+
