@@ -1,0 +1,8 @@
+Here is a bug:
+- XDeclaration.toString doesn't escape attribute values (edge case)
+- If any of the three values contain a single quote, the declaration will be malformed. In practice version, encoding, and standalone are constrained strings that won't contain quotes,  
+  but the same xmlEscapeAttrValue helper used for regular attributes should be applied here for consistency and safety.
+
+Fix this bug.
+
+Write unit tests.

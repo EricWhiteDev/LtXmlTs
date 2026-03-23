@@ -66,6 +66,21 @@ describe('XDeclaration.toString', () => {
     expect(new XDeclaration('1.0', 'utf-8', '').toString())
       .toBe("<?xml version='1.0' encoding='utf-8'?>");
   });
+
+  it('escapes single quote in version', () => {
+    expect(new XDeclaration("1.0'x", '', '').toString())
+      .toBe("<?xml version='1.0&apos;x'?>");
+  });
+
+  it('escapes single quote in encoding', () => {
+    expect(new XDeclaration('1.0', "utf-8'bad", '').toString())
+      .toBe("<?xml version='1.0' encoding='utf-8&apos;bad'?>");
+  });
+
+  it('escapes ampersand in encoding', () => {
+    expect(new XDeclaration('1.0', 'utf&8', '').toString())
+      .toBe("<?xml version='1.0' encoding='utf&amp;8'?>");
+  });
 });
 
 describe('XDeclaration.equals', () => {

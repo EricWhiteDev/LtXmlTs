@@ -1016,9 +1016,9 @@ export class XDeclaration {
   }
 
   public toString(): string {
-    let result = `<?xml version='${this.version}'`;
-    if (this.encoding.length > 0) result += ` encoding='${this.encoding}'`;
-    if (this.standalone.length > 0) result += ` standalone='${this.standalone}'`;
+    let result = `<?xml version='${xmlEscapeAttrValue(this.version)}'`;
+    if (this.encoding.length > 0) result += ` encoding='${xmlEscapeAttrValue(this.encoding)}'`;
+    if (this.standalone.length > 0) result += ` standalone='${xmlEscapeAttrValue(this.standalone)}'`;
     result += '?>';
     return result;
   }
