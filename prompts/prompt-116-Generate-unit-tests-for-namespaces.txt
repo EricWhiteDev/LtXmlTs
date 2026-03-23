@@ -1,0 +1,6 @@
+Generate 40 random serialization unit tests that focus on indentation and namespaces, to go into Serialization.test.ts
+- Include nested elements in various namespaces with various prefixes
+- Include deeply nested elements in various namespaces with various prefixes
+- Include attributes at various levels of indentation, in various namespaces.  Sometimes the attributes should be in no namespace.  Sometimes in a namespace with a given prefix.  Sometimes with no explicit prefix, so p# prefixes should be generated.
+- Include mixed content at various points, in various namespaces.
+- Include tests where elements are in the default namespace. Include tests where elements at a deeper level are in the default namespace.  Include tests where elements at a deep level are in no namespace.
