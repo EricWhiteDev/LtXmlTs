@@ -298,4 +298,194 @@ describe('toStringWithIndentation', () => {
 </root>`
     );
   });
+
+  it('attributes on elements at every nesting level', () => {
+    const root = new XElement('root', new XAttribute('lang', 'en'),
+      new XElement('section', new XAttribute('id', '1'),
+        new XElement('para', new XAttribute('class', 'intro'), 'Hello')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root lang='en'>
+  <section id='1'>
+    <para class='intro'>Hello</para>
+  </section>
+</root>`
+    );
+  });
+
+  it('attributes on deep element with self-closing leaf', () => {
+    const root = new XElement('root', new XAttribute('id', '1'),
+      new XElement('item', new XAttribute('type', 'widget'), new XAttribute('active', 'true'),
+        new XElement('name', 'foo')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root id='1'>
+  <item type='widget' active='true'>
+    <name>foo</name>
+  </item>
+</root>`
+    );
+  });
+
+  it('four levels of element-only nesting', () => {
+    const root = new XElement('a',
+      new XElement('b',
+        new XElement('c',
+          new XElement('d')
+        )
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<a>
+  <b>
+    <c>
+      <d />
+    </c>
+  </b>
+</a>`
+    );
+  });
+
+  it('five levels deep with attribute on innermost element', () => {
+    const root = new XElement('l1',
+      new XElement('l2',
+        new XElement('l3',
+          new XElement('l4',
+            new XElement('l5', new XAttribute('x', 'y'))
+          )
+        )
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<l1>
+  <l2>
+    <l3>
+      <l4>
+        <l5 x='y' />
+      </l4>
+    </l3>
+  </l2>
+</l1>`
+    );
+  });
+
+  it('comments at root level and nested level', () => {
+    const root = new XElement('root',
+      new XComment('top level comment'),
+      new XElement('child',
+        new XComment('nested comment'),
+        new XElement('leaf')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root>
+  <!--top level comment-->
+  <child>
+    <!--nested comment-->
+    <leaf />
+  </child>
+</root>`
+    );
+  });
+
+  it('processing instructions at root level and nested level', () => {
+    const root = new XElement('root',
+      new XProcessingInstruction('app', 'init'),
+      new XElement('child',
+        new XProcessingInstruction('nested', 'value'),
+        new XElement('leaf', 'content')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root>
+  <?app init?>
+  <child>
+    <?nested value?>
+    <leaf>content</leaf>
+  </child>
+</root>`
+    );
+  });
+
+  it('mixed content at child level alongside element-only siblings', () => {
+    const root = new XElement('article',
+      new XElement('p',
+        new XText('Text with '),
+        new XElement('em', 'emphasis'),
+        new XText(' inline')
+      ),
+      new XElement('aside',
+        new XElement('note', 'side note')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<article>
+  <p>Text with <em>emphasis</em> inline</p>
+  <aside>
+    <note>side note</note>
+  </aside>
+</article>`
+    );
+  });
+
+  it('mixed content deeply nested inside element-only ancestors', () => {
+    const root = new XElement('root',
+      new XElement('outer',
+        new XElement('inner',
+          new XText('text with '),
+          new XElement('b', 'bold')
+        )
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root>
+  <outer>
+    <inner>text with <b>bold</b></inner>
+  </outer>
+</root>`
+    );
+  });
+
+  it('namespace-prefixed elements at multiple nesting levels', () => {
+    const w = new XNamespace('urn:test');
+    const root = new XElement(w + 'root', new XAttribute(XNamespace.xmlns + 'w', 'urn:test'),
+      new XElement(w + 'child',
+        new XElement(w + 'leaf')
+      )
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<w:root xmlns:w='urn:test'>
+  <w:child>
+    <w:leaf />
+  </w:child>
+</w:root>`
+    );
+  });
+
+  it('mixed text-only and element-only siblings at multiple depths', () => {
+    const root = new XElement('root',
+      new XElement('header', 'Title'),
+      new XElement('body',
+        new XElement('section',
+          new XElement('p', 'Paragraph one'),
+          new XElement('p', 'Paragraph two')
+        )
+      ),
+      new XElement('footer', 'End')
+    );
+    expect(root.toStringWithIndentation()).toBe(
+`<root>
+  <header>Title</header>
+  <body>
+    <section>
+      <p>Paragraph one</p>
+      <p>Paragraph two</p>
+    </section>
+  </body>
+  <footer>End</footer>
+</root>`
+    );
+  });
 });

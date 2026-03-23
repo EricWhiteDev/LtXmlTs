@@ -1,0 +1,5 @@
+Generate 10 random serialization unit tests that focus on indentation, to go into Serialization.test.ts
+- Include nested elements
+- Include deeply nested elements
+- Include attributes at various levels of indentation
+- Include mixed content at various points
