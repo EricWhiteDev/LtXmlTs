@@ -951,7 +951,8 @@ export class XElement extends XContainer {
       }
     }
     if (element.name.namespace !== XNamespace.none) {
-      const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === element.name.namespace);
+      const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === element.name.namespace)
+        || element.name.namespace === info.defaultNamespace;
       if (!alreadyMapped) {
         const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
         info.namespacePrefixPairs.push(new NamespacePrefixPair(element.name.namespace, pPrefix));

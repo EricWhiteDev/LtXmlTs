@@ -137,3 +137,44 @@ describe('Serialization', () => {
   });
 
 });
+
+describe('Default namespace serialization', () => {
+  it('element in its own declared default namespace renders without prefix', () => {
+    const ns = new XNamespace('urn:default:self');
+    const root = new XElement(ns + 'root',
+      new XAttribute(XNamespace.xmlns + 'xmlns', 'urn:default:self')
+    );
+    expect(root.toString()).toBe("<root xmlns='urn:default:self' />");
+  });
+
+  it('child element in inherited default namespace renders without prefix', () => {
+    const ns = new XNamespace('urn:default:child');
+    const root = new XElement(ns + 'root',
+      new XAttribute(XNamespace.xmlns + 'xmlns', 'urn:default:child'),
+      new XElement(ns + 'child')
+    );
+    expect(root.toString()).toBe("<root xmlns='urn:default:child'><child /></root>");
+  });
+
+  it('element not in default namespace still gets a p# prefix', () => {
+    const defNs = new XNamespace('urn:default:mixed-def');
+    const otherNs = new XNamespace('urn:default:mixed-other');
+    const root = new XElement(defNs + 'root',
+      new XAttribute(XNamespace.xmlns + 'xmlns', 'urn:default:mixed-def'),
+      new XElement(otherNs + 'child')
+    );
+    // root is in default ns (no prefix); child is in a different ns (gets p#)
+    expect(root.toString()).toBe(
+      "<root xmlns='urn:default:mixed-def'><p0:child xmlns:p0='urn:default:mixed-other' /></root>"
+    );
+  });
+
+  it('serializing a default-namespace tree twice produces identical output', () => {
+    const ns = new XNamespace('urn:default:idempotent');
+    const root = new XElement(ns + 'root',
+      new XAttribute(XNamespace.xmlns + 'xmlns', 'urn:default:idempotent'),
+      new XElement(ns + 'child')
+    );
+    expect(root.toString()).toBe(root.toString());
+  });
+});

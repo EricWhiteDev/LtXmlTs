@@ -1,0 +1,63 @@
+Please examine the code in detail, and find any areas where serialization of the XML tree is incorrect.  Are there any problems with the code?                                                                                                                                                                   
+----
+
+ Remaining Issues Found
+
+  1. Default namespace not consulted when auto-generating p# prefixes (bug)
+
+  Lines 944 and 954 — populateNamespacePrefixInfoRecurse has two places that decide whether to auto-generate a p# prefix declaration. Both check only namespacePrefixPairs; neither checks
+   info.defaultNamespace:
+
+  // Line 944 — for attribute namespaces:
+  const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === attr.name.namespace);
+
+  // Line 954 — for element name namespace:
+  const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === element.name.namespace);
+
+  When an element's namespace matches the default namespace declared by xmlns='...' on an ancestor, info.defaultNamespace holds that namespace but it is never checked. The code sees no
+  matching pair, sets alreadyMapped = false, and generates a redundant xmlns:p0='...' declaration and prefix.
+
+  Concrete example:
+  const ns = new XNamespace('urn:example');
+  const root = new XElement(ns + 'root',
+    new XAttribute(XNamespace.xmlns + 'xmlns', 'urn:example')
+  );
+  root.toString();
+  // Current:  <p0:root xmlns='urn:example' xmlns:p0='urn:example' />
+  // Correct:  <root xmlns='urn:example' />
+
+  The fix is to add || element.name.namespace === info.defaultNamespace to the alreadyMapped check on line 954 (element names). Note that line 944 (attribute namespaces) does not need a
+  similar fix — XML attributes cannot be in the default namespace; unprefixed attributes are always in no namespace, and the XNamespace.none guard on line 943 already skips them.
+
+  ---
+  2. cleanupAfterSerialization does not reset namespacePrefixInfo (latent issue)
+
+  After serialization, every element in the tree still holds its populated namespacePrefixInfo. The cleanup only removes auto-generated p# attributes and resets pHashCount — it does not
+  null out element.namespacePrefixInfo. In the normal flow this is harmless because the next toString() call re-populates it. However, it means elements silently expose stale namespace
+  context between serializations, which could be misleading if code accesses element.namespacePrefixInfo directly outside of a serialization pass.
+
+  ---
+  3. XAttribute.value is mutable (design principle)
+
+  Line 592: public value: string; — should be public readonly value: string; per the project rule that public fields are readonly by default.
+
+  ---
+  4. pHashNamespace is public (internal detail leak)
+
+  Line 593: public pHashNamespace: boolean = false; — this flag is an internal serialization marker. Any user who accidentally sets it to true will have their attribute silently deleted
+  by cleanupAfterSerialization. It has no place in the public API.
+
+  ---
+  Priority summary:
+
+  ┌────────────────────────────────────────────────────────────┬────────────────────┬──────────┐
+  │                           Issue                            │        Kind        │ Severity │
+  ├────────────────────────────────────────────────────────────┼────────────────────┼──────────┤
+  │ Default namespace ignored when auto-generating p# prefixes │ Serialization bug  │ High     │
+  ├────────────────────────────────────────────────────────────┼────────────────────┼──────────┤
+  │ namespacePrefixInfo not cleared after serialization        │ Latent / hygiene   │ Low      │
+  ├────────────────────────────────────────────────────────────┼────────────────────┼──────────┤
+  │ XAttribute.value mutable                                   │ Design principle   │ Low      │
+  ├────────────────────────────────────────────────────────────┼────────────────────┼──────────┤
+  │ pHashNamespace public                                      │ API leak / footgun │ Low      │
+
