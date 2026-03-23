@@ -1,0 +1,9 @@
+I want an option to serialize with indentation.
+
+When running on node.js, require JSDOM.  When running in the browser, require DOMDocument.
+
+Add a new method to each class, toStringWithIndentation(). This method calls the toString() method to get the serialization of the XML tree. Then after getting the serialization, use JSDOM to parse the resulting string, and then convert that string to XML that is formatted, with indentation.  Then return the formatted XML.
+
+Write unit tests.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
