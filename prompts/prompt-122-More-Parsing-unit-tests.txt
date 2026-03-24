@@ -1,0 +1,5 @@
+In Serialization.test.ts, there are many tests that generate XML text through serialization.
+
+For each test, get the produced XML from the test, and create a new set of unit tests that put the parser through its paces. Each of the unit tests should do the following: Assign the XML to a string using a template literal, named originalXml.  Then parse the string using either XDocument.parse, or XElement.parse.  After materializing an XML tree using the parse method, then serialize again into another string, named roundTrippedXml.  Then compare the originalXml to roundTrippedXml.  They should be equal for the test to pass.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
