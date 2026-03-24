@@ -1,0 +1,13 @@
+Write documentation for the public classes and public members of LtXmlTs.
+
+Write a separate DOCX for each class. Name the DOCX with the name of the class, with the docx extension.
+
+Write an overview of the class.
+
+For each public member in the class:
+- Write a description of the member.
+- Write information about the signature of the member, including its parameters, and what it returns, if appropriate.
+- Note any special semantics about the member.
+- Write an example in TypeScript.
+
+Put the various DOCX files in the docs directory in the LtXmlTs project.
