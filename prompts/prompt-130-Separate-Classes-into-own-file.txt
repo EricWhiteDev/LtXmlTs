@@ -1,0 +1,7 @@
+Separate each of the classes in LtXmlTs into their own source file.
+
+Some functionality will probably need to be split out into some utility classes.
+
+Unit tests should still run.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
