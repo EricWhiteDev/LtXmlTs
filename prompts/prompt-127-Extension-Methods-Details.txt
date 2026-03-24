@@ -1,0 +1,127 @@
+     Plan: Implement XSequence and Standalone Extension Functions
+
+     Context
+
+     LINQ to XML's System.Xml.Linq.Extensions class provides methods that operate on sequences of XML objects, flattening results across all items. LtXmlTs has the individual instance
+     methods (.ancestors(), .descendants(), etc.) but no way to call them across an array and get a flat result back. This implements that missing layer via a fluent XSequence<T> wrapper
+      class and standalone exported functions.
+
+     New Files
+
+     - LtXmlTs/src/XSequence.ts — XSequence<T> class + xseq() factory + standalone functions
+     - LtXmlTs.Test/src/XSequence.test.ts — tests
+
+     Modified Files
+
+     - LtXmlTs/src/index.ts — add exports for XSequence, xseq, and all standalone functions
+
+     ---
+     XSequence Design (LtXmlTs/src/XSequence.ts)
+
+     T extends XNode | XAttribute
+
+     Constructor & escape hatch
+
+     constructor(private readonly items: T[]) {}
+     toArray(): T[]
+     [Symbol.iterator](): Iterator<T>   // makes it iterable
+
+     Methods returning XSequence
+
+     All flatMap over items, filtering to XElement where needed:
+     - ancestors(name?: XName | string): XSequence<XElement>
+     — items must be XNode; calls item.ancestors(name)
+     - ancestorsAndSelf(name?: XName | string): XSequence<XElement>
+     — items must be XElement; calls item.ancestorsAndSelf(name)
+     - descendants(name?: XName | string): XSequence<XElement>
+     — items must be XElement; calls item.descendants(name)
+     - descendantsAndSelf(name?: XName | string): XSequence<XElement>
+     — items must be XElement; calls item.descendantsAndSelf(name)
+     - elements(name?: XName | string): XSequence<XElement>
+     — items must be XElement (or XContainer); calls item.elements(name)
+
+     Methods returning XSequence
+
+     - descendantNodes(): XSequence<XNode>
+     — items must be XElement; calls item.descendantNodes()
+     - nodes(): XSequence<XNode>
+     — items must be XElement; calls item.nodes()
+
+     Methods returning XSequence
+
+     - attributes(name?: XName | string): XSequence<XAttribute>
+     — items must be XElement; calls item.attributes(name)
+
+     Utility methods
+
+     - inDocumentOrder(): XSequence<T>
+     Walk up from first item to its root, then pre-order traversal to assign position indices; sort items by position. Algorithm:
+       a. Find root: walk .parent until null
+       b. Pre-order walk of root's subtree, push each node into an ordered array
+       c. Build Map<XNode|XAttribute, number> of positions (for attributes, record them while visiting their parent element)
+       d. Sort [...this.items] by position map value
+     - remove(): void
+     Snapshot items array first, then call .remove() on each:
+     const snap = [...this.items]; for (const item of snap) item.remove();
+
+     Factory function
+
+     export function xseq<T extends XNode | XAttribute>(items: T[]): XSequence<T>
+
+     ---
+     Standalone Functions (XSequence.ts, exported)
+
+     Thin wrappers — each delegates to xseq(...).method().toArray() or .remove():
+
+     export function ancestors(nodes: XNode[], name?: XName | string): XElement[]
+     export function ancestorsAndSelf(elements: XElement[], name?: XName | string): XElement[]
+     export function attributes(elements: XElement[], name?: XName | string): XAttribute[]
+     export function descendants(elements: XElement[], name?: XName | string): XElement[]
+     export function descendantsAndSelf(elements: XElement[], name?: XName | string): XElement[]
+     export function descendantNodes(elements: XElement[]): XNode[]
+     export function elements(nodes: XNode[], name?: XName | string): XElement[]
+     export function nodes(elements: XElement[]): XNode[]
+     export function inDocumentOrder<T extends XNode | XAttribute>(items: T[]): T[]
+     export function remove(items: Array<XNode | XAttribute>): void
+
+     ---
+     index.ts additions
+
+     export { XSequence, xseq, ancestors, ancestorsAndSelf, attributes,
+              descendants, descendantsAndSelf, descendantNodes, elements,
+              nodes, inDocumentOrder, remove } from './XSequence.js';
+
+     ---
+     Test coverage (XSequence.test.ts)
+
+     Describe blocks:
+     - xseq() factory — wraps array, iterable, toArray round-trips
+     - XSequence.ancestors — empty seq, single element, multiple elements, with name filter
+     - XSequence.ancestorsAndSelf — same shape
+     - XSequence.descendants — flat result across multiple roots, name filter
+     - XSequence.descendantsAndSelf — includes self
+     - XSequence.descendantNodes — includes text/comment nodes
+     - XSequence.elements — child elements only, name filter
+     - XSequence.nodes — all child node types
+     - XSequence.attributes — across multiple elements, name filter
+     - XSequence.inDocumentOrder — scrambled nodes sorted correctly
+     - XSequence.remove (nodes) — safe removal from parent
+     - XSequence.remove (attributes) — safe removal from parent element
+     - Standalone functions — one smoke test each confirming they match the XSequence result
+
+     ---
+     Imports needed in XSequence.ts
+
+     import { XNode } from './XNode.js';
+     import { XElement } from './XElement.js';
+     import { XAttribute } from './XAttribute.js';
+     import { XContainer } from './XContainer.js';
+     import { XName } from './XName.js';
+     import type { XObject } from './XObject.js';
+
+     ---
+     Verification
+
+     cd /Users/ericwhite/LtXmlTs/LtXmlTs.Test && npm run test
+
+     All existing 1021 tests continue to pass; new XSequence tests also pass.

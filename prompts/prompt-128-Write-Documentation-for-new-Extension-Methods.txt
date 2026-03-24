@@ -1,0 +1,12 @@
+Write documentation for the extension methods implemented using XSequence, xseq
+
+Write an overview of the extension methods.
+
+For each extension method:
+- Write a description of the method.
+- Write information about the signature of the method, including its parameters, and what it returns.
+- If documenting the remove methods, include details about snapshot semantics.
+- Write an example in TypeScript.
+- If the extension method returns an XSequence, show how to retrieve the array of XNode, XElement, or XAttribute classes, as that information is foundational to using the extension methods.
+
+Generate a DOCX that contains the documentation.  Put the DOCX in the docs directory in the LtXmlTs project.

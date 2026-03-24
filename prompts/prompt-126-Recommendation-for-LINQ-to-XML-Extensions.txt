@@ -1,3 +1,138 @@
  There are a number of extension methods in the System.Xml.Linq.Extensions class. They operate on sequences (IEnumerable<T>) of XML objects, enabling LINQ queries to traverse and manipulate XML trees.
 
  Do some research and make some recommendations about how to implement corresponding functionality in the LtXmlTs library?
+
+ ----
+
+ ⏺ Here's my analysis and recommendations:
+
+  What the extension methods do
+
+  In C#, System.Xml.Linq.Extensions contains static methods that operate on sequences (IEnumerable<T>) of XML objects, and they flatten results across all items in the sequence. For
+  example:
+
+  // Gets ALL descendants of ALL elements in the sequence — flat
+  doc.Descendants("w:p").Elements("w:r").Attributes("id").Remove();
+
+  What LtXmlTs already has
+
+  The instance methods already exist on individual objects:
+
+  ┌───────────────────────────────┬──────────────┐
+  │      Already on instance      │   Returns    │
+  ├───────────────────────────────┼──────────────┤
+  │ xElement.ancestors()          │ XElement[]   │
+  ├───────────────────────────────┼──────────────┤
+  │ xElement.ancestorsAndSelf()   │ XElement[]   │
+  ├───────────────────────────────┼──────────────┤
+  │ xElement.descendants()        │ XElement[]   │
+  ├───────────────────────────────┼──────────────┤
+  │ xElement.descendantNodes()    │ XNode[]      │
+  ├───────────────────────────────┼──────────────┤
+  │ xElement.descendantsAndSelf() │ XElement[]   │
+  ├───────────────────────────────┼──────────────┤
+  │ xElement.elements()           │ XElement[]   │
+  ├───────────────────────────────┼──────────────┤
+  │ xElement.nodes()              │ XNode[]      │
+  ├───────────────────────────────┼──────────────┤
+  │ xElement.attributes()         │ XAttribute[] │
+  ├───────────────────────────────┼──────────────┤
+  │ xNode.remove()                │ void         │
+  ├───────────────────────────────┼──────────────┤
+  │ xAttr.remove()                │ void         │
+  └───────────────────────────────┴──────────────┘
+
+  What's missing is the ability to call those methods on a sequence and get a flat result back.
+
+  ---
+  The core TypeScript challenge
+
+  C# has actual extension methods — they attach to types. TypeScript doesn't. The three realistic approaches are:
+
+  Option A — Standalone exported functions
+
+  import { descendants, elements, remove } from 'ltxmlts';
+
+  const attrs = attributes(elements(descendants([root], 'w:p'), 'w:r'));
+  remove(attrs);
+  Simple, tree-shakeable, no new classes. But nested calls read inside-out, which is awkward for deep chains.
+
+  Option B — Fluent XSequence<T> wrapper
+
+  import { xseq } from 'ltxmlts';
+
+  xseq(root.descendants('w:p'))
+    .elements('w:r')
+    .attributes('id')
+    .remove();
+  Closest to the LINQ feel. Chainable. Requires wrapping the initial array in xseq(...). The wrapper class would just hold a T[] internally and expose the same method names.
+
+  Option C — Lean on native Array methods
+
+  Because the instance methods already exist, users can mostly do this today:
+  root.descendants('w:p')
+      .flatMap(p => p.elements('w:r'))
+      .flatMap(r => r.attributes('id'))
+      .forEach(a => a.remove());
+  No new code needed. The downside: it's verbose, and remove() on an array isn't available.
+
+  ---
+  Recommendations
+
+  1. Implement XSequence<T> as the primary abstraction. It mirrors LINQ's chaining style most faithfully and is the right fit for a library called "LINQ to XML for TypeScript." A factory
+   function xseq() provides the entry point:
+
+  export class XSequence<T extends XNode | XAttribute> {
+    constructor(private items: T[]) {}
+
+    ancestors(name?: XName | string): XSequence<XElement> { ... }
+    ancestorsAndSelf(name?: XName | string): XSequence<XElement> { ... }
+    descendants(name?: XName | string): XSequence<XElement> { ... }
+    descendantsAndSelf(name?: XName | string): XSequence<XElement> { ... }
+    descendantNodes(): XSequence<XNode> { ... }
+    elements(name?: XName | string): XSequence<XElement> { ... }
+    nodes(): XSequence<XNode> { ... }
+    attributes(name?: XName | string): XSequence<XAttribute> { ... }
+    inDocumentOrder(): XSequence<T> { ... }
+    remove(): void { ... }
+
+    // Escape hatch back to plain array
+    toArray(): T[] { return [...this.items]; }
+  }
+
+  export function xseq<T extends XNode | XAttribute>(items: T[]): XSequence<T> {
+    return new XSequence(items);
+  }
+
+  Most methods are simple flatMap + deduplication over the existing instance methods — very little new logic.
+
+  2. inDocumentOrder() needs a real implementation. This is the one method with non-trivial logic. The approach: walk the root's tree in pre-order, assign each node a sequence index,
+  then sort the sequence by that index. The root can be found by walking .parent until it's null.
+
+  3. remove() is the highest-value standalone addition. Calling .forEach(x => x.remove()) is a footgun because remove() mutates the parent's node array while you may be iterating. The
+  sequence's remove() should snapshot the array before iterating:
+  remove(): void {
+    const snapshot = [...this.items];
+    for (const item of snapshot) item.remove();
+  }
+
+  4. Also export standalone functions alongside XSequence. For users who don't need chaining, remove(elements) is cleaner than xseq(elements).remove(). Implement the standalone functions
+   as thin wrappers that call xseq(...).methodName().
+
+  5. Keep the type constraints narrow. Not all methods make sense on all types:
+  - ancestors, ancestorsAndSelf — only on XNode / XElement
+  - attributes — only on XElement[]
+  - descendants, descendantsAndSelf, descendantNodes, elements, nodes — only on XElement[] (or XContainer[])
+  - remove — on XNode[] or XAttribute[]
+
+  TypeScript overloads or separate wrapper subclasses (XNodeSequence, XElementSequence, XAttributeSequence) can enforce this at compile time.
+
+  ---
+  Suggested file layout
+
+  LtXmlTs/src/
+    XSequence.ts        ← XSequence<T> class + xseq() factory
+    Extensions.ts       ← standalone exported functions (thin wrappers)
+
+  Both exported from index.ts. The test file XSequence.test.ts would mirror the structure of the existing test files.
+  
