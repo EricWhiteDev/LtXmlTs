@@ -23,3 +23,8 @@ export { XNamespace } from './XNamespace.js';
 export { NamespacePrefixPair, NamespacePrefixInfo } from './NamespacePrefixInfo.js';
 export { XName } from './XName.js';
 export { XmlParseError } from './SaxParser.js';
+export {
+  XSequence, xseq,
+  ancestors, ancestorsAndSelf, attributes, descendants, descendantsAndSelf,
+  descendantNodes, elements, nodes, inDocumentOrder, remove,
+} from './XSequence.js';

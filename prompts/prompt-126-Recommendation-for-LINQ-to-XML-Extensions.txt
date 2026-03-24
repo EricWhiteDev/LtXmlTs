@@ -1,0 +1,3 @@
+ There are a number of extension methods in the System.Xml.Linq.Extensions class. They operate on sequences (IEnumerable<T>) of XML objects, enabling LINQ queries to traverse and manipulate XML trees.
+
+ Do some research and make some recommendations about how to implement corresponding functionality in the LtXmlTs library?
