@@ -1059,7 +1059,7 @@ describe('Round-trip — Open XML: test1', () => {
       <w:fldSimple w:instr=' CREATEDATE  \* MERGEFORMAT '>
         <w:r>
           <w:rPr>
-            <w:noProof/>
+            <w:noProof />
           </w:rPr>
           <w:t>3/24/26 5:26:00 AM</w:t>
         </w:r>
@@ -1070,7 +1070,7 @@ describe('Round-trip — Open XML: test1', () => {
       <w:hyperlink r:id='rId7' w:history='1'>
         <w:r w:rsidRPr='00F314CB'>
           <w:rPr>
-            <w:rStyle w:val='Hyperlink'/>
+            <w:rStyle w:val='Hyperlink' />
           </w:rPr>
           <w:t>Online Video</w:t>
         </w:r>
@@ -1080,7 +1080,7 @@ describe('Round-trip — Open XML: test1', () => {
       </w:r>
       <w:r w:rsidR='00606287' w:rsidRPr='00606287'>
         <w:rPr>
-          <w:shd w:val='clear' w:color='auto' w:fill='E97132' w:themeFill='accent2'/>
+          <w:shd w:val='clear' w:color='auto' w:fill='E97132' w:themeFill='accent2' />
         </w:rPr>
         <w:t>some formatted text</w:t>
       </w:r>
@@ -1094,9 +1094,9 @@ describe('Round-trip — Open XML: test1', () => {
       </w:r>
       <w:r w:rsidRPr='00606287'>
         <w:rPr>
-          <w:rFonts w:ascii='Consolas' w:hAnsi='Consolas' w:cs='Consolas'/>
-          <w:sz w:val='32'/>
-          <w:szCs w:val='32'/>
+          <w:rFonts w:ascii='Consolas' w:hAnsi='Consolas' w:cs='Consolas' />
+          <w:sz w:val='32' />
+          <w:szCs w:val='32' />
         </w:rPr>
         <w:t>document look professionally produced</w:t>
       </w:r>
@@ -1119,13 +1119,13 @@ describe('Round-trip — Open XML: test1', () => {
         <w:t>Reading is easier, too, in the new Reading view. You can collapse parts of the document and focus on the text you want. If you need to stop reading before you reach the end, Word remembers where you left off - even on another device.</w:t>
       </w:r>
     </w:p>
-    <w:p w14:paraId='20D91DBA' w14:textId='77777777' w:rsidR='00F314CB' w:rsidRDefault='00F314CB'/>
+    <w:p w14:paraId='20D91DBA' w14:textId='77777777' w:rsidR='00F314CB' w:rsidRDefault='00F314CB' />
     <w:sectPr w:rsidR='00F314CB'>
-      <w:headerReference w:type='default' r:id='rId8'/>
-      <w:pgSz w:w='12240' w:h='15840'/>
-      <w:pgMar w:top='1440' w:right='1440' w:bottom='1440' w:left='1440' w:header='720' w:footer='720' w:gutter='0'/>
-      <w:cols w:space='720'/>
-      <w:docGrid w:linePitch='360'/>
+      <w:headerReference w:type='default' r:id='rId8' />
+      <w:pgSz w:w='12240' w:h='15840' />
+      <w:pgMar w:top='1440' w:right='1440' w:bottom='1440' w:left='1440' w:header='720' w:footer='720' w:gutter='0' />
+      <w:cols w:space='720' />
+      <w:docGrid w:linePitch='360' />
     </w:sectPr>
   </w:body>
 </w:document>`;
