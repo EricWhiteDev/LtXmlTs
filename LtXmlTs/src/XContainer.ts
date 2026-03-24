@@ -10,7 +10,6 @@
 import { XNode } from './XNode.js';
 import { XComment } from './XComment.js';
 import { XText } from './XText.js';
-import { XEntity } from './XEntity.js';
 import { XCData } from './XCData.js';
 import { XProcessingInstruction } from './XProcessingInstruction.js';
 import { XName } from './XName.js';
@@ -61,7 +60,6 @@ export class XContainer extends XNode {
     if (
       content instanceof XComment ||
       content instanceof XText ||
-      content instanceof XEntity ||
       content instanceof XCData ||
       content instanceof XProcessingInstruction
     ) {
@@ -74,8 +72,6 @@ export class XContainer extends XNode {
           node = new XComment(content);
         } else if (content instanceof XText) {
           node = new XText(content);
-        } else if (content instanceof XEntity) {
-          node = new XEntity(content);
         } else if (content instanceof XCData) {
           node = new XCData(content);
         } else {
@@ -248,8 +244,6 @@ export class XContainer extends XNode {
       } else if (a instanceof XComment && b instanceof XComment) {
         if (!a.equals(b)) return false;
       } else if (a instanceof XText && b instanceof XText) {
-        if (!a.equals(b)) return false;
-      } else if (a instanceof XEntity && b instanceof XEntity) {
         if (!a.equals(b)) return false;
       } else if (a instanceof XCData && b instanceof XCData) {
         if (!a.equals(b)) return false;

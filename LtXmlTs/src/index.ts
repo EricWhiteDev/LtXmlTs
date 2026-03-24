@@ -12,7 +12,6 @@ export { XObject } from './XObject.js';
 export { XNode } from './XNode.js';
 export { XComment } from './XComment.js';
 export { XText } from './XText.js';
-export { XEntity } from './XEntity.js';
 export { XCData } from './XCData.js';
 export { XProcessingInstruction } from './XProcessingInstruction.js';
 export { XContainer } from './XContainer.js';

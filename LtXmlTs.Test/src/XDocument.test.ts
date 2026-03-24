@@ -10,7 +10,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   XDocument, XDeclaration, XElement, XName, XComment, XText,
-  XProcessingInstruction, XAttribute, XEntity, XCData,
+  XProcessingInstruction, XAttribute, XCData,
 } from 'ltxmlts';
 
 describe('XDocument', () => {
@@ -229,10 +229,6 @@ describe('XDocument', () => {
     it('throws on XAttribute', () => {
       const attr = new XAttribute(XName.get('id'), '1');
       expect(() => new XDocument(attr)).toThrow();
-    });
-
-    it('throws on XEntity', () => {
-      expect(() => new XDocument(new XEntity('amp', '&amp;'))).toThrow();
     });
 
     it('throws on XCData', () => {

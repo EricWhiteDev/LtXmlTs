@@ -9,7 +9,7 @@
 
 import { describe, it, expect } from 'vitest';
 import {
-  XElement, XName, XComment, XText, XEntity, XCData,
+  XElement, XName, XComment, XText, XCData,
   XProcessingInstruction, XAttribute
 } from 'ltxmlts';
 
@@ -76,21 +76,6 @@ describe('XContainer.addContentObject', () => {
     const e2 = new XElement(name(), t);
     expect(e2.nodes()[0]).not.toBe(t);
     expect((e2.nodes()[0] as XText).value).toBe('text');
-  });
-
-  it('adds XEntity with no parent', () => {
-    const entity = new XEntity('amp');
-    const e = new XElement(name(), entity);
-    expect(e.nodes()[0]).toBe(entity);
-    expect(entity.parent).toBe(e);
-  });
-
-  it('clones XEntity that already has a parent', () => {
-    const entity = new XEntity('amp');
-    const e1 = new XElement(name(), entity);
-    const e2 = new XElement(name(), entity);
-    expect(e2.nodes()[0]).not.toBe(entity);
-    expect((e2.nodes()[0] as XEntity).value).toBe('amp');
   });
 
   it('adds XCData with no parent', () => {

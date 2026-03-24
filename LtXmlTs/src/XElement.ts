@@ -14,7 +14,6 @@ import { XNamespace } from './XNamespace.js';
 import { NamespacePrefixInfo, NamespacePrefixPair } from './NamespacePrefixInfo.js';
 import { XComment } from './XComment.js';
 import { XText } from './XText.js';
-import { XEntity } from './XEntity.js';
 import { XCData } from './XCData.js';
 import { XProcessingInstruction } from './XProcessingInstruction.js';
 import { XNode } from './XNode.js';
@@ -196,8 +195,6 @@ export class XElement extends XContainer {
           clonedNode = new XComment(node);
         } else if (node instanceof XText) {
           clonedNode = new XText(node);
-        } else if (node instanceof XEntity) {
-          clonedNode = new XEntity(node);
         } else if (node instanceof XCData) {
           clonedNode = new XCData(node);
         } else if (node instanceof XProcessingInstruction) {

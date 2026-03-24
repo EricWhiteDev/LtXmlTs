@@ -12,7 +12,6 @@ import { XDeclaration } from './XDeclaration.js';
 import { XElement } from './XElement.js';
 import { XComment } from './XComment.js';
 import { XText } from './XText.js';
-import { XEntity } from './XEntity.js';
 import { XCData } from './XCData.js';
 import { XProcessingInstruction } from './XProcessingInstruction.js';
 import { XNode } from './XNode.js';
@@ -48,8 +47,6 @@ export class XDocument extends XContainer {
             clonedNode = new XComment(node);
           } else if (node instanceof XText) {
             clonedNode = new XText(node);
-          } else if (node instanceof XEntity) {
-            clonedNode = new XEntity(node);
           } else if (node instanceof XCData) {
             clonedNode = new XCData(node);
           } else if (node instanceof XProcessingInstruction) {
@@ -107,9 +104,6 @@ export class XDocument extends XContainer {
     }
     if (content instanceof XAttribute) {
       throw new Error('XAttribute is not valid content for an XDocument.');
-    }
-    if (content instanceof XEntity) {
-      throw new Error('XEntity is not valid content for an XDocument.');
     }
     if (content instanceof XCData) {
       throw new Error('XCData is not valid content for an XDocument.');

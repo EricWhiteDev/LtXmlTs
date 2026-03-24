@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { XNode, XElement, XComment, XText, XDocument, XName, XAttribute, XDeclaration, XEntity, XCData, XProcessingInstruction } from 'ltxmlts';
+import { XNode, XElement, XComment, XText, XDocument, XName, XAttribute, XDeclaration, XCData, XProcessingInstruction } from 'ltxmlts';
 
 describe('XNode.addAfterSelf', () => {
   describe('error cases', () => {
@@ -757,9 +757,6 @@ describe('XNode.deepEquals', () => {
   });
   it('returns true for two equal XCData nodes', () => {
     expect(new XCData('raw').deepEquals(new XCData('raw'))).toBe(true);
-  });
-  it('returns true for two equal XEntity nodes', () => {
-    expect(new XEntity('amp').deepEquals(new XEntity('amp'))).toBe(true);
   });
   it('returns true for two equal XProcessingInstruction nodes', () => {
     expect(new XProcessingInstruction('xml-stylesheet', 'type="text/css"')

@@ -14,7 +14,6 @@ import type { XElement } from './XElement.js';
 import type { XDocument } from './XDocument.js';
 import type { XComment } from './XComment.js';
 import type { XText } from './XText.js';
-import type { XEntity } from './XEntity.js';
 import type { XCData } from './XCData.js';
 import type { XProcessingInstruction } from './XProcessingInstruction.js';
 
@@ -136,8 +135,6 @@ export class XNode extends XObject {
       return (this as unknown as XComment).equals(other as unknown as XComment);
     if (this.nodeType === 'Text' && other.nodeType === 'Text')
       return (this as unknown as XText).equals(other as unknown as XText);
-    if (this.nodeType === 'Entity' && other.nodeType === 'Entity')
-      return (this as unknown as XEntity).equals(other as unknown as XEntity);
     if (this.nodeType === 'CDATA' && other.nodeType === 'CDATA')
       return (this as unknown as XCData).equals(other as unknown as XCData);
     if (this.nodeType === 'ProcessingInstruction' && other.nodeType === 'ProcessingInstruction')

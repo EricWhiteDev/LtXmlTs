@@ -20,7 +20,6 @@ import {
   XNode,
   XComment,
   XText,
-  XEntity,
   XCData,
   XProcessingInstruction,
   XContainer,
