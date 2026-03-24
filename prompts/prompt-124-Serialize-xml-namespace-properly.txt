@@ -1,0 +1,1 @@
+In the case where there is the xml namespace 'http://www.w3.org/XML/1998/namespace' that needs a prefix for serialization, do determine a p# prefix for that namespace. Instead, hard code the prefix for the namespace as 'xml'.

@@ -289,22 +289,30 @@ export class XElement extends XContainer {
       if (attr.name.namespace === XNamespace.none) continue;
       const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === attr.name.namespace);
       if (!alreadyMapped) {
-        const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
-        info.namespacePrefixPairs.push(new NamespacePrefixPair(attr.name.namespace, pPrefix));
-        const decl = new XAttribute(XNamespace.xmlns + pPrefix, attr.name.namespace.uri);
-        decl.pHashNamespace = true;
-        element.addAttributeContentObject(decl);
+        if (attr.name.namespace === XNamespace.xml) {
+          info.namespacePrefixPairs.push(new NamespacePrefixPair(attr.name.namespace, 'xml'));
+        } else {
+          const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
+          info.namespacePrefixPairs.push(new NamespacePrefixPair(attr.name.namespace, pPrefix));
+          const decl = new XAttribute(XNamespace.xmlns + pPrefix, attr.name.namespace.uri);
+          decl.pHashNamespace = true;
+          element.addAttributeContentObject(decl);
+        }
       }
     }
     if (element.name.namespace !== XNamespace.none) {
       const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === element.name.namespace)
         || element.name.namespace === info.defaultNamespace;
       if (!alreadyMapped) {
-        const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
-        info.namespacePrefixPairs.push(new NamespacePrefixPair(element.name.namespace, pPrefix));
-        const decl = new XAttribute(XNamespace.xmlns + pPrefix, element.name.namespace.uri);
-        decl.pHashNamespace = true;
-        element.addAttributeContentObject(decl);
+        if (element.name.namespace === XNamespace.xml) {
+          info.namespacePrefixPairs.push(new NamespacePrefixPair(element.name.namespace, 'xml'));
+        } else {
+          const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
+          info.namespacePrefixPairs.push(new NamespacePrefixPair(element.name.namespace, pPrefix));
+          const decl = new XAttribute(XNamespace.xmlns + pPrefix, element.name.namespace.uri);
+          decl.pHashNamespace = true;
+          element.addAttributeContentObject(decl);
+        }
       }
     }
     element.namespacePrefixInfo = info;

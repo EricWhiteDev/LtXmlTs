@@ -1,0 +1,7 @@
+Stub out 5 more round trip tests.  These are going to be round trip tests of Open XML markup, so put them in their own describe block in RoundTrip.test.ts.
+
+For now, the originalXml will be simply `<root />`
+
+After I locate the actual Open XML markup, I'll manually paste it into the round trip test source code file.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
