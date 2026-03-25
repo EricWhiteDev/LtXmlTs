@@ -153,7 +153,7 @@ class SaxParser {
       this.addNode(new XComment(comment));
     };
 
-    this.saxParser.onprocessinginstruction = (pi: sax.ProcessingInstruction) => {
+    this.saxParser.onprocessinginstruction = (pi: { name: string; body: string }) => {
       if (this.error !== null) return;
       if (pi.name === 'xml' && this.elementStack.length === 0) {
         const version = pi.body.match(/version=['"]([^'"]+)['"]/)?.[1] ?? '1.0';
