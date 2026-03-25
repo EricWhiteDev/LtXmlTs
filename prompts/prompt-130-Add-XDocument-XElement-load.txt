@@ -1,0 +1,11 @@
+There is an issue: While there is XDocument.parse and XElement.parse, there is no XDocument.load and XElement.load, which loads and parses XML in a single step.
+
+Enhance SaxParser.  Make an overload to SaxParser.parseDocument and parseElement to take a path to a file.  Then implement the code so that it parses and populates the XML tree while parsing from a file.
+
+Add XDocument.load and XElement.load. These new methods will use the new functionality in SaxParser to load the XML tree from a file.
+
+Add unit tests.  Initiate a string to some XML to parse.  In each unit test, save the string to a file, and then test XDocument.load and XElement.load.  Test a few variations of this.
+
+Have some unit tests that save invalid XML to a file. Then use XDocument.load and XElement.load, and make sure that the error that gets reported has the correct file and line number.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.

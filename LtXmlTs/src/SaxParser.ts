@@ -7,6 +7,7 @@
  * Licensed under the MIT License
  */
 
+import * as fs from 'fs';
 import * as sax from 'sax';
 import {
   XDocument,
@@ -25,12 +26,14 @@ import {
 export class XmlParseError extends Error {
   public readonly line?: number;
   public readonly column?: number;
+  public readonly filePath?: string;
 
-  constructor(message: string, line?: number, column?: number) {
+  constructor(message: string, line?: number, column?: number, filePath?: string) {
     super(message);
     this.name = 'XmlParseError';
     this.line = line;
     this.column = column;
+    this.filePath = filePath;
   }
 }
 
@@ -56,6 +59,50 @@ class SaxParser {
     const root = this.docLevelNodes.find((n): n is XElement => n instanceof XElement);
     if (root === undefined) throw new XmlParseError('No root element found');
     return root;
+  }
+
+  public parseDocumentFromFile(filePath: string): XDocument {
+    const xml = fs.readFileSync(filePath, 'utf8');
+    try {
+      return this.parseDocument(xml);
+    } catch (e) {
+      if (e instanceof XmlParseError)
+        throw new XmlParseError(e.message, e.line, e.column, filePath);
+      throw e;
+    }
+  }
+
+  public parseElementFromFile(filePath: string): XElement {
+    const xml = fs.readFileSync(filePath, 'utf8');
+    try {
+      return this.parseElement(xml);
+    } catch (e) {
+      if (e instanceof XmlParseError)
+        throw new XmlParseError(e.message, e.line, e.column, filePath);
+      throw e;
+    }
+  }
+
+  public async parseDocumentFromFileAsync(filePath: string): Promise<XDocument> {
+    const xml = await fs.promises.readFile(filePath, 'utf8');
+    try {
+      return this.parseDocument(xml);
+    } catch (e) {
+      if (e instanceof XmlParseError)
+        throw new XmlParseError(e.message, e.line, e.column, filePath);
+      throw e;
+    }
+  }
+
+  public async parseElementFromFileAsync(filePath: string): Promise<XElement> {
+    const xml = await fs.promises.readFile(filePath, 'utf8');
+    try {
+      return this.parseElement(xml);
+    } catch (e) {
+      if (e instanceof XmlParseError)
+        throw new XmlParseError(e.message, e.line, e.column, filePath);
+      throw e;
+    }
   }
 
   private runParser(xml: string): void {

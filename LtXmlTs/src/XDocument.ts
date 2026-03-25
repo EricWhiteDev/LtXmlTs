@@ -175,4 +175,12 @@ export class XDocument extends XContainer {
   public static parse(xml: string): XDocument {
     return new SaxParser().parseDocument(xml);
   }
+
+  public static load(filePath: string): XDocument {
+    return new SaxParser().parseDocumentFromFile(filePath);
+  }
+
+  public static async loadAsync(filePath: string): Promise<XDocument> {
+    return new SaxParser().parseDocumentFromFileAsync(filePath);
+  }
 }

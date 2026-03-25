@@ -344,4 +344,12 @@ export class XElement extends XContainer {
   public static parse(xml: string): XElement {
     return new SaxParser().parseElement(xml);
   }
+
+  public static load(filePath: string): XElement {
+    return new SaxParser().parseElementFromFile(filePath);
+  }
+
+  public static async loadAsync(filePath: string): Promise<XElement> {
+    return new SaxParser().parseElementFromFileAsync(filePath);
+  }
 }
