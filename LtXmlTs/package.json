@@ -1,6 +1,6 @@
 {
   "name": "ltxmlts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "LINQ to XML for TypeScript — a port of System.Xml.Linq",
   "type": "module",
   "main": "./dist/index.js",

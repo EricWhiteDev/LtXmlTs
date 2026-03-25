@@ -8,7 +8,8 @@
  */
 
 import * as fs from 'fs';
-import * as sax from 'sax';
+import sax from 'sax';
+import type * as saxTypes from 'sax';
 import {
   XDocument,
   XElement,
@@ -38,7 +39,7 @@ export class XmlParseError extends Error {
 }
 
 class SaxParser {
-  private readonly saxParser: sax.SAXParser = sax.parser(true, { xmlns: true });
+  private readonly saxParser: saxTypes.SAXParser = sax.parser(true, { xmlns: true });
   private readonly elementStack: XElement[] = [];
   private readonly docLevelNodes: XNode[] = [];
   private declaration: XDeclaration | null = null;
@@ -106,16 +107,16 @@ class SaxParser {
   }
 
   private runParser(xml: string): void {
-    this.saxParser.onopentag = (tag: sax.Tag | sax.QualifiedTag) => {
+    this.saxParser.onopentag = (tag: saxTypes.Tag | saxTypes.QualifiedTag) => {
       if (this.error !== null) return;
-      const qtag = tag as sax.QualifiedTag;
+      const qtag = tag as saxTypes.QualifiedTag;
       const xname = qtag.uri !== ''
         ? XName.get(`{${qtag.uri}}${qtag.local}`)
         : XName.get(qtag.local);
 
       const attrs: XAttribute[] = [];
       for (const [attrKey, attr] of Object.entries(qtag.attributes)) {
-        const qattr = attr as sax.QualifiedAttribute;
+        const qattr = attr as saxTypes.QualifiedAttribute;
         if (attrKey === 'xmlns' || attrKey.startsWith('xmlns:')) {
           const localName = attrKey === 'xmlns' ? 'xmlns' : qattr.local;
           attrs.push(new XAttribute(XNamespace.xmlns.getName(localName), qattr.value));
