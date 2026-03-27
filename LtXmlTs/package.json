@@ -1,6 +1,6 @@
 {
   "name": "ltxmlts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "LINQ to XML for TypeScript — a port of System.Xml.Linq",
   "type": "module",
   "main": "./dist/index.js",
@@ -11,7 +11,7 @@
     }
   },
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": ["dist", "src"],
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build"
