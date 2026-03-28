@@ -8,49 +8,65 @@
  */
 
 export function xmlEscapeText(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 export function xmlEscapeAttrValue(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/'/g, '&apos;');
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/'/g, "&apos;");
 }
 
 export function indentXml(xml: string): string {
-  const INDENT = '  ';
+  const INDENT = "  ";
   const TOKEN_RE =
     /<!\[CDATA\[[\s\S]*?\]\]>|<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/[^>]+>|<[^>]+\/>|<[^>]+>|[^<]+/g;
 
   function isOpenTag(t: string): boolean {
-    return t.startsWith('<') && !t.startsWith('</') && !t.startsWith('<?') &&
-      !t.startsWith('<!--') && !t.startsWith('<![CDATA[') && !t.endsWith('/>');
+    return (
+      t.startsWith("<") &&
+      !t.startsWith("</") &&
+      !t.startsWith("<?") &&
+      !t.startsWith("<!--") &&
+      !t.startsWith("<![CDATA[") &&
+      !t.endsWith("/>")
+    );
   }
-  function isCloseTag(t: string): boolean { return t.startsWith('</'); }
+  function isCloseTag(t: string): boolean {
+    return t.startsWith("</");
+  }
   function isDirectText(t: string): boolean {
-    if (t.startsWith('<![CDATA[')) return true;
-    return !t.startsWith('<') && t.trim().length > 0;
+    if (t.startsWith("<![CDATA[")) {
+      return true;
+    }
+    return !t.startsWith("<") && t.trim().length > 0;
   }
 
   // Tokenize
   const tokens: string[] = [];
   let m: RegExpExecArray | null;
-  while ((m = TOKEN_RE.exec(xml)) !== null) tokens.push(m[0]);
+  while ((m = TOKEN_RE.exec(xml)) !== null) {
+    tokens.push(m[0]);
+  }
 
   // For each open tag index, record whether it has non-whitespace text at direct child depth.
   // Elements with direct text (text-only or mixed content) are emitted compactly on one line.
   const hasDirectText = new Set<number>();
   for (let i = 0; i < tokens.length; i++) {
-    if (!isOpenTag(tokens[i])) continue;
+    if (!isOpenTag(tokens[i])) {
+      continue;
+    }
     let depth = 1;
     for (let j = i + 1; j < tokens.length; j++) {
-      if (isOpenTag(tokens[j])) depth++;
-      else if (isCloseTag(tokens[j])) { depth--; if (depth === 0) break; }
-      else if (isDirectText(tokens[j]) && depth === 1) { hasDirectText.add(i); break; }
+      if (isOpenTag(tokens[j])) {
+        depth++;
+      } else if (isCloseTag(tokens[j])) {
+        depth--;
+        if (depth === 0) {
+          break;
+        }
+      } else if (isDirectText(tokens[j]) && depth === 1) {
+        hasDirectText.add(i);
+        break;
+      }
     }
   }
 
@@ -60,15 +76,22 @@ export function indentXml(xml: string): string {
   let i = 0;
   while (i < tokens.length) {
     const token = tokens[i];
-    if (!token.startsWith('<') && token.trim() === '') { i++; continue; }
+    if (!token.startsWith("<") && token.trim() === "") {
+      i++;
+      continue;
+    }
     if (isCloseTag(token)) {
       level--;
       lines.push(INDENT.repeat(level) + token);
       i++;
-    } else if (token.startsWith('<?') || token.startsWith('<!--') || token.startsWith('<![CDATA[')) {
+    } else if (
+      token.startsWith("<?") ||
+      token.startsWith("<!--") ||
+      token.startsWith("<![CDATA[")
+    ) {
       lines.push(INDENT.repeat(level) + token);
       i++;
-    } else if (token.endsWith('/>')) {
+    } else if (token.endsWith("/>")) {
       lines.push(INDENT.repeat(level) + token);
       i++;
     } else if (isOpenTag(token) && hasDirectText.has(i)) {
@@ -76,8 +99,11 @@ export function indentXml(xml: string): string {
       let compact = token;
       let j = i + 1;
       while (j < tokens.length && depth > 0) {
-        if (isOpenTag(tokens[j])) depth++;
-        else if (isCloseTag(tokens[j])) depth--;
+        if (isOpenTag(tokens[j])) {
+          depth++;
+        } else if (isCloseTag(tokens[j])) {
+          depth--;
+        }
         compact += tokens[j];
         j++;
       }
@@ -92,5 +118,5 @@ export function indentXml(xml: string): string {
       i++;
     }
   }
-  return lines.join('\n');
+  return lines.join("\n");
 }

@@ -7,7 +7,7 @@
  * Licensed under the MIT License
  */
 
-import { XNode } from './XNode.js';
+import { XNode } from "./XNode.js";
 
 export class XComment extends XNode {
   public readonly value: string;
@@ -16,10 +16,10 @@ export class XComment extends XNode {
   constructor(other: XComment);
   constructor(contentOrOther: string | XComment) {
     super();
-    this.nodeType = 'Comment';
-    if (typeof contentOrOther === 'string') {
+    this.nodeType = "Comment";
+    if (typeof contentOrOther === "string") {
       this.value = contentOrOther;
-      if (this.value.includes('--')) {
+      if (this.value.includes("--")) {
         throw new Error(`XComment value must not contain '--': ${JSON.stringify(this.value)}`);
       }
     } else {

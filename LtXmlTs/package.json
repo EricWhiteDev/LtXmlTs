@@ -11,17 +11,34 @@
     }
   },
   "types": "./dist/index.d.ts",
-  "files": ["dist", "src"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build": "tsc",
+    "format": "prettier --write src",
+    "lint": "eslint src",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["xml", "linq", "xpath", "typescript", "dom"],
+  "keywords": [
+    "xml",
+    "linq",
+    "xpath",
+    "typescript",
+    "dom"
+  ],
   "author": "Eric White <eric@ericwhite.com> (https://www.ericwhite.com)",
   "license": "MIT",
-  "dependencies": { "sax": "^1.4.1" },
+  "dependencies": {
+    "sax": "^1.4.1"
+  },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/sax": "^1.2.7",
-    "typescript": "^5.9.3"
+    "eslint": "^10.1.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2"
   }
 }

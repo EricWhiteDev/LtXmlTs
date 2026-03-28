@@ -7,7 +7,7 @@
  * Licensed under the MIT License
  */
 
-import { XNode } from './XNode.js';
+import { XNode } from "./XNode.js";
 
 export class XProcessingInstruction extends XNode {
   public readonly target: string;
@@ -17,18 +17,24 @@ export class XProcessingInstruction extends XNode {
   constructor(other: XProcessingInstruction);
   constructor(targetOrOther: string | XProcessingInstruction, data?: string) {
     super();
-    this.nodeType = 'ProcessingInstruction';
-    if (typeof targetOrOther === 'string') {
+    this.nodeType = "ProcessingInstruction";
+    if (typeof targetOrOther === "string") {
       this.target = targetOrOther;
       this.data = data!;
       if (/\s/.test(this.target)) {
-        throw new Error(`XProcessingInstruction target must not contain whitespace: ${JSON.stringify(this.target)}`);
+        throw new Error(
+          `XProcessingInstruction target must not contain whitespace: ${JSON.stringify(this.target)}`,
+        );
       }
-      if (this.target.includes('?>')) {
-        throw new Error(`XProcessingInstruction target must not contain '?>': ${JSON.stringify(this.target)}`);
+      if (this.target.includes("?>")) {
+        throw new Error(
+          `XProcessingInstruction target must not contain '?>': ${JSON.stringify(this.target)}`,
+        );
       }
-      if (this.data.includes('?>')) {
-        throw new Error(`XProcessingInstruction data must not contain '?>': ${JSON.stringify(this.data)}`);
+      if (this.data.includes("?>")) {
+        throw new Error(
+          `XProcessingInstruction data must not contain '?>': ${JSON.stringify(this.data)}`,
+        );
       }
     } else {
       this.target = targetOrOther.target;
@@ -41,9 +47,7 @@ export class XProcessingInstruction extends XNode {
   }
 
   public toStringInternal(): string {
-    return this.data.length > 0
-      ? `<?${this.target} ${this.data}?>`
-      : `<?${this.target}?>`;
+    return this.data.length > 0 ? `<?${this.target} ${this.data}?>` : `<?${this.target}?>`;
   }
 
   public toString(): string {

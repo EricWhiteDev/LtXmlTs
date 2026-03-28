@@ -7,8 +7,8 @@
  * Licensed under the MIT License
  */
 
-import { XNamespace } from './XNamespace.js';
-import type { XObject } from './XObject.js';
+import { XNamespace } from "./XNamespace.js";
+import type { XObject } from "./XObject.js";
 
 class XNameCacheEntry {
   name: XName;
@@ -28,8 +28,8 @@ export class XName {
     return this.namespace.uri;
   }
 
-  public static get(namespace: XNamespace, localName: string): XName
-  public static get(name: string): XName
+  public static get(namespace: XNamespace, localName: string): XName;
+  public static get(name: string): XName;
   public static get(namespaceOrName: XNamespace | string, localName?: string): XName {
     if (namespaceOrName instanceof XNamespace) {
       return new XName(namespaceOrName, localName!);
@@ -37,8 +37,8 @@ export class XName {
     return new XName(namespaceOrName);
   }
 
-  constructor(namespace: XNamespace, localName: string)
-  constructor(name: string)
+  constructor(namespace: XNamespace, localName: string);
+  constructor(name: string);
   constructor(namespaceOrName: XNamespace | string, localName?: string) {
     let ns: XNamespace;
     let local: string;
@@ -48,8 +48,8 @@ export class XName {
       local = localName!;
     } else {
       const name = namespaceOrName;
-      if (name.startsWith('{')) {
-        const closeIdx = name.indexOf('}');
+      if (name.startsWith("{")) {
+        const closeIdx = name.indexOf("}");
         if (closeIdx === -1) {
           throw new Error(`Invalid clark notation name: '${name}'`);
         }
@@ -64,7 +64,7 @@ export class XName {
     this.namespace = ns;
     this.localName = local;
 
-    const clarkKey = ns.uri === '' ? local : `{${ns.uri}}${local}`;
+    const clarkKey = ns.uri === "" ? local : `{${ns.uri}}${local}`;
     const cached = XName.nameCache.get(clarkKey);
     if (cached) {
       return cached.name;
@@ -74,7 +74,7 @@ export class XName {
   }
 
   public toString(): string {
-    return this.namespace.uri === '' ? this.localName : `{${this.namespace.uri}}${this.localName}`;
+    return this.namespace.uri === "" ? this.localName : `{${this.namespace.uri}}${this.localName}`;
   }
 
   public equals(other: XName): boolean {
@@ -82,9 +82,13 @@ export class XName {
   }
 
   public getPrefixedName(contextObject: XObject): string {
-    if (this.namespace === XNamespace.none) return this.localName;
+    if (this.namespace === XNamespace.none) {
+      return this.localName;
+    }
     const prefix = this.namespace.getPrefix(contextObject);
-    if (prefix === '') return this.localName;
+    if (prefix === "") {
+      return this.localName;
+    }
     return `${prefix}:${this.localName}`;
   }
 }

@@ -7,7 +7,7 @@
  * Licensed under the MIT License
  */
 
-import { XNode } from './XNode.js';
+import { XNode } from "./XNode.js";
 
 export class XCData extends XNode {
   public readonly value: string;
@@ -16,10 +16,10 @@ export class XCData extends XNode {
   constructor(other: XCData);
   constructor(valueOrOther: string | XCData) {
     super();
-    this.nodeType = 'CDATA';
-    if (typeof valueOrOther === 'string') {
+    this.nodeType = "CDATA";
+    if (typeof valueOrOther === "string") {
       this.value = valueOrOther;
-      if (this.value.includes(']]>')) {
+      if (this.value.includes("]]>")) {
         throw new Error(`XCData value must not contain ']]>': ${JSON.stringify(this.value)}`);
       }
     } else {

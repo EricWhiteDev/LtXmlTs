@@ -7,18 +7,18 @@
  * Licensed under the MIT License
  */
 
-import { XContainer } from './XContainer.js';
-import { XName } from './XName.js';
-import { XAttribute } from './XAttribute.js';
-import { XNamespace } from './XNamespace.js';
-import { NamespacePrefixInfo, NamespacePrefixPair } from './NamespacePrefixInfo.js';
-import { XComment } from './XComment.js';
-import { XText } from './XText.js';
-import { XCData } from './XCData.js';
-import { XProcessingInstruction } from './XProcessingInstruction.js';
-import { XNode } from './XNode.js';
-import { indentXml } from './XmlUtils.js';
-import { SaxParser } from './SaxParser.js';
+import { XContainer } from "./XContainer.js";
+import { XName } from "./XName.js";
+import { XAttribute } from "./XAttribute.js";
+import { XNamespace } from "./XNamespace.js";
+import { NamespacePrefixInfo, NamespacePrefixPair } from "./NamespacePrefixInfo.js";
+import { XComment } from "./XComment.js";
+import { XText } from "./XText.js";
+import { XCData } from "./XCData.js";
+import { XProcessingInstruction } from "./XProcessingInstruction.js";
+import { XNode } from "./XNode.js";
+import { indentXml } from "./XmlUtils.js";
+import { SaxParser } from "./SaxParser.js";
 
 export class XElement extends XContainer {
   public readonly name: XName;
@@ -27,8 +27,8 @@ export class XElement extends XContainer {
   public get value(): string {
     return this.descendantNodes()
       .filter((n): n is XText => n instanceof XText)
-      .map(n => n.value)
-      .join('');
+      .map((n) => n.value)
+      .join("");
   }
 
   public set value(value: string) {
@@ -39,12 +39,13 @@ export class XElement extends XContainer {
   public attributes(): XAttribute[];
   public attributes(name: XName | string): XAttribute[];
   public attributes(name?: XName | string): XAttribute[] {
-    const xname = name === undefined ? undefined : (typeof name === 'string' ? new XName(name) : name);
+    const xname =
+      name === undefined ? undefined : typeof name === "string" ? new XName(name) : name;
     return this.attributesArray.filter((a) => xname === undefined || a.name === xname);
   }
 
   public attribute(name: XName | string): XAttribute | null {
-    const xname = typeof name === 'string' ? new XName(name) : name;
+    const xname = typeof name === "string" ? new XName(name) : name;
     return this.attributesArray.find((a) => a.name === xname) ?? null;
   }
 
@@ -75,13 +76,13 @@ export class XElement extends XContainer {
   public descendantsAndSelf(name: XName | string): XElement[];
   public descendantsAndSelf(name?: XName | string): XElement[] {
     const tempArray: XElement[] = [];
-    const xname = name === undefined ? null : (typeof name === 'string' ? new XName(name) : name);
+    const xname = name === undefined ? null : typeof name === "string" ? new XName(name) : name;
     this.addSelfAndDescendantsElementsToTempArray(tempArray, this, xname);
     return tempArray;
   }
 
   public get hasElements(): boolean {
-    return this.nodesArray.some(n => n instanceof XElement);
+    return this.nodesArray.some((n) => n instanceof XElement);
   }
 
   public get isEmpty(): boolean {
@@ -178,7 +179,7 @@ export class XElement extends XContainer {
   constructor(other: XElement);
   constructor(nameOrOther: XName | XElement | string, ...content: unknown[]) {
     super();
-    this.nodeType = 'Element';
+    this.nodeType = "Element";
     if (nameOrOther instanceof XElement) {
       const other = nameOrOther;
       this.name = other.name;
@@ -206,7 +207,7 @@ export class XElement extends XContainer {
         this.nodesArray.push(clonedNode);
       }
     } else {
-      const name = typeof nameOrOther === 'string' ? new XName(nameOrOther) : nameOrOther;
+      const name = typeof nameOrOther === "string" ? new XName(nameOrOther) : nameOrOther;
       this.name = name;
       this.addContentList(...content);
       this.addAttributeContentList(...content);
@@ -218,34 +219,42 @@ export class XElement extends XContainer {
   public ancestorsAndSelf(name?: XName | string): XElement[] {
     const result: XElement[] = [this];
     let current = this.parent;
-    while (current !== null && current.nodeType === 'Element') {
+    while (current !== null && current.nodeType === "Element") {
       result.push(current as unknown as XElement);
       current = current.parent;
     }
-    if (name === undefined) return result;
-    const xname = typeof name === 'string' ? new XName(name) : name;
-    return result.filter(e => e.name === xname);
+    if (name === undefined) {
+      return result;
+    }
+    const xname = typeof name === "string" ? new XName(name) : name;
+    return result.filter((e) => e.name === xname);
   }
 
   public override equals(other: XElement): boolean {
-    if (!this.name.equals(other.name)) return false;
-    if (this.attributesArray.length !== other.attributesArray.length) return false;
+    if (!this.name.equals(other.name)) {
+      return false;
+    }
+    if (this.attributesArray.length !== other.attributesArray.length) {
+      return false;
+    }
     for (let i = 0; i < this.attributesArray.length; i++) {
-      if (!this.attributesArray[i].equals(other.attributesArray[i])) return false;
+      if (!this.attributesArray[i].equals(other.attributesArray[i])) {
+        return false;
+      }
     }
     return super.equals(other);
   }
 
   public toStringInternal(): string {
     const prefixedName = this.name.getPrefixedName(this);
-    const attrs = this.attributesArray.map(a => a.toStringInternal()).join(' ');
-    const attrsStr = attrs.length > 0 ? ' ' + attrs : '';
+    const attrs = this.attributesArray.map((a) => a.toStringInternal()).join(" ");
+    const attrsStr = attrs.length > 0 ? " " + attrs : "";
 
     if (this.nodesArray.length === 0) {
       return `<${prefixedName}${attrsStr} />`;
     }
 
-    const content = this.nodesArray.map(n => n.toStringInternal()).join('');
+    const content = this.nodesArray.map((n) => n.toStringInternal()).join("");
     return `<${prefixedName}${attrsStr}>${content}</${prefixedName}>`;
   }
 
@@ -264,17 +273,19 @@ export class XElement extends XContainer {
 
   public static populateNamespacePrefixInfoRecurse(
     namespacePrefixInfo: NamespacePrefixInfo,
-    element: XElement
+    element: XElement,
   ): void {
     const info = new NamespacePrefixInfo(namespacePrefixInfo);
     for (const attr of element.attributes()) {
-      if (!attr.isNamespaceDeclaration) continue;
-      if (attr.name.localName === 'xmlns') {
+      if (!attr.isNamespaceDeclaration) {
+        continue;
+      }
+      if (attr.name.localName === "xmlns") {
         info.defaultNamespace = XNamespace.get(attr.value);
       } else {
         const ns = XNamespace.get(attr.value);
         const newPrefix = attr.name.localName;
-        const existing = info.namespacePrefixPairs.find(p => p.prefix === newPrefix);
+        const existing = info.namespacePrefixPairs.find((p) => p.prefix === newPrefix);
         if (existing !== undefined) {
           existing.prefix = `p${NamespacePrefixInfo.pHashCount++}`;
         }
@@ -282,12 +293,18 @@ export class XElement extends XContainer {
       }
     }
     for (const attr of element.attributes()) {
-      if (attr.isNamespaceDeclaration) continue;
-      if (attr.name.namespace === XNamespace.none) continue;
-      const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === attr.name.namespace);
+      if (attr.isNamespaceDeclaration) {
+        continue;
+      }
+      if (attr.name.namespace === XNamespace.none) {
+        continue;
+      }
+      const alreadyMapped = info.namespacePrefixPairs.some(
+        (p) => p.namespace === attr.name.namespace,
+      );
       if (!alreadyMapped) {
         if (attr.name.namespace === XNamespace.xml) {
-          info.namespacePrefixPairs.push(new NamespacePrefixPair(attr.name.namespace, 'xml'));
+          info.namespacePrefixPairs.push(new NamespacePrefixPair(attr.name.namespace, "xml"));
         } else {
           const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
           info.namespacePrefixPairs.push(new NamespacePrefixPair(attr.name.namespace, pPrefix));
@@ -298,11 +315,12 @@ export class XElement extends XContainer {
       }
     }
     if (element.name.namespace !== XNamespace.none) {
-      const alreadyMapped = info.namespacePrefixPairs.some(p => p.namespace === element.name.namespace)
-        || element.name.namespace === info.defaultNamespace;
+      const alreadyMapped =
+        info.namespacePrefixPairs.some((p) => p.namespace === element.name.namespace) ||
+        element.name.namespace === info.defaultNamespace;
       if (!alreadyMapped) {
         if (element.name.namespace === XNamespace.xml) {
-          info.namespacePrefixPairs.push(new NamespacePrefixPair(element.name.namespace, 'xml'));
+          info.namespacePrefixPairs.push(new NamespacePrefixPair(element.name.namespace, "xml"));
         } else {
           const pPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
           info.namespacePrefixPairs.push(new NamespacePrefixPair(element.name.namespace, pPrefix));
@@ -333,7 +351,7 @@ export class XElement extends XContainer {
       root = root.parent;
     }
     for (const el of root.descendantsAndSelf()) {
-      const toRemove = el.attributes().filter(a => a.pHashNamespace);
+      const toRemove = el.attributes().filter((a) => a.pHashNamespace);
       for (const attr of toRemove) {
         el.removeAttribute(attr);
       }

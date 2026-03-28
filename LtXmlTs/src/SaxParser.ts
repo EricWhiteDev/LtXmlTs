@@ -7,9 +7,9 @@
  * Licensed under the MIT License
  */
 
-import * as fs from 'fs';
-import sax from 'sax';
-import type * as saxTypes from 'sax';
+import * as fs from "fs";
+import sax from "sax";
+import type * as saxTypes from "sax";
 import {
   XDocument,
   XElement,
@@ -22,7 +22,7 @@ import {
   XName,
   XNamespace,
   XNode,
-} from './index.js';
+} from "./index.js";
 
 export class XmlParseError extends Error {
   public readonly line?: number;
@@ -31,7 +31,7 @@ export class XmlParseError extends Error {
 
   constructor(message: string, line?: number, column?: number, filePath?: string) {
     super(message);
-    this.name = 'XmlParseError';
+    this.name = "XmlParseError";
     this.line = line;
     this.column = column;
     this.filePath = filePath;
@@ -47,7 +47,9 @@ class SaxParser {
 
   public parseDocument(xml: string): XDocument {
     this.runParser(xml);
-    if (this.error !== null) throw this.error;
+    if (this.error !== null) {
+      throw this.error;
+    }
     if (this.declaration !== null) {
       return new XDocument(this.declaration, ...this.docLevelNodes);
     }
@@ -56,74 +58,82 @@ class SaxParser {
 
   public parseElement(xml: string): XElement {
     this.runParser(xml);
-    if (this.error !== null) throw this.error;
+    if (this.error !== null) {
+      throw this.error;
+    }
     const root = this.docLevelNodes.find((n): n is XElement => n instanceof XElement);
-    if (root === undefined) throw new XmlParseError('No root element found');
+    if (root === undefined) {
+      throw new XmlParseError("No root element found");
+    }
     return root;
   }
 
   public parseDocumentFromFile(filePath: string): XDocument {
-    const xml = fs.readFileSync(filePath, 'utf8');
+    const xml = fs.readFileSync(filePath, "utf8");
     try {
       return this.parseDocument(xml);
     } catch (e) {
-      if (e instanceof XmlParseError)
+      if (e instanceof XmlParseError) {
         throw new XmlParseError(e.message, e.line, e.column, filePath);
+      }
       throw e;
     }
   }
 
   public parseElementFromFile(filePath: string): XElement {
-    const xml = fs.readFileSync(filePath, 'utf8');
+    const xml = fs.readFileSync(filePath, "utf8");
     try {
       return this.parseElement(xml);
     } catch (e) {
-      if (e instanceof XmlParseError)
+      if (e instanceof XmlParseError) {
         throw new XmlParseError(e.message, e.line, e.column, filePath);
+      }
       throw e;
     }
   }
 
   public async parseDocumentFromFileAsync(filePath: string): Promise<XDocument> {
-    const xml = await fs.promises.readFile(filePath, 'utf8');
+    const xml = await fs.promises.readFile(filePath, "utf8");
     try {
       return this.parseDocument(xml);
     } catch (e) {
-      if (e instanceof XmlParseError)
+      if (e instanceof XmlParseError) {
         throw new XmlParseError(e.message, e.line, e.column, filePath);
+      }
       throw e;
     }
   }
 
   public async parseElementFromFileAsync(filePath: string): Promise<XElement> {
-    const xml = await fs.promises.readFile(filePath, 'utf8');
+    const xml = await fs.promises.readFile(filePath, "utf8");
     try {
       return this.parseElement(xml);
     } catch (e) {
-      if (e instanceof XmlParseError)
+      if (e instanceof XmlParseError) {
         throw new XmlParseError(e.message, e.line, e.column, filePath);
+      }
       throw e;
     }
   }
 
   private runParser(xml: string): void {
     this.saxParser.onopentag = (tag: saxTypes.Tag | saxTypes.QualifiedTag) => {
-      if (this.error !== null) return;
+      if (this.error !== null) {
+        return;
+      }
       const qtag = tag as saxTypes.QualifiedTag;
-      const xname = qtag.uri !== ''
-        ? XName.get(`{${qtag.uri}}${qtag.local}`)
-        : XName.get(qtag.local);
+      const xname =
+        qtag.uri !== "" ? XName.get(`{${qtag.uri}}${qtag.local}`) : XName.get(qtag.local);
 
       const attrs: XAttribute[] = [];
       for (const [attrKey, attr] of Object.entries(qtag.attributes)) {
         const qattr = attr as saxTypes.QualifiedAttribute;
-        if (attrKey === 'xmlns' || attrKey.startsWith('xmlns:')) {
-          const localName = attrKey === 'xmlns' ? 'xmlns' : qattr.local;
+        if (attrKey === "xmlns" || attrKey.startsWith("xmlns:")) {
+          const localName = attrKey === "xmlns" ? "xmlns" : qattr.local;
           attrs.push(new XAttribute(XNamespace.xmlns.getName(localName), qattr.value));
         } else {
-          const axname = qattr.uri !== ''
-            ? XName.get(`{${qattr.uri}}${qattr.local}`)
-            : XName.get(qattr.local);
+          const axname =
+            qattr.uri !== "" ? XName.get(`{${qattr.uri}}${qattr.local}`) : XName.get(qattr.local);
           attrs.push(new XAttribute(axname, qattr.value));
         }
       }
@@ -132,34 +142,48 @@ class SaxParser {
       this.elementStack.push(element);
     };
 
-    this.saxParser.onclosetag = (_name: string) => {
-      if (this.error !== null) return;
+    this.saxParser.onclosetag = () => {
+      if (this.error !== null) {
+        return;
+      }
       const element = this.elementStack.pop();
-      if (element !== undefined) this.addNode(element);
+      if (element !== undefined) {
+        this.addNode(element);
+      }
     };
 
     this.saxParser.ontext = (text: string) => {
-      if (this.error !== null) return;
-      if (/^\s*$/.test(text)) return;
+      if (this.error !== null) {
+        return;
+      }
+      if (/^\s*$/.test(text)) {
+        return;
+      }
       this.addNode(new XText(text));
     };
 
     this.saxParser.oncdata = (cdata: string) => {
-      if (this.error !== null) return;
+      if (this.error !== null) {
+        return;
+      }
       this.addNode(new XCData(cdata));
     };
 
     this.saxParser.oncomment = (comment: string) => {
-      if (this.error !== null) return;
+      if (this.error !== null) {
+        return;
+      }
       this.addNode(new XComment(comment));
     };
 
     this.saxParser.onprocessinginstruction = (pi: { name: string; body: string }) => {
-      if (this.error !== null) return;
-      if (pi.name === 'xml' && this.elementStack.length === 0) {
-        const version = pi.body.match(/version=['"]([^'"]+)['"]/)?.[1] ?? '1.0';
-        const encoding = pi.body.match(/encoding=['"]([^'"]+)['"]/)?.[1] ?? '';
-        const standalone = pi.body.match(/standalone=['"]([^'"]+)['"]/)?.[1] ?? '';
+      if (this.error !== null) {
+        return;
+      }
+      if (pi.name === "xml" && this.elementStack.length === 0) {
+        const version = pi.body.match(/version=['"]([^'"]+)['"]/)?.[1] ?? "1.0";
+        const encoding = pi.body.match(/encoding=['"]([^'"]+)['"]/)?.[1] ?? "";
+        const standalone = pi.body.match(/standalone=['"]([^'"]+)['"]/)?.[1] ?? "";
         this.declaration = new XDeclaration(version, encoding, standalone);
       } else {
         this.addNode(new XProcessingInstruction(pi.name, pi.body.trim()));
@@ -168,11 +192,7 @@ class SaxParser {
 
     this.saxParser.onerror = (err: Error) => {
       if (this.error === null) {
-        this.error = new XmlParseError(
-          err.message,
-          this.saxParser.line,
-          this.saxParser.column,
-        );
+        this.error = new XmlParseError(err.message, this.saxParser.line, this.saxParser.column);
       }
       this.saxParser.resume();
     };
@@ -183,11 +203,7 @@ class SaxParser {
     } catch (thrown) {
       if (this.error === null) {
         const e = thrown as Error;
-        this.error = new XmlParseError(
-          e.message,
-          this.saxParser.line,
-          this.saxParser.column,
-        );
+        this.error = new XmlParseError(e.message, this.saxParser.line, this.saxParser.column);
       }
     }
   }

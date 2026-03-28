@@ -7,17 +7,17 @@
  * Licensed under the MIT License
  */
 
-import { XContainer } from './XContainer.js';
-import { XDeclaration } from './XDeclaration.js';
-import { XElement } from './XElement.js';
-import { XComment } from './XComment.js';
-import { XText } from './XText.js';
-import { XCData } from './XCData.js';
-import { XProcessingInstruction } from './XProcessingInstruction.js';
-import { XNode } from './XNode.js';
-import { XAttribute } from './XAttribute.js';
-import { indentXml } from './XmlUtils.js';
-import { SaxParser } from './SaxParser.js';
+import { XContainer } from "./XContainer.js";
+import { XDeclaration } from "./XDeclaration.js";
+import { XElement } from "./XElement.js";
+import { XComment } from "./XComment.js";
+import { XText } from "./XText.js";
+import { XCData } from "./XCData.js";
+import { XProcessingInstruction } from "./XProcessingInstruction.js";
+import { XNode } from "./XNode.js";
+import { XAttribute } from "./XAttribute.js";
+import { indentXml } from "./XmlUtils.js";
+import { SaxParser } from "./SaxParser.js";
 
 export class XDocument extends XContainer {
   public readonly declaration: XDeclaration | null;
@@ -29,12 +29,10 @@ export class XDocument extends XContainer {
   constructor(declaration: XDeclaration, ...content: unknown[]);
   constructor(firstOrContent?: XDeclaration | XDocument | unknown, ...rest: unknown[]) {
     super();
-    this.nodeType = 'Document';
+    this.nodeType = "Document";
     if (firstOrContent instanceof XDocument) {
       const other = firstOrContent;
-      this.declaration = other.declaration !== null
-        ? new XDeclaration(other.declaration)
-        : null;
+      this.declaration = other.declaration !== null ? new XDeclaration(other.declaration) : null;
       for (const node of other.nodesArray) {
         if (node.parent === null) {
           node.parent = this;
@@ -70,16 +68,22 @@ export class XDocument extends XContainer {
   }
 
   public override equals(other: XDocument): boolean {
-    if (this.declaration === null && other.declaration !== null) return false;
-    if (this.declaration !== null && other.declaration === null) return false;
+    if (this.declaration === null && other.declaration !== null) {
+      return false;
+    }
+    if (this.declaration !== null && other.declaration === null) {
+      return false;
+    }
     if (this.declaration !== null && other.declaration !== null) {
-      if (!this.declaration.equals(other.declaration)) return false;
+      if (!this.declaration.equals(other.declaration)) {
+        return false;
+      }
     }
     return super.equals(other);
   }
 
   public get root(): XElement | null {
-    return (this.nodesArray.find(n => n instanceof XElement) as XElement) ?? null;
+    return (this.nodesArray.find((n) => n instanceof XElement) as XElement) ?? null;
   }
 
   protected override insertContentItems(...items: unknown[]): void {
@@ -103,14 +107,14 @@ export class XDocument extends XContainer {
       return;
     }
     if (content instanceof XAttribute) {
-      throw new Error('XAttribute is not valid content for an XDocument.');
+      throw new Error("XAttribute is not valid content for an XDocument.");
     }
     if (content instanceof XCData) {
-      throw new Error('XCData is not valid content for an XDocument.');
+      throw new Error("XCData is not valid content for an XDocument.");
     }
-    if (typeof content === 'string') {
+    if (typeof content === "string") {
       if (/\S/.test(content)) {
-        throw new Error('Non-whitespace string content is not valid for an XDocument.');
+        throw new Error("Non-whitespace string content is not valid for an XDocument.");
       }
       const text = new XText(content);
       text.parent = this;
@@ -124,10 +128,10 @@ export class XDocument extends XContainer {
       content instanceof XElement
     ) {
       if (content instanceof XText && /\S/.test(content.value)) {
-        throw new Error('XText with non-whitespace content is not valid for an XDocument.');
+        throw new Error("XText with non-whitespace content is not valid for an XDocument.");
       }
-      if (content instanceof XElement && this.nodesArray.some(n => n instanceof XElement)) {
-        throw new Error('An XDocument may contain only one XElement.');
+      if (content instanceof XElement && this.nodesArray.some((n) => n instanceof XElement)) {
+        throw new Error("An XDocument may contain only one XElement.");
       }
       if (content.parent === null) {
         content.parent = this;
@@ -151,8 +155,8 @@ export class XDocument extends XContainer {
   }
 
   public toStringInternal(): string {
-    const decl = this.declaration !== null ? this.declaration.toString() : '';
-    return decl + this.nodesArray.map(n => n.toStringInternal()).join('');
+    const decl = this.declaration !== null ? this.declaration.toString() : "";
+    return decl + this.nodesArray.map((n) => n.toStringInternal()).join("");
   }
 
   public toString(): string {

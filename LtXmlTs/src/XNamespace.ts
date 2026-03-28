@@ -7,9 +7,9 @@
  * Licensed under the MIT License
  */
 
-import { XName } from './XName.js';
-import type { XObject } from './XObject.js';
-import type { NamespacePrefixInfo, NamespacePrefixPair } from './NamespacePrefixInfo.js';
+import { XName } from "./XName.js";
+import type { XObject } from "./XObject.js";
+import type { NamespacePrefixInfo, NamespacePrefixPair } from "./NamespacePrefixInfo.js";
 
 class XNamespaceCacheEntry {
   namespace: XNamespace;
@@ -24,9 +24,15 @@ class XNamespaceCacheEntry {
 export class XNamespace {
   private static namespaceCache: Map<string, XNamespaceCacheEntry> = new Map();
 
-  public static readonly none: XNamespace = new XNamespace('');
-  public static readonly xml: XNamespace = new XNamespace('http://www.w3.org/XML/1998/namespace', 'xml');
-  public static readonly xmlns: XNamespace = new XNamespace('http://www.w3.org/2000/xmlns/', 'xmlns');
+  public static readonly none: XNamespace = new XNamespace("");
+  public static readonly xml: XNamespace = new XNamespace(
+    "http://www.w3.org/XML/1998/namespace",
+    "xml",
+  );
+  public static readonly xmlns: XNamespace = new XNamespace(
+    "http://www.w3.org/2000/xmlns/",
+    "xmlns",
+  );
 
   public readonly uri: string;
 
@@ -43,19 +49,19 @@ export class XNamespace {
   }
 
   public static getNone(): XNamespace {
-    return new XNamespace('');
+    return new XNamespace("");
   }
 
   public static getXml(): XNamespace {
-    return new XNamespace('http://www.w3.org/XML/1998/namespace', 'xml');
+    return new XNamespace("http://www.w3.org/XML/1998/namespace", "xml");
   }
 
   public static getXmlns(): XNamespace {
-    return new XNamespace('http://www.w3.org/2000/xmlns/', 'xmlns');
+    return new XNamespace("http://www.w3.org/2000/xmlns/", "xmlns");
   }
 
   public toString(): string {
-    return this.uri === '' ? '' : `{${this.uri}}`;
+    return this.uri === "" ? "" : `{${this.uri}}`;
   }
 
   public getName(localName: string): XName {
@@ -67,18 +73,22 @@ export class XNamespace {
   }
 
   public getPrefix(contextObject: XObject): string {
-    if (contextObject.nodeType === 'Attribute') {
-      const attrName = (contextObject as any).name as XName;
+    if (contextObject.nodeType === "Attribute") {
+      const attrName = (contextObject as unknown as { name: XName }).name;
       if (attrName.namespace === XNamespace.none) {
-        return '';
+        return "";
       }
       contextObject = contextObject.parent as XObject;
-      if (contextObject === null) return '';
+      if (contextObject === null) {
+        return "";
+      }
     }
     const info = contextObject.namespacePrefixInfo as NamespacePrefixInfo | null;
-    if (info === null) return '';
+    if (info === null) {
+      return "";
+    }
     const pair = info.namespacePrefixPairs.find((p: NamespacePrefixPair) => p.namespace === this);
-    return pair?.prefix ?? '';
+    return pair?.prefix ?? "";
   }
 
   constructor(uri: string, preferredPrefix: string | null = null) {

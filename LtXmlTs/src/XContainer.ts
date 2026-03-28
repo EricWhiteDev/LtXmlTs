@@ -7,13 +7,13 @@
  * Licensed under the MIT License
  */
 
-import { XNode } from './XNode.js';
-import { XComment } from './XComment.js';
-import { XText } from './XText.js';
-import { XCData } from './XCData.js';
-import { XProcessingInstruction } from './XProcessingInstruction.js';
-import { XName } from './XName.js';
-import type { XElement } from './XElement.js';
+import { XNode } from "./XNode.js";
+import { XComment } from "./XComment.js";
+import { XText } from "./XText.js";
+import { XCData } from "./XCData.js";
+import { XProcessingInstruction } from "./XProcessingInstruction.js";
+import { XName } from "./XName.js";
+import type { XElement } from "./XElement.js";
 
 export class XContainer extends XNode {
   protected nodesArray: XNode[] = [];
@@ -27,9 +27,7 @@ export class XContainer extends XNode {
   }
 
   public get lastNode(): XNode | null {
-    return this.nodesArray.length > 0
-      ? this.nodesArray[this.nodesArray.length - 1]
-      : null;
+    return this.nodesArray.length > 0 ? this.nodesArray[this.nodesArray.length - 1] : null;
   }
 
   protected addContentList(...items: unknown[]): void {
@@ -48,10 +46,10 @@ export class XContainer extends XNode {
       }
       return;
     }
-    if ((content as any)?.nodeType === 'Attribute') {
+    if ((content as { nodeType?: string })?.nodeType === "Attribute") {
       return;
     }
-    if (typeof content === 'string') {
+    if (typeof content === "string") {
       const text = new XText(content);
       text.parent = this;
       this.nodesArray.push(text);
@@ -82,14 +80,14 @@ export class XContainer extends XNode {
       this.nodesArray.push(node);
       return;
     }
-    if ((content as any)?.nodeType === 'Element') {
+    if ((content as { nodeType?: string })?.nodeType === "Element") {
       const el = content as XNode;
       el.parent = this;
       this.nodesArray.push(el);
       return;
     }
     const str = (content as { toString(): string }).toString();
-    if (str !== '[object Object]') {
+    if (str !== "[object Object]") {
       const text = new XText(str);
       text.parent = this;
       this.nodesArray.push(text);
@@ -132,17 +130,22 @@ export class XContainer extends XNode {
   public elements(): XElement[];
   public elements(name: XName | string): XElement[];
   public elements(name?: XName | string): XElement[] {
-    const xname = name === undefined ? undefined : (typeof name === 'string' ? new XName(name) : name);
+    const xname =
+      name === undefined ? undefined : typeof name === "string" ? new XName(name) : name;
     return this.nodesArray.filter(
-      (n): n is XElement => n.nodeType === 'Element' && (xname === undefined || (n as unknown as XElement).name === xname),
+      (n): n is XElement =>
+        n.nodeType === "Element" &&
+        (xname === undefined || (n as unknown as XElement).name === xname),
     );
   }
 
   public element(name: XName | string): XElement | null {
-    const xname = typeof name === 'string' ? new XName(name) : name;
-    return this.nodesArray.find(
-      (n): n is XElement => n.nodeType === 'Element' && (n as unknown as XElement).name === xname,
-    ) ?? null;
+    const xname = typeof name === "string" ? new XName(name) : name;
+    return (
+      this.nodesArray.find(
+        (n): n is XElement => n.nodeType === "Element" && (n as unknown as XElement).name === xname,
+      ) ?? null
+    );
   }
 
   public descendantNodes(): XNode[] {
@@ -155,7 +158,7 @@ export class XContainer extends XNode {
 
   protected addSelfAndDescendantsToTempArray(tempArray: XNode[], node: XNode): void {
     tempArray.push(node);
-    if (node.nodeType === 'Element' || node.nodeType === 'Document') {
+    if (node.nodeType === "Element" || node.nodeType === "Document") {
       const container = node as unknown as XContainer;
       for (const child of container.nodesArray) {
         this.addSelfAndDescendantsToTempArray(tempArray, child);
@@ -167,10 +170,14 @@ export class XContainer extends XNode {
   public descendants(name: XName | string): XElement[];
   public descendants(name?: XName | string): XElement[] {
     const tempArray: XElement[] = [];
-    const xname = name === undefined ? null : (typeof name === 'string' ? new XName(name) : name);
+    const xname = name === undefined ? null : typeof name === "string" ? new XName(name) : name;
     for (const node of this.nodesArray) {
-      if (node.nodeType === 'Element') {
-        this.addSelfAndDescendantsElementsToTempArray(tempArray, node as unknown as XElement, xname);
+      if (node.nodeType === "Element") {
+        this.addSelfAndDescendantsElementsToTempArray(
+          tempArray,
+          node as unknown as XElement,
+          xname,
+        );
       }
     }
     return tempArray;
@@ -185,8 +192,12 @@ export class XContainer extends XNode {
       tempArray.push(element);
     }
     for (const child of element.nodesArray) {
-      if (child.nodeType === 'Element') {
-        this.addSelfAndDescendantsElementsToTempArray(tempArray, child as unknown as XElement, name);
+      if (child.nodeType === "Element") {
+        this.addSelfAndDescendantsElementsToTempArray(
+          tempArray,
+          child as unknown as XElement,
+          name,
+        );
       }
     }
   }
@@ -228,27 +239,36 @@ export class XContainer extends XNode {
 
   public removeChild(child: XNode): void {
     const idx = this.nodesArray.indexOf(child);
-    this.nodesArray = [
-      ...this.nodesArray.slice(0, idx),
-      ...this.nodesArray.slice(idx + 1),
-    ];
+    this.nodesArray = [...this.nodesArray.slice(0, idx), ...this.nodesArray.slice(idx + 1)];
   }
 
   public equals(other: XContainer): boolean {
-    if (this.nodesArray.length !== other.nodesArray.length) return false;
+    if (this.nodesArray.length !== other.nodesArray.length) {
+      return false;
+    }
     for (let i = 0; i < this.nodesArray.length; i++) {
       const a = this.nodesArray[i];
       const b = other.nodesArray[i];
-      if (a.nodeType === 'Element' && b.nodeType === 'Element') {
-        if (!(a as unknown as XElement).equals(b as unknown as XElement)) return false;
+      if (a.nodeType === "Element" && b.nodeType === "Element") {
+        if (!(a as unknown as XElement).equals(b as unknown as XElement)) {
+          return false;
+        }
       } else if (a instanceof XComment && b instanceof XComment) {
-        if (!a.equals(b)) return false;
+        if (!a.equals(b)) {
+          return false;
+        }
       } else if (a instanceof XText && b instanceof XText) {
-        if (!a.equals(b)) return false;
+        if (!a.equals(b)) {
+          return false;
+        }
       } else if (a instanceof XCData && b instanceof XCData) {
-        if (!a.equals(b)) return false;
+        if (!a.equals(b)) {
+          return false;
+        }
       } else if (a instanceof XProcessingInstruction && b instanceof XProcessingInstruction) {
-        if (!a.equals(b)) return false;
+        if (!a.equals(b)) {
+          return false;
+        }
       } else {
         return false; // different types
       }

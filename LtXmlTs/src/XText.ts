@@ -7,8 +7,8 @@
  * Licensed under the MIT License
  */
 
-import { XNode } from './XNode.js';
-import { xmlEscapeText } from './XmlUtils.js';
+import { XNode } from "./XNode.js";
+import { xmlEscapeText } from "./XmlUtils.js";
 
 export class XText extends XNode {
   public readonly value: string;
@@ -17,8 +17,8 @@ export class XText extends XNode {
   constructor(other: XText);
   constructor(valueOrOther: string | XText) {
     super();
-    this.nodeType = 'Text';
-    if (typeof valueOrOther === 'string') {
+    this.nodeType = "Text";
+    if (typeof valueOrOther === "string") {
       this.value = valueOrOther;
     } else {
       this.value = valueOrOther.value;

@@ -7,12 +7,12 @@
  * Licensed under the MIT License
  */
 
-import type { XObject } from './XObject.js';
-import { XNode } from './XNode.js';
-import { XContainer } from './XContainer.js';
-import { XElement } from './XElement.js';
-import { XAttribute } from './XAttribute.js';
-import { XName } from './XName.js';
+import type { XObject } from "./XObject.js";
+import { XNode } from "./XNode.js";
+import { XContainer } from "./XContainer.js";
+import { XElement } from "./XElement.js";
+import { XAttribute } from "./XAttribute.js";
+import { XName } from "./XName.js";
 
 function buildDocumentOrderMap(root: XObject): Map<XNode | XAttribute, number> {
   const map = new Map<XNode | XAttribute, number>();
@@ -40,7 +40,9 @@ function buildDocumentOrderMap(root: XObject): Map<XNode | XAttribute, number> {
 
 function findRoot(item: XNode | XAttribute): XObject {
   let current: XObject = item;
-  while (current.parent !== null) current = current.parent;
+  while (current.parent !== null) {
+    current = current.parent;
+  }
   return current;
 }
 
@@ -117,7 +119,8 @@ export class XSequence<T extends XNode | XAttribute> {
     const result: XElement[] = [];
     for (const item of this.items) {
       if (item instanceof XElement) {
-        const descs = name === undefined ? item.descendantsAndSelf() : item.descendantsAndSelf(name);
+        const descs =
+          name === undefined ? item.descendantsAndSelf() : item.descendantsAndSelf(name);
         result.push(...descs);
       }
     }
@@ -158,7 +161,9 @@ export class XSequence<T extends XNode | XAttribute> {
   }
 
   public inDocumentOrder(): XSequence<T> {
-    if (this.items.length === 0) return new XSequence<T>([]);
+    if (this.items.length === 0) {
+      return new XSequence<T>([]);
+    }
     const root = findRoot(this.items[0]);
     const posMap = buildDocumentOrderMap(root);
     const sorted = [...this.items].sort((a, b) => {

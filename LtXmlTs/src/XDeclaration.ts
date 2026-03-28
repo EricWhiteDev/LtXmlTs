@@ -7,7 +7,7 @@
  * Licensed under the MIT License
  */
 
-import { xmlEscapeAttrValue } from './XmlUtils.js';
+import { xmlEscapeAttrValue } from "./XmlUtils.js";
 
 export class XDeclaration {
   public readonly version: string;
@@ -17,7 +17,7 @@ export class XDeclaration {
   constructor(version: string, encoding: string, standalone: string);
   constructor(other: XDeclaration);
   constructor(versionOrOther: string | XDeclaration, encoding?: string, standalone?: string) {
-    if (typeof versionOrOther === 'string') {
+    if (typeof versionOrOther === "string") {
       this.version = versionOrOther;
       this.encoding = encoding!;
       this.standalone = standalone!;
@@ -29,16 +29,22 @@ export class XDeclaration {
   }
 
   public equals(other: XDeclaration): boolean {
-    return this.version === other.version &&
+    return (
+      this.version === other.version &&
       this.encoding === other.encoding &&
-      this.standalone === other.standalone;
+      this.standalone === other.standalone
+    );
   }
 
   public toString(): string {
     let result = `<?xml version='${xmlEscapeAttrValue(this.version)}'`;
-    if (this.encoding.length > 0) result += ` encoding='${xmlEscapeAttrValue(this.encoding)}'`;
-    if (this.standalone.length > 0) result += ` standalone='${xmlEscapeAttrValue(this.standalone)}'`;
-    result += '?>';
+    if (this.encoding.length > 0) {
+      result += ` encoding='${xmlEscapeAttrValue(this.encoding)}'`;
+    }
+    if (this.standalone.length > 0) {
+      result += ` standalone='${xmlEscapeAttrValue(this.standalone)}'`;
+    }
+    result += "?>";
     return result;
   }
 }

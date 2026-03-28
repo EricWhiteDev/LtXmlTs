@@ -7,7 +7,7 @@
  * Licensed under the MIT License
  */
 
-import type { XNamespace } from './XNamespace.js';
+import type { XNamespace } from "./XNamespace.js";
 
 export class NamespacePrefixPair {
   public readonly namespace: XNamespace;
@@ -28,12 +28,12 @@ export class NamespacePrefixInfo {
   constructor(other: NamespacePrefixInfo);
   constructor(
     defaultNamespaceOrOther: XNamespace | NamespacePrefixInfo,
-    namespacePrefixPairs?: NamespacePrefixPair[]
+    namespacePrefixPairs?: NamespacePrefixPair[],
   ) {
     if (defaultNamespaceOrOther instanceof NamespacePrefixInfo) {
       this.defaultNamespace = defaultNamespaceOrOther.defaultNamespace;
       this.namespacePrefixPairs = defaultNamespaceOrOther.namespacePrefixPairs.map(
-        p => new NamespacePrefixPair(p.namespace, p.prefix)
+        (p) => new NamespacePrefixPair(p.namespace, p.prefix),
       );
     } else {
       this.defaultNamespace = defaultNamespaceOrOther;

@@ -7,39 +7,41 @@
  * Licensed under the MIT License
  */
 
-import type { NamespacePrefixInfo } from './NamespacePrefixInfo.js';
-import type { XDocument } from './XDocument.js';
+import type { NamespacePrefixInfo } from "./NamespacePrefixInfo.js";
+import type { XDocument } from "./XDocument.js";
 
 export type XmlNodeType =
-  | 'Element'
-  | 'Text'
-  | 'Comment'
-  | 'CDATA'
-  | 'ProcessingInstruction'
-  | 'Entity'
-  | 'Attribute'
-  | 'Document'
+  | "Element"
+  | "Text"
+  | "Comment"
+  | "CDATA"
+  | "ProcessingInstruction"
+  | "Entity"
+  | "Attribute"
+  | "Document"
   | null;
 
 export class XObject {
-  protected annotationsArray: any[] = [];
+  protected annotationsArray: unknown[] = [];
   public nodeType: XmlNodeType = null;
   public parent: XObject | null = null;
   public namespacePrefixInfo: NamespacePrefixInfo | null = null;
 
-  addAnnotation(obj: any): void {
+  addAnnotation(obj: unknown): void {
     this.annotationsArray.push(obj);
   }
 
   annotation<T>(ctor: new (...args: any[]) => T): T | null {
     for (const item of this.annotationsArray) {
-      if (item instanceof ctor) return item as T;
+      if (item instanceof ctor) {
+        return item as T;
+      }
     }
     return null;
   }
 
   annotations<T>(ctor: new (...args: any[]) => T): T[] {
-    return this.annotationsArray.filter(item => item instanceof ctor) as T[];
+    return this.annotationsArray.filter((item) => item instanceof ctor) as T[];
   }
 
   removeAnnotations(): void;
@@ -48,17 +50,20 @@ export class XObject {
     if (ctor === undefined) {
       this.annotationsArray = [];
     } else {
-      this.annotationsArray = this.annotationsArray.filter(item => item.constructor !== ctor);
+      this.annotationsArray = this.annotationsArray.filter(
+        (item) => (item as { constructor: unknown }).constructor !== ctor,
+      );
     }
   }
 
   public get document(): XDocument | null {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let current: XObject = this;
     while (current.parent !== null) {
       current = current.parent;
     }
     // Use nodeType check to avoid needing a runtime import of XDocument
     // (which would create a deep circular dependency chain)
-    return current.nodeType === 'Document' ? current as unknown as XDocument : null;
+    return current.nodeType === "Document" ? (current as unknown as XDocument) : null;
   }
 }
