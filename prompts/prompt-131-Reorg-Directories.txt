@@ -1,0 +1,56 @@
+I want to reorganize directories to a more common setup.
+
+Currently, the library is stored in an LtXmlTs directory, with the src directory as a subdir under that.  The unit tests are stored in a directory name LtXmlTs.Test
+
+Instead, 
+
+The following is the directory structure that I want to move to:
+
+LtXmlTs/
+├── src/                # TypeScript source files
+│   ├── index.ts        # Entry point for the library
+│   ├── NamespacePrefixInfo.ts
+│   ├── SaxParser.ts
+│   ├── XAttribute.ts
+│   ├── XCData.ts
+│   ├── XComment.ts
+│   ├── XContainer.ts
+│   ├── XDeclaration.ts
+│   ├── XDocument.ts
+│   ├── XElement.ts
+│   ├── XmlUtils.ts
+│   ├── XName.ts
+│   ├── XNamespace.ts
+│   ├── XNode.ts
+│   ├── XObject.ts
+│   ├── XProcessingInstruction.ts
+│   ├── XSequence.ts
+│   └── XTest.ts
+├── tests/              # Replicated src structure
+│   ├── NamespacePrefixInfo.test.ts
+│   ├── Parsing.test.ts
+│   ├── RoundTrip.test.ts
+│   ├── Serialization.test.ts
+│   ├── XAttribute.test.ts
+│   ├── XCData.test.ts
+│   ├── XComment.test.ts
+│   ├── XContainer.test.ts
+│   ├── XDeclaration.test.ts
+│   ├── XDocument.test.ts
+│   ├── XElement.test.ts
+│   ├── XmlLoad.test.ts
+│   ├── XName.test.ts
+│   ├── XNamespace.test.ts
+│   ├── XNode.test.ts
+│   ├── XObject.test.ts
+│   ├── XProcessingInstruction.test.ts
+│   ├── XSequence.test.ts
+│   └── XText.test.ts
+├── dist/               # Compiled JS and type definitions
+├── tsconfig.json       # TypeScript configuration
+├── package.json        # Metadata and dependencies
+├── prompts             # Claude code prompts that I used to generate the code
+├── scripts             # documentation generation scripts
+└── .gitignore          # Files to ignore (node_modules, dist, etc.)
+
+Move the necessary configuration files such as vitest.config.ts to their recommended location, and make sure that all unit tests pass.

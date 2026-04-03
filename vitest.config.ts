@@ -16,8 +16,11 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      ltxmlts: resolve(__dirname, '../LtXmlTs/src/index.ts'),
+      ltxmlts: resolve(__dirname, './src/index.ts'),
     },
   },
-  test: { environment: 'node' },
+  test: {
+    environment: 'node',
+    include: ['tests/**/*.test.ts'],
+  },
 });
