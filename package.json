@@ -21,6 +21,7 @@
     "lint": "eslint src",
     "test": "vitest run",
     "test:watch": "vitest",
+    "docs": "typedoc",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -40,6 +41,7 @@
     "@types/sax": "^1.2.7",
     "eslint": "^10.1.0",
     "prettier": "^3.8.1",
+    "typedoc": "^0.28.18",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.2",
     "vitest": "^4.1.0"

@@ -143,15 +143,15 @@ All parse and load methods throw `XmlParseError` on malformed input:
 
 ## Documentation
 
-Per-class reference documentation (DOCX format) is in the `docs/` directory:
+Full API reference and guides are published at **[ericwhitedev.github.io/LtXmlTs](https://ericwhitedev.github.io/LtXmlTs/)**.
 
-`XObject` · `XNode` · `XContainer` · `XElement` · `XDocument` · `XAttribute` · `XText` · `XComment` · `XCData` · `XProcessingInstruction` · `XDeclaration` · `XName` · `XNamespace` · `NamespacePrefixPair` · `NamespacePrefixInfo` · `XmlParseError`
-
-To regenerate the docs after source changes:
+To build the documentation locally:
 
 ```bash
-cd scripts && node gen-class-docs.mjs
+npm run docs
 ```
+
+Output is written to `docs/api/`. Open `docs/api/index.html` in a browser.
 
 ## License
 

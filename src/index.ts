@@ -7,6 +7,15 @@
  * Licensed under the MIT License
  */
 
+/**
+ * LtXmlTs -- LINQ to XML for TypeScript.
+ *
+ * A TypeScript port of .NET's System.Xml.Linq, providing a rich XML object model
+ * with fluent querying, functional tree construction, and round-trip serialization.
+ *
+ * @packageDocumentation
+ */
+
 export type { XmlNodeType } from "./XObject.js";
 export { XObject } from "./XObject.js";
 export { XNode } from "./XNode.js";

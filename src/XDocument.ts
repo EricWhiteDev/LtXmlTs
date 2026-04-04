@@ -19,13 +19,69 @@ import { XAttribute } from "./XAttribute.js";
 import { indentXml } from "./XmlUtils.js";
 import { SaxParser } from "./SaxParser.js";
 
+/**
+ * Represents a complete XML document.
+ *
+ * @remarks
+ * An `XDocument` may contain at most one {@link XElement} (the root).
+ * {@link XAttribute} and {@link XCData} are not valid document content and
+ * will throw. Non-whitespace string content will also throw.
+ *
+ * @example
+ * ```typescript
+ * const doc = new XDocument(
+ *   new XDeclaration('1.0', 'UTF-8', 'yes'),
+ *   new XElement('root', new XElement('child')),
+ * );
+ * doc.declaration?.version; // '1.0'
+ * doc.root?.name.localName; // 'root'
+ *
+ * const doc = XDocument.parse("<?xml version='1.0'?><root/>");
+ * ```
+ */
 export class XDocument extends XContainer {
+  /**
+   * The XML declaration for this document, or `null` if none was specified.
+   */
   public readonly declaration: XDeclaration | null;
 
+  /**
+   * Creates a new empty XDocument.
+   *
+   * @remarks
+   * - `new XDocument()` creates an empty document.
+   * - `new XDocument(declaration)` creates a document with an XML declaration.
+   * - `new XDocument(other)` deep-clones an existing document.
+   * - `new XDocument(...content)` creates a document with content nodes.
+   * - `new XDocument(declaration, ...content)` creates a document with both.
+   */
   constructor();
+  /**
+   * Creates a new XDocument with an XML declaration.
+   *
+   * @param declaration - The XML declaration.
+   */
   constructor(declaration: XDeclaration);
+  /**
+   * Deep-clones an existing XDocument.
+   *
+   * @param other - The document to clone.
+   */
   constructor(other: XDocument);
+  /**
+   * Creates a new XDocument with the specified content.
+   *
+   * @param content - Root element, comments, processing instructions, or
+   *   whitespace-only strings.
+   */
   constructor(...content: unknown[]);
+  /**
+   * Creates a new XDocument with an XML declaration and content.
+   *
+   * @param declaration - The XML declaration.
+   * @param content - Root element, comments, processing instructions, or
+   *   whitespace-only strings.
+   */
   constructor(declaration: XDeclaration, ...content: unknown[]);
   constructor(firstOrContent?: XDeclaration | XDocument | unknown, ...rest: unknown[]) {
     super();
@@ -67,6 +123,13 @@ export class XDocument extends XContainer {
     }
   }
 
+  /**
+   * Compares this document with another for structural equality, including
+   * the declaration and all child nodes.
+   *
+   * @param other - The document to compare against.
+   * @returns `true` if the documents are structurally identical.
+   */
   public override equals(other: XDocument): boolean {
     if (this.declaration === null && other.declaration !== null) {
       return false;
@@ -82,20 +145,35 @@ export class XDocument extends XContainer {
     return super.equals(other);
   }
 
+  /**
+   * Gets the root element of this document, or `null` if there is none.
+   */
   public get root(): XElement | null {
     return (this.nodesArray.find((n) => n instanceof XElement) as XElement) ?? null;
   }
 
+  /**
+   * Overrides content insertion to enforce document content rules.
+   * @internal
+   */
   protected override insertContentItems(...items: unknown[]): void {
     this.addDocumentContentList(...items);
   }
 
+  /**
+   * Adds multiple document content items with validation.
+   * @internal
+   */
   protected addDocumentContentList(...items: unknown[]): void {
     for (const item of items) {
       this.addDocumentContentObject(item);
     }
   }
 
+  /**
+   * Adds a single document content object with type validation.
+   * @internal
+   */
   protected addDocumentContentObject(content: unknown): void {
     if (content === null || content === undefined) {
       return;
@@ -154,11 +232,20 @@ export class XDocument extends XContainer {
     }
   }
 
+  /**
+   * Produces the XML string for this document (used by the serialisation pipeline).
+   * @internal
+   */
   public toStringInternal(): string {
     const decl = this.declaration !== null ? this.declaration.toString() : "";
     return decl + this.nodesArray.map((n) => n.toStringInternal()).join("");
   }
 
+  /**
+   * Serialises this document to an XML string.
+   *
+   * @returns The XML string representation, including the declaration if present.
+   */
   public toString(): string {
     if (this.root !== null) {
       XElement.populateNamespacePrefixInfo(this.root);
@@ -172,18 +259,46 @@ export class XDocument extends XContainer {
     }
   }
 
+  /**
+   * Serialises this document to an indented (pretty-printed) XML string.
+   *
+   * @returns The indented XML string.
+   */
   public toStringWithIndentation(): string {
     return indentXml(this.toString());
   }
 
+  /**
+   * Parses an XML string into an {@link XDocument}.
+   *
+   * @param xml - The XML string to parse.
+   * @returns The parsed document.
+   *
+   * @example
+   * ```typescript
+   * const doc = XDocument.parse("<?xml version='1.0'?><root/>");
+   * ```
+   */
   public static parse(xml: string): XDocument {
     return new SaxParser().parseDocument(xml);
   }
 
+  /**
+   * Loads an XML file synchronously and parses it into an {@link XDocument}.
+   *
+   * @param filePath - Path to the XML file.
+   * @returns The parsed document.
+   */
   public static load(filePath: string): XDocument {
     return new SaxParser().parseDocumentFromFile(filePath);
   }
 
+  /**
+   * Loads an XML file asynchronously and parses it into an {@link XDocument}.
+   *
+   * @param filePath - Path to the XML file.
+   * @returns A promise that resolves to the parsed document.
+   */
   public static async loadAsync(filePath: string): Promise<XDocument> {
     return new SaxParser().parseDocumentFromFileAsync(filePath);
   }

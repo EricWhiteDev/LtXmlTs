@@ -9,21 +9,42 @@
 
 import type { XNamespace } from "./XNamespace.js";
 
+/**
+ * A simple data class that binds an {@link XNamespace} to its serialization prefix.
+ */
 export class NamespacePrefixPair {
+  /** The namespace. */
   public readonly namespace: XNamespace;
+  /** The prefix string used during serialization. */
   public prefix: string;
 
+  /**
+   * @param namespace - The namespace to bind.
+   * @param prefix - The prefix string.
+   */
   constructor(namespace: XNamespace, prefix: string) {
     this.namespace = namespace;
     this.prefix = prefix;
   }
 }
 
+/**
+ * Holds namespace-prefix scope information used during serialization.
+ */
 export class NamespacePrefixInfo {
+  /** @internal */
   public static pHashCount: number = 0;
+  /** The default namespace in this scope. */
   public defaultNamespace: XNamespace;
+  /** The list of namespace-to-prefix bindings in this scope. */
   public readonly namespacePrefixPairs: NamespacePrefixPair[];
 
+  /**
+   * Creates a new {@link NamespacePrefixInfo} from explicit values or by copying another.
+   *
+   * @param defaultNamespace - The default namespace for the scope.
+   * @param namespacePrefixPairs - The prefix bindings.
+   */
   constructor(defaultNamespace: XNamespace, namespacePrefixPairs: NamespacePrefixPair[]);
   constructor(other: NamespacePrefixInfo);
   constructor(

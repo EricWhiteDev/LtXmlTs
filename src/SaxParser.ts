@@ -24,11 +24,38 @@ import {
   XNode,
 } from "./index.js";
 
+/**
+ * Error thrown by all parse/load methods when the input XML is malformed.
+ *
+ * @remarks
+ * Carries optional line, column, and file-path information to help locate the
+ * source of the error.
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   XDocument.load('/data/config.xml');
+ * } catch (e) {
+ *   if (e instanceof XmlParseError) {
+ *     console.error(`Parse error in ${e.filePath} at line ${e.line}`);
+ *   }
+ * }
+ * ```
+ */
 export class XmlParseError extends Error {
+  /** The 1-based line number where the error occurred, if available. */
   public readonly line?: number;
+  /** The 1-based column number where the error occurred, if available. */
   public readonly column?: number;
+  /** The file path that was being parsed, if the parse originated from a file. */
   public readonly filePath?: string;
 
+  /**
+   * @param message - The error message.
+   * @param line - The line number of the parse error.
+   * @param column - The column number of the parse error.
+   * @param filePath - The file path, if parsing from a file.
+   */
   constructor(message: string, line?: number, column?: number, filePath?: string) {
     super(message);
     this.name = "XmlParseError";
@@ -38,6 +65,7 @@ export class XmlParseError extends Error {
   }
 }
 
+/** @internal */
 class SaxParser {
   private readonly saxParser: saxTypes.SAXParser = sax.parser(true, { xmlns: true });
   private readonly elementStack: XElement[] = [];

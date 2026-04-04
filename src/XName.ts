@@ -18,16 +18,47 @@ class XNameCacheEntry {
   }
 }
 
+/**
+ * An immutable, interned representation of an XML qualified name.
+ *
+ * @remarks
+ * {@link XName} instances are cached: two instances for the same namespace and local
+ * name are the same object (identity equality). Supports Clark notation:
+ * `{http://example.com/ns}localName`.
+ *
+ * @example
+ * ```typescript
+ * const n1 = XName.get('title');
+ * const n2 = XName.get('title');
+ * n1 === n2; // true -- same cached instance
+ *
+ * XName.get('{urn:example}item').localName; // 'item'
+ * XName.get('{urn:example}item').namespaceName; // 'urn:example'
+ * ```
+ */
 export class XName {
   private static nameCache: Map<string, XNameCacheEntry> = new Map();
 
+  /** The namespace of this name. */
   public readonly namespace: XNamespace;
+  /** The local (unqualified) part of this name. */
   public readonly localName: string;
 
+  /**
+   * Returns the namespace URI string of this name.
+   */
   public get namespaceName(): string {
     return this.namespace.uri;
   }
 
+  /**
+   * Returns a cached {@link XName} for the given namespace and local name, or
+   * parses a Clark-notation string.
+   *
+   * @param namespace - The namespace, or a string in Clark notation.
+   * @param localName - The local name (when providing an explicit namespace).
+   * @returns The cached {@link XName} instance.
+   */
   public static get(namespace: XNamespace, localName: string): XName;
   public static get(name: string): XName;
   public static get(namespaceOrName: XNamespace | string, localName?: string): XName {
@@ -37,6 +68,16 @@ export class XName {
     return new XName(namespaceOrName);
   }
 
+  /**
+   * Creates (or retrieves from cache) an {@link XName}.
+   *
+   * @remarks
+   * Because names are interned, calling `new XName('foo')` twice returns the
+   * same object.
+   *
+   * @param namespace - The namespace, or a Clark-notation string.
+   * @param localName - The local name (when providing an explicit namespace).
+   */
   constructor(namespace: XNamespace, localName: string);
   constructor(name: string);
   constructor(namespaceOrName: XNamespace | string, localName?: string) {
@@ -73,14 +114,30 @@ export class XName {
     XName.nameCache.set(clarkKey, new XNameCacheEntry(this));
   }
 
+  /**
+   * Returns the Clark-notation string for this name, or just the local name
+   * when the namespace is empty.
+   *
+   * @returns The string representation, e.g. `"{urn:example}item"` or `"item"`.
+   */
   public toString(): string {
     return this.namespace.uri === "" ? this.localName : `{${this.namespace.uri}}${this.localName}`;
   }
 
+  /**
+   * Compares this name to another by identity (interned reference equality).
+   *
+   * @param other - The name to compare against.
+   * @returns `true` if both names are the same interned instance.
+   */
   public equals(other: XName): boolean {
     return this === other;
   }
 
+  /**
+   * Returns the prefixed form of this name for serialization.
+   * @internal
+   */
   public getPrefixedName(contextObject: XObject): string {
     if (this.namespace === XNamespace.none) {
       return this.localName;

@@ -46,22 +46,58 @@ function findRoot(item: XNode | XAttribute): XObject {
   return current;
 }
 
+/**
+ * A LINQ-style sequence wrapper for arrays of XML objects.
+ *
+ * @remarks
+ * Wraps an array of {@link XNode} or {@link XAttribute} items and provides
+ * chainable query methods (ancestors, descendants, elements, etc.) that mirror
+ * the .NET LINQ to XML extension methods.
+ *
+ * @typeParam T - The element type of the sequence.
+ *
+ * @example
+ * ```typescript
+ * const root = XElement.parse('<catalog><book id="1"><title>A</title></book><book id="2"><title>B</title></book></catalog>');
+ * const titles = xseq(root.elements("book")).elements("title").toArray().map(el => el.value);
+ * // ["A", "B"]
+ * ```
+ */
 export class XSequence<T extends XNode | XAttribute> {
   private readonly items: T[];
 
+  /**
+   * @param items - The array of items to wrap.
+   */
   constructor(items: T[]) {
     this.items = items;
   }
 
+  /** Returns an iterator over the items in this sequence. */
   [Symbol.iterator](): Iterator<T> {
     return this.items[Symbol.iterator]();
   }
 
+  /**
+   * Materializes the sequence into a plain array.
+   *
+   * @returns A new array containing all items.
+   */
   public toArray(): T[] {
     return [...this.items];
   }
 
+  /**
+   * Returns the ancestors of every node in this sequence.
+   *
+   * @returns A sequence of ancestor elements.
+   */
   public ancestors(): XSequence<XElement>;
+  /**
+   * Returns the ancestors of every node in this sequence, filtered by name.
+   *
+   * @param name - Name filter.
+   */
   public ancestors(name: XName | string): XSequence<XElement>;
   public ancestors(name?: XName | string): XSequence<XElement> {
     const result: XElement[] = [];
@@ -74,7 +110,17 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(result);
   }
 
+  /**
+   * Returns each element in this sequence together with its ancestors.
+   *
+   * @returns A sequence of elements.
+   */
   public ancestorsAndSelf(): XSequence<XElement>;
+  /**
+   * Returns each element in this sequence together with its ancestors, filtered by name.
+   *
+   * @param name - Name filter.
+   */
   public ancestorsAndSelf(name: XName | string): XSequence<XElement>;
   public ancestorsAndSelf(name?: XName | string): XSequence<XElement> {
     const result: XElement[] = [];
@@ -87,7 +133,17 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(result);
   }
 
+  /**
+   * Returns the attributes of every element in this sequence.
+   *
+   * @returns A sequence of attributes.
+   */
   public attributes(): XSequence<XAttribute>;
+  /**
+   * Returns the attributes of every element in this sequence, filtered by name.
+   *
+   * @param name - Name filter.
+   */
   public attributes(name: XName | string): XSequence<XAttribute>;
   public attributes(name?: XName | string): XSequence<XAttribute> {
     const result: XAttribute[] = [];
@@ -100,7 +156,17 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(result);
   }
 
+  /**
+   * Returns the descendants of every element in this sequence.
+   *
+   * @returns A sequence of descendant elements.
+   */
   public descendants(): XSequence<XElement>;
+  /**
+   * Returns the descendants of every element in this sequence, filtered by name.
+   *
+   * @param name - Name filter.
+   */
   public descendants(name: XName | string): XSequence<XElement>;
   public descendants(name?: XName | string): XSequence<XElement> {
     const result: XElement[] = [];
@@ -113,7 +179,17 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(result);
   }
 
+  /**
+   * Returns each element in this sequence together with its descendants.
+   *
+   * @returns A sequence of elements.
+   */
   public descendantsAndSelf(): XSequence<XElement>;
+  /**
+   * Returns each element in this sequence together with its descendants, filtered by name.
+   *
+   * @param name - Name filter.
+   */
   public descendantsAndSelf(name: XName | string): XSequence<XElement>;
   public descendantsAndSelf(name?: XName | string): XSequence<XElement> {
     const result: XElement[] = [];
@@ -127,6 +203,11 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(result);
   }
 
+  /**
+   * Returns all descendant nodes (of any type) of every element in this sequence.
+   *
+   * @returns A sequence of descendant nodes.
+   */
   public descendantNodes(): XSequence<XNode> {
     const result: XNode[] = [];
     for (const item of this.items) {
@@ -137,7 +218,17 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(result);
   }
 
+  /**
+   * Returns the direct child elements of every container in this sequence.
+   *
+   * @returns A sequence of child elements.
+   */
   public elements(): XSequence<XElement>;
+  /**
+   * Returns the direct child elements of every container in this sequence, filtered by name.
+   *
+   * @param name - Name filter.
+   */
   public elements(name: XName | string): XSequence<XElement>;
   public elements(name?: XName | string): XSequence<XElement> {
     const result: XElement[] = [];
@@ -150,6 +241,11 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(result);
   }
 
+  /**
+   * Returns all direct child nodes of every container in this sequence.
+   *
+   * @returns A sequence of child nodes.
+   */
   public nodes(): XSequence<XNode> {
     const result: XNode[] = [];
     for (const item of this.items) {
@@ -160,6 +256,11 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(result);
   }
 
+  /**
+   * Returns the items sorted in document order.
+   *
+   * @returns A new sequence with items in document order.
+   */
   public inDocumentOrder(): XSequence<T> {
     if (this.items.length === 0) {
       return new XSequence<T>([]);
@@ -174,6 +275,9 @@ export class XSequence<T extends XNode | XAttribute> {
     return new XSequence(sorted);
   }
 
+  /**
+   * Removes all items in this sequence from their parents.
+   */
   public remove(): void {
     const snapshot = [...this.items];
     for (const item of snapshot) {
@@ -182,60 +286,143 @@ export class XSequence<T extends XNode | XAttribute> {
   }
 }
 
+/**
+ * Wraps an array of XML objects in an {@link XSequence} for fluent querying.
+ *
+ * @typeParam T - The element type.
+ * @param items - The array to wrap.
+ * @returns A new {@link XSequence}.
+ *
+ * @example
+ * ```typescript
+ * const titles = xseq(root.elements("book")).elements("title").toArray();
+ * ```
+ */
 export function xseq<T extends XNode | XAttribute>(items: T[]): XSequence<T> {
   return new XSequence(items);
 }
 
 // Standalone functions
 
+/**
+ * Returns the ancestors of every node in the array, optionally filtered by name.
+ *
+ * @param nodes - The source nodes.
+ * @param name - Optional name filter.
+ * @returns An array of ancestor elements.
+ */
 export function ancestors(nodes: XNode[], name?: XName | string): XElement[] {
   return name === undefined
     ? xseq(nodes).ancestors().toArray()
     : xseq(nodes).ancestors(name).toArray();
 }
 
+/**
+ * Returns each element together with its ancestors, optionally filtered by name.
+ *
+ * @param elements - The source elements.
+ * @param name - Optional name filter.
+ * @returns An array of elements.
+ */
 export function ancestorsAndSelf(elements: XElement[], name?: XName | string): XElement[] {
   return name === undefined
     ? xseq(elements).ancestorsAndSelf().toArray()
     : xseq(elements).ancestorsAndSelf(name).toArray();
 }
 
+/**
+ * Returns the attributes of every element in the array, optionally filtered by name.
+ *
+ * @param elements - The source elements.
+ * @param name - Optional name filter.
+ * @returns An array of attributes.
+ */
 export function attributes(elements: XElement[], name?: XName | string): XAttribute[] {
   return name === undefined
     ? xseq(elements).attributes().toArray()
     : xseq(elements).attributes(name).toArray();
 }
 
+/**
+ * Returns the descendants of every element in the array, optionally filtered by name.
+ *
+ * @param elements - The source elements.
+ * @param name - Optional name filter.
+ * @returns An array of descendant elements.
+ */
 export function descendants(elements: XElement[], name?: XName | string): XElement[] {
   return name === undefined
     ? xseq(elements).descendants().toArray()
     : xseq(elements).descendants(name).toArray();
 }
 
+/**
+ * Returns each element together with its descendants, optionally filtered by name.
+ *
+ * @param elements - The source elements.
+ * @param name - Optional name filter.
+ * @returns An array of elements.
+ */
 export function descendantsAndSelf(elements: XElement[], name?: XName | string): XElement[] {
   return name === undefined
     ? xseq(elements).descendantsAndSelf().toArray()
     : xseq(elements).descendantsAndSelf(name).toArray();
 }
 
+/**
+ * Returns all descendant nodes of every element in the array.
+ *
+ * @param elements - The source elements.
+ * @returns An array of descendant nodes.
+ */
 export function descendantNodes(elements: XElement[]): XNode[] {
   return xseq(elements).descendantNodes().toArray();
 }
 
+/**
+ * Returns the direct child elements of every node in the array, optionally filtered by name.
+ *
+ * @param nodes - The source nodes.
+ * @param name - Optional name filter.
+ * @returns An array of child elements.
+ */
 export function elements(nodes: XNode[], name?: XName | string): XElement[] {
   return name === undefined
     ? xseq(nodes).elements().toArray()
     : xseq(nodes).elements(name).toArray();
 }
 
+/**
+ * Returns all direct child nodes of every element in the array.
+ *
+ * @param elements - The source elements.
+ * @returns An array of child nodes.
+ */
 export function nodes(elements: XElement[]): XNode[] {
   return xseq(elements).nodes().toArray();
 }
 
+/**
+ * Returns the items sorted in document order.
+ *
+ * @typeParam T - The element type.
+ * @param items - The items to sort.
+ * @returns A new array in document order.
+ */
 export function inDocumentOrder<T extends XNode | XAttribute>(items: T[]): T[] {
   return xseq(items).inDocumentOrder().toArray();
 }
 
+/**
+ * Removes all items in the array from their parents.
+ *
+ * @param items - The nodes or attributes to remove.
+ *
+ * @example
+ * ```typescript
+ * remove(root.descendants('book'));
+ * ```
+ */
 export function remove(items: Array<XNode | XAttribute>): void {
   xseq(items).remove();
 }

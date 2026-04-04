@@ -1,0 +1,12 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "docs/api",
+  "projectDocuments": ["docs/guides/**/*.md"],
+  "name": "LtXmlTs — LINQ to XML for TypeScript",
+  "readme": "README.md",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "githubPages": true
+}

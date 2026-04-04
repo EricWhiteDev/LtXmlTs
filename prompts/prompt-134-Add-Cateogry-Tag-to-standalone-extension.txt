@@ -1,0 +1,16 @@
+add @category tags to group the standalone functions from XSequence.ts together in the docs.  Name the category "Array Extension Methods".
+
+The external functions that should have the @category tag are:
+- ancestors
+- ancestorsAndSelf
+- attributes
+- descendantNodes
+- descendants
+- descendantsAndSelf
+- elements
+- inDocumentOrder
+- nodes
+- remove
+- xseq
+
+Regenerate the docs after making this change.

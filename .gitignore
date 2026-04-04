@@ -10,6 +10,9 @@ coverage/
 # Vitest cache
 .vitest/
 
+# TypeDoc generated output
+docs/api/
+
 # macOS
 .DS_Store
 

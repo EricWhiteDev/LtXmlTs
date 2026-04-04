@@ -15,27 +15,58 @@ import { XProcessingInstruction } from "./XProcessingInstruction.js";
 import { XName } from "./XName.js";
 import type { XElement } from "./XElement.js";
 
+/**
+ * Abstract base class for XML nodes that can contain child nodes.
+ *
+ * @remarks
+ * {@link XElement} and {@link XDocument} extend `XContainer`. It provides
+ * the child-node collection, element and descendant queries, and content
+ * manipulation methods (add, remove, replace).
+ */
 export class XContainer extends XNode {
+  /**
+   * Internal backing array for child nodes.
+   * @internal
+   */
   protected nodesArray: XNode[] = [];
 
+  /**
+   * Returns a shallow copy of this container's child nodes.
+   *
+   * @returns A new array containing all direct child {@link XNode} instances.
+   */
   public nodes(): XNode[] {
     return [...this.nodesArray];
   }
 
+  /**
+   * Gets the first child node, or `null` if the container is empty.
+   */
   public get firstNode(): XNode | null {
     return this.nodesArray.length > 0 ? this.nodesArray[0] : null;
   }
 
+  /**
+   * Gets the last child node, or `null` if the container is empty.
+   */
   public get lastNode(): XNode | null {
     return this.nodesArray.length > 0 ? this.nodesArray[this.nodesArray.length - 1] : null;
   }
 
+  /**
+   * Adds multiple content items to this container.
+   * @internal
+   */
   protected addContentList(...items: unknown[]): void {
     for (const item of items) {
       this.addContentObject(item);
     }
   }
 
+  /**
+   * Adds a single content item to this container, handling type dispatch.
+   * @internal
+   */
   protected addContentObject(content: unknown): void {
     if (content === null || content === undefined) {
       return;
@@ -94,10 +125,20 @@ export class XContainer extends XNode {
     }
   }
 
+  /**
+   * Inserts content items into this container (overridden by XDocument for validation).
+   * @internal
+   */
   protected insertContentItems(...items: unknown[]): void {
     this.addContentList(...items);
   }
 
+  /**
+   * Inserts content immediately after an existing child node.
+   *
+   * @param child - The reference child node.
+   * @param content - Content to insert after the child.
+   */
   public insertAfterChild(child: XNode, ...content: unknown[]): void {
     const copy = [...this.nodesArray];
     this.nodesArray = [];
@@ -111,10 +152,30 @@ export class XContainer extends XNode {
     }
   }
 
+  /**
+   * Appends content as children of this container.
+   *
+   * @remarks
+   * Content rules:
+   * - {@link XElement} and other {@link XNode} subclasses are added as child nodes.
+   * - Strings are wrapped in {@link XText}.
+   * - Arrays are recursively unpacked.
+   * - {@link XAttribute} objects passed here are silently ignored; pass
+   *   attributes to the {@link XElement} constructor or use
+   *   {@link XElement.setAttributeValue} instead.
+   * - If a node already has a parent, it is cloned before being added.
+   *
+   * @param content - Nodes, strings, or arrays to add.
+   */
   public add(...content: unknown[]): void {
     this.insertContentItems(...content);
   }
 
+  /**
+   * Replaces all child nodes with the specified content.
+   *
+   * @param content - New content to use as children.
+   */
   public replaceNodes(...content: unknown[]): void {
     for (const node of this.nodesArray) {
       node.parent = null;
@@ -123,11 +184,24 @@ export class XContainer extends XNode {
     this.insertContentItems(...content);
   }
 
+  /**
+   * Removes all child nodes from this container.
+   */
   public removeNodes(): void {
     this.replaceNodes();
   }
 
+  /**
+   * Returns the child elements of this container.
+   *
+   * @returns An array of direct child {@link XElement} instances.
+   */
   public elements(): XElement[];
+  /**
+   * Returns the child elements of this container filtered by name.
+   *
+   * @param name - Name to filter by.
+   */
   public elements(name: XName | string): XElement[];
   public elements(name?: XName | string): XElement[] {
     const xname =
@@ -139,6 +213,12 @@ export class XContainer extends XNode {
     );
   }
 
+  /**
+   * Returns the first child element with the specified name, or `null`.
+   *
+   * @param name - The element name to match.
+   * @returns The first matching child {@link XElement}, or `null`.
+   */
   public element(name: XName | string): XElement | null {
     const xname = typeof name === "string" ? new XName(name) : name;
     return (
@@ -148,6 +228,11 @@ export class XContainer extends XNode {
     );
   }
 
+  /**
+   * Returns all descendant nodes of this container in document order.
+   *
+   * @returns A flat array of all descendant {@link XNode} instances.
+   */
   public descendantNodes(): XNode[] {
     const tempArray: XNode[] = [];
     for (const node of this.nodesArray) {
@@ -156,6 +241,10 @@ export class XContainer extends XNode {
     return tempArray;
   }
 
+  /**
+   * Recursively collects a node and all its descendants into an array.
+   * @internal
+   */
   protected addSelfAndDescendantsToTempArray(tempArray: XNode[], node: XNode): void {
     tempArray.push(node);
     if (node.nodeType === "Element" || node.nodeType === "Document") {
@@ -166,7 +255,17 @@ export class XContainer extends XNode {
     }
   }
 
+  /**
+   * Returns all descendant elements of this container in document order.
+   *
+   * @returns An array of descendant {@link XElement} instances.
+   */
   public descendants(): XElement[];
+  /**
+   * Returns all descendant elements of this container in document order, filtered by name.
+   *
+   * @param name - Name to filter by.
+   */
   public descendants(name: XName | string): XElement[];
   public descendants(name?: XName | string): XElement[] {
     const tempArray: XElement[] = [];
@@ -183,6 +282,10 @@ export class XContainer extends XNode {
     return tempArray;
   }
 
+  /**
+   * Recursively collects an element and its descendant elements into an array.
+   * @internal
+   */
   protected addSelfAndDescendantsElementsToTempArray(
     tempArray: XElement[],
     element: XElement,
@@ -202,6 +305,11 @@ export class XContainer extends XNode {
     }
   }
 
+  /**
+   * Inserts content as the first children of this container.
+   *
+   * @param content - Nodes, strings, or arrays to prepend.
+   */
   public addFirst(...content: unknown[]): void {
     const copy = [...this.nodesArray];
     this.nodesArray = copy; // let XDocument see existing nodes for constraint checks
@@ -211,6 +319,12 @@ export class XContainer extends XNode {
     this.nodesArray = [...newNodes, ...copy];
   }
 
+  /**
+   * Inserts content immediately before an existing child node.
+   *
+   * @param child - The reference child node.
+   * @param content - Content to insert before the child.
+   */
   public insertBeforeChild(child: XNode, ...content: unknown[]): void {
     const copy = [...this.nodesArray];
     const idx = copy.indexOf(child);
@@ -224,6 +338,12 @@ export class XContainer extends XNode {
     this.nodesArray = [...copy.slice(0, idx), ...newNodes, ...this.nodesArray];
   }
 
+  /**
+   * Replaces an existing child node with the specified content.
+   *
+   * @param child - The child node to replace.
+   * @param content - Content that replaces the child.
+   */
   public replaceChild(child: XNode, ...content: unknown[]): void {
     const copy = [...this.nodesArray];
     const idx = copy.indexOf(child);
@@ -237,11 +357,23 @@ export class XContainer extends XNode {
     this.nodesArray = [...copy.slice(0, idx), ...newNodes, ...this.nodesArray];
   }
 
+  /**
+   * Removes a specific child node from this container.
+   *
+   * @param child - The child node to remove.
+   */
   public removeChild(child: XNode): void {
     const idx = this.nodesArray.indexOf(child);
     this.nodesArray = [...this.nodesArray.slice(0, idx), ...this.nodesArray.slice(idx + 1)];
   }
 
+  /**
+   * Compares this container's child nodes with another container's for
+   * structural equality.
+   *
+   * @param other - The container to compare against.
+   * @returns `true` if both containers have the same child nodes in order.
+   */
   public equals(other: XContainer): boolean {
     if (this.nodesArray.length !== other.nodesArray.length) {
       return false;
