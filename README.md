@@ -156,3 +156,4 @@ Output is written to `docs/api/`. Open `docs/api/index.html` in a browser.
 ## License
 
 MIT © 2026 Eric White
+
