@@ -2,6 +2,18 @@
 
 LtXmlTs is a TypeScript port of .NET's LINQ to XML (`System.Xml.Linq`) library. It provides a rich, immutable-friendly XML object model with fluent querying, functional tree construction, and round-trip serialization.
 
+## Documentation
+
+Full API reference and guides are published at **[ericwhitedev.github.io/LtXmlTs](https://ericwhitedev.github.io/LtXmlTs/)**.
+
+To build the documentation locally:
+
+```bash
+npm run docs
+```
+
+Output is written to `docs/api/`. Open `docs/api/index.html` in a browser.
+
 ## Class Hierarchy
 
 ```
@@ -140,18 +152,6 @@ All parse and load methods throw `XmlParseError` on malformed input:
 | `line` | `number?` | One-based line number |
 | `column` | `number?` | One-based column number |
 | `filePath` | `string?` | Set only by `load`/`loadAsync` |
-
-## Documentation
-
-Full API reference and guides are published at **[ericwhitedev.github.io/LtXmlTs](https://ericwhitedev.github.io/LtXmlTs/)**.
-
-To build the documentation locally:
-
-```bash
-npm run docs
-```
-
-Output is written to `docs/api/`. Open `docs/api/index.html` in a browser.
 
 ## License
 
