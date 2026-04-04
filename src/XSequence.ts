@@ -62,6 +62,8 @@ function findRoot(item: XNode | XAttribute): XObject {
  * const titles = xseq(root.elements("book")).elements("title").toArray().map(el => el.value);
  * // ["A", "B"]
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XSequence<T extends XNode | XAttribute> {
   private readonly items: T[];
@@ -297,6 +299,8 @@ export class XSequence<T extends XNode | XAttribute> {
  * ```typescript
  * const titles = xseq(root.elements("book")).elements("title").toArray();
  * ```
+ *
+ * @category Array Extension Methods
  */
 export function xseq<T extends XNode | XAttribute>(items: T[]): XSequence<T> {
   return new XSequence(items);
@@ -310,6 +314,8 @@ export function xseq<T extends XNode | XAttribute>(items: T[]): XSequence<T> {
  * @param nodes - The source nodes.
  * @param name - Optional name filter.
  * @returns An array of ancestor elements.
+ *
+ * @category Array Extension Methods
  */
 export function ancestors(nodes: XNode[], name?: XName | string): XElement[] {
   return name === undefined
@@ -323,6 +329,8 @@ export function ancestors(nodes: XNode[], name?: XName | string): XElement[] {
  * @param elements - The source elements.
  * @param name - Optional name filter.
  * @returns An array of elements.
+ *
+ * @category Array Extension Methods
  */
 export function ancestorsAndSelf(elements: XElement[], name?: XName | string): XElement[] {
   return name === undefined
@@ -336,6 +344,8 @@ export function ancestorsAndSelf(elements: XElement[], name?: XName | string): X
  * @param elements - The source elements.
  * @param name - Optional name filter.
  * @returns An array of attributes.
+ *
+ * @category Array Extension Methods
  */
 export function attributes(elements: XElement[], name?: XName | string): XAttribute[] {
   return name === undefined
@@ -349,6 +359,8 @@ export function attributes(elements: XElement[], name?: XName | string): XAttrib
  * @param elements - The source elements.
  * @param name - Optional name filter.
  * @returns An array of descendant elements.
+ *
+ * @category Array Extension Methods
  */
 export function descendants(elements: XElement[], name?: XName | string): XElement[] {
   return name === undefined
@@ -362,6 +374,8 @@ export function descendants(elements: XElement[], name?: XName | string): XEleme
  * @param elements - The source elements.
  * @param name - Optional name filter.
  * @returns An array of elements.
+ *
+ * @category Array Extension Methods
  */
 export function descendantsAndSelf(elements: XElement[], name?: XName | string): XElement[] {
   return name === undefined
@@ -374,6 +388,8 @@ export function descendantsAndSelf(elements: XElement[], name?: XName | string):
  *
  * @param elements - The source elements.
  * @returns An array of descendant nodes.
+ *
+ * @category Array Extension Methods
  */
 export function descendantNodes(elements: XElement[]): XNode[] {
   return xseq(elements).descendantNodes().toArray();
@@ -385,6 +401,8 @@ export function descendantNodes(elements: XElement[]): XNode[] {
  * @param nodes - The source nodes.
  * @param name - Optional name filter.
  * @returns An array of child elements.
+ *
+ * @category Array Extension Methods
  */
 export function elements(nodes: XNode[], name?: XName | string): XElement[] {
   return name === undefined
@@ -397,6 +415,8 @@ export function elements(nodes: XNode[], name?: XName | string): XElement[] {
  *
  * @param elements - The source elements.
  * @returns An array of child nodes.
+ *
+ * @category Array Extension Methods
  */
 export function nodes(elements: XElement[]): XNode[] {
   return xseq(elements).nodes().toArray();
@@ -408,6 +428,8 @@ export function nodes(elements: XElement[]): XNode[] {
  * @typeParam T - The element type.
  * @param items - The items to sort.
  * @returns A new array in document order.
+ *
+ * @category Array Extension Methods
  */
 export function inDocumentOrder<T extends XNode | XAttribute>(items: T[]): T[] {
   return xseq(items).inDocumentOrder().toArray();
@@ -422,6 +444,8 @@ export function inDocumentOrder<T extends XNode | XAttribute>(items: T[]): T[] {
  * ```typescript
  * remove(root.descendants('book'));
  * ```
+ *
+ * @category Array Extension Methods
  */
 export function remove(items: Array<XNode | XAttribute>): void {
   xseq(items).remove();

@@ -35,6 +35,8 @@ class XNameCacheEntry {
  * XName.get('{urn:example}item').localName; // 'item'
  * XName.get('{urn:example}item').namespaceName; // 'urn:example'
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XName {
   private static nameCache: Map<string, XNameCacheEntry> = new Map();

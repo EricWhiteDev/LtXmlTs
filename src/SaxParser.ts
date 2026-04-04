@@ -41,6 +41,8 @@ import {
  *   }
  * }
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XmlParseError extends Error {
   /** The 1-based line number where the error occurred, if available. */

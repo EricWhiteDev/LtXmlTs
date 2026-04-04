@@ -21,6 +21,8 @@ import { xmlEscapeAttrValue } from "./XmlUtils.js";
  * const decl = new XDeclaration('1.0', 'UTF-8', 'yes');
  * decl.toString(); // "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>"
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XDeclaration {
   /** The XML version, typically `"1.0"`. */

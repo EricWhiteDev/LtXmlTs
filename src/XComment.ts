@@ -21,6 +21,8 @@ import { XNode } from "./XNode.js";
  * c.toString(); // '<!-- this is a comment -->'
  * c.value; // ' this is a comment '
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XComment extends XNode {
   /** The text content of the comment (without the `<!--` / `-->` delimiters). */

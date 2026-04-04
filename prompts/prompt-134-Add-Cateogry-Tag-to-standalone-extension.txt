@@ -13,4 +13,6 @@ The external functions that should have the @category tag are:
 - remove
 - xseq
 
+Note that this @category tag does not apply to the XSequence methods, nor does it apply to methods in XElement, XContainer, etc.  This note about the @category tag only applies to the exported functions in XSequence.ts.
+
 Regenerate the docs after making this change.

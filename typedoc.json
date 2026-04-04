@@ -8,5 +8,6 @@
   "excludePrivate": true,
   "excludeProtected": true,
   "excludeInternal": true,
-  "githubPages": true
+  "githubPages": true,
+  "categoryOrder": ["Class and Type Reference", "Array Extension Methods", "*"]
 }

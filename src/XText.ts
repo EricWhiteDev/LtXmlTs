@@ -23,6 +23,8 @@ import { xmlEscapeText } from "./XmlUtils.js";
  * t.value; // 'Hello & World'
  * new XText('a < b & c > d').toString(); // 'a &lt; b &amp; c &gt; d'
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XText extends XNode {
   /** The raw (unescaped) string content of this text node. */

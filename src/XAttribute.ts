@@ -28,6 +28,8 @@ import { xmlEscapeAttrValue } from "./XmlUtils.js";
  * a.name.localName; // 'id'
  * a.value; // '42'
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XAttribute extends XObject {
   /** The fully-qualified name of this attribute. */

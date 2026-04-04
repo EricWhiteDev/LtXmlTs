@@ -42,6 +42,8 @@ class XNamespaceCacheEntry {
  * // Clark notation via string concatenation:
  * const name = W + 'body'; // '{http://...}body'
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XNamespace {
   private static namespaceCache: Map<string, XNamespaceCacheEntry> = new Map();

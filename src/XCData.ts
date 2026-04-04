@@ -20,6 +20,8 @@ import { XNode } from "./XNode.js";
  * const cd = new XCData('<b>bold text & more</b>');
  * cd.toString(); // '<![CDATA[<b>bold text & more</b>]]>'
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XCData extends XNode {
   /** The raw content of the CDATA section. */

@@ -16,6 +16,8 @@ import type { XDocument } from "./XDocument.js";
  * @remarks
  * Every {@link XObject} carries a `nodeType` property whose value is one of these
  * string literals, or `null` before the node has been fully initialised.
+ *
+ * @category Class and Type Reference
  */
 export type XmlNodeType =
   | "Element"
@@ -42,6 +44,8 @@ export type XmlNodeType =
  * const el = new XElement('root');
  * console.log(el.nodeType); // 'Element'
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XObject {
   protected annotationsArray: unknown[] = [];

@@ -20,6 +20,8 @@ import { XNode } from "./XNode.js";
  * const pi = new XProcessingInstruction('xml-stylesheet', 'type="text/css" href="style.css"');
  * pi.toString(); // '<?xml-stylesheet type="text/css" href="style.css"?>'
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XProcessingInstruction extends XNode {
   /** The target name of the processing instruction. */

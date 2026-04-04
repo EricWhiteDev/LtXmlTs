@@ -22,6 +22,8 @@ import type { XElement } from "./XElement.js";
  * {@link XElement} and {@link XDocument} extend `XContainer`. It provides
  * the child-node collection, element and descendant queries, and content
  * manipulation methods (add, remove, replace).
+ *
+ * @category Class and Type Reference
  */
 export class XContainer extends XNode {
   /**

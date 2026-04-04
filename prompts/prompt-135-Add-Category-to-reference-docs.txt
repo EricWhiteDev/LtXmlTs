@@ -1,0 +1,24 @@
+add @category tags to group the following classes and types together in the docs.  Name the category "Class and Type Reference".
+
+NamespacePrefixInfo
+NamespacePrefixPair
+XAttribute
+XCData
+XComment
+XContainer
+XDeclaration
+XDocument
+XElement
+XmlParseError
+XName
+XNamespace
+XNode
+XObject
+XProcessingInstruction
+XSequence
+XText
+XmlNodeType
+
+I would like the category "Class and Type Reference" to appear before the category "Array Extension Methods" in the docs.
+
+After making this change, regenerate the docs.

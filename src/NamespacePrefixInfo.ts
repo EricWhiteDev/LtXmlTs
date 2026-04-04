@@ -11,6 +11,8 @@ import type { XNamespace } from "./XNamespace.js";
 
 /**
  * A simple data class that binds an {@link XNamespace} to its serialization prefix.
+ *
+ * @category Class and Type Reference
  */
 export class NamespacePrefixPair {
   /** The namespace. */
@@ -30,6 +32,8 @@ export class NamespacePrefixPair {
 
 /**
  * Holds namespace-prefix scope information used during serialization.
+ *
+ * @category Class and Type Reference
  */
 export class NamespacePrefixInfo {
   /** @internal */

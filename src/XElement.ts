@@ -37,6 +37,8 @@ import { SaxParser } from "./SaxParser.js";
  * );
  * const copy = new XElement(el); // clone
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XElement extends XContainer {
   /**

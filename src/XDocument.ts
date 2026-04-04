@@ -38,6 +38,8 @@ import { SaxParser } from "./SaxParser.js";
  *
  * const doc = XDocument.parse("<?xml version='1.0'?><root/>");
  * ```
+ *
+ * @category Class and Type Reference
  */
 export class XDocument extends XContainer {
   /**

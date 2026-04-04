@@ -24,6 +24,8 @@ import type { XProcessingInstruction } from "./XProcessingInstruction.js";
  * @remarks
  * `XNode` extends {@link XObject} with sibling navigation, ancestor queries,
  * parent-relative insertion and removal, and deep equality comparison.
+ *
+ * @category Class and Type Reference
  */
 export class XNode extends XObject {
   /**
