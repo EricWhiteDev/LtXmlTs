@@ -46,4 +46,5 @@ export {
   inDocumentOrder,
   remove,
   groupBy,
+  groupAdjacent,
 } from "./XSequence.js";

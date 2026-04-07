@@ -12,7 +12,7 @@ import {
   XElement, XAttribute, XText, XComment, XName,
   XSequence, xseq,
   ancestors, ancestorsAndSelf, attributes, descendants, descendantsAndSelf,
-  descendantNodes, elements, nodes, inDocumentOrder, remove, groupBy,
+  descendantNodes, elements, nodes, inDocumentOrder, remove, groupBy, groupAdjacent,
 } from 'ltxmlts';
 
 // Helper to build a small tree:
@@ -433,5 +433,87 @@ describe('Standalone groupBy', () => {
     expect(grouped.size).toBe(2);
     expect(grouped.get('1')!.toArray()).toEqual([attrs[0]]);
     expect(grouped.get('2')!.toArray()).toEqual([attrs[1]]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('XSequence.groupAdjacent', () => {
+  it('groups adjacent elements with the same name', () => {
+    const root = XElement.parse('<r><a/><a/><b/><a/></r>');
+    const children = root.elements();
+    const groups = xseq(children).groupAdjacent(el => el.name.localName);
+    expect(groups.length).toBe(3);
+    expect(groups[0].key).toBe('a');
+    expect(groups[0].items.toArray().length).toBe(2);
+    expect(groups[1].key).toBe('b');
+    expect(groups[1].items.toArray().length).toBe(1);
+    expect(groups[2].key).toBe('a');
+    expect(groups[2].items.toArray().length).toBe(1);
+  });
+
+  it('returns a single group when all keys are the same', () => {
+    const { a1, a2 } = makeTree();
+    const groups = xseq([a1, a2]).groupAdjacent(el => el.name.localName);
+    expect(groups.length).toBe(1);
+    expect(groups[0].key).toBe('a');
+    expect(groups[0].items.toArray()).toEqual([a1, a2]);
+  });
+
+  it('returns one group per item when all keys differ', () => {
+    const { b, c, d } = makeTree();
+    const groups = xseq([b, c, d]).groupAdjacent(el => el.name.localName);
+    expect(groups.length).toBe(3);
+    expect(groups[0].key).toBe('b');
+    expect(groups[1].key).toBe('c');
+    expect(groups[2].key).toBe('d');
+  });
+
+  it('returns an empty array for an empty sequence', () => {
+    const groups = xseq<XElement>([]).groupAdjacent(el => el.name.localName);
+    expect(groups).toEqual([]);
+  });
+
+  it('items in each group are XSequence instances', () => {
+    const { a1, a2 } = makeTree();
+    const groups = xseq([a1, a2]).groupAdjacent(el => el.name.localName);
+    expect(groups[0].items).toBeInstanceOf(XSequence);
+    // verify chaining works
+    const children = groups[0].items.elements().toArray();
+    expect(children.length).toBe(3); // b, c from a1 + d from a2
+  });
+
+  it('works with XAttribute sequences', () => {
+    const root = XElement.parse('<r a="1" b="1" c="2"/>');
+    const attrs = root.attributes();
+    const groups = xseq(attrs).groupAdjacent(attr => attr.value);
+    expect(groups.length).toBe(2);
+    expect(groups[0].key).toBe('1');
+    expect(groups[0].items.toArray().length).toBe(2);
+    expect(groups[1].key).toBe('2');
+    expect(groups[1].items.toArray().length).toBe(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('Standalone groupAdjacent', () => {
+  it('returns same grouping as the instance method', () => {
+    const root = XElement.parse('<r><a/><a/><b/></r>');
+    const children = root.elements();
+    const standalone = groupAdjacent(children, el => el.name.localName);
+    const instance = xseq(children).groupAdjacent(el => el.name.localName);
+    expect(standalone.length).toBe(instance.length);
+    for (let i = 0; i < standalone.length; i++) {
+      expect(standalone[i].key).toBe(instance[i].key);
+      expect(standalone[i].items.toArray()).toEqual(instance[i].items.toArray());
+    }
+  });
+
+  it('works with XAttribute arrays', () => {
+    const root = XElement.parse('<r x="a" y="a" z="b"/>');
+    const attrs = root.attributes();
+    const groups = groupAdjacent(attrs, attr => attr.value);
+    expect(groups.length).toBe(2);
+    expect(groups[0].key).toBe('a');
+    expect(groups[1].key).toBe('b');
   });
 });

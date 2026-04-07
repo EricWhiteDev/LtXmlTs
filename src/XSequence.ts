@@ -311,6 +311,27 @@ export class XSequence<T extends XNode | XAttribute> {
     }
     return result;
   }
+
+  /**
+   * Groups adjacent items that share the same key into runs.
+   *
+   * @typeParam K - The type of the grouping key.
+   * @param keySelector - A function that returns the grouping key for each item.
+   * @returns An array of objects, each containing a `key` and an {@link XSequence} of adjacent items with that key.
+   */
+  public groupAdjacent<K>(keySelector: (item: T) => K): { key: K; items: XSequence<T> }[] {
+    const groups: { key: K; items: T[] }[] = [];
+    for (const item of this.items) {
+      const key = keySelector(item);
+      const lastGroup = groups[groups.length - 1];
+      if (lastGroup && lastGroup.key === key) {
+        lastGroup.items.push(item);
+      } else {
+        groups.push({ key, items: [item] });
+      }
+    }
+    return groups.map(g => ({ key: g.key, items: new XSequence(g.items) }));
+  }
 }
 
 /**
@@ -492,4 +513,22 @@ export function groupBy<T extends XNode | XAttribute, K>(
   keySelector: (item: T) => K
 ): Map<K, XSequence<T>> {
   return xseq(items).groupBy(keySelector);
+}
+
+/**
+ * Groups adjacent items that share the same key into runs.
+ *
+ * @typeParam T - The element type.
+ * @typeParam K - The type of the grouping key.
+ * @param items - The items to group.
+ * @param keySelector - A function that returns the grouping key for each item.
+ * @returns An array of objects, each containing a `key` and an {@link XSequence} of adjacent items with that key.
+ *
+ * @category Array Extension Methods
+ */
+export function groupAdjacent<T extends XNode | XAttribute, K>(
+  items: T[],
+  keySelector: (item: T) => K
+): { key: K; items: XSequence<T> }[] {
+  return xseq(items).groupAdjacent(keySelector);
 }

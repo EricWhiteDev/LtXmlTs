@@ -1,0 +1,25 @@
+Enhance the XSequence class (in XSequence.ts):
+
+Add a new public method, groupAdjacent
+
+Here is a similar implementation, except that instead of the object containing a key and an array of items, it should contain a key and an XSequence
+
+export function groupAdjacent<T, K>(array: T[], keySelector: (item: T) => K): { key: K; items: T[] }[] {
+    const groups: { key: K; items: T[] }[] = [];
+    for (const item of array) {
+        const key = keySelector(item);
+        const lastGroup = groups[groups.length - 1];
+        if (lastGroup && lastGroup.key === key) {
+            lastGroup.items.push(item);
+        } else {
+            groups.push({ key, items: [item] });
+        }
+    }
+    return groups;
+}
+
+Also add a public function, groupAdjacent, that takes an array of XNode and the same keySelector as above.
+
+Add unit tests for these two methods.
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
