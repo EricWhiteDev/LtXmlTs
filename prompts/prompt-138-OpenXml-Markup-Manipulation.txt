@@ -1,0 +1,36 @@
+Make a new test source file named OpenXmlIntegration.test.ts
+
+Add the following as an overview comment to the new test module.
+This module contains unit tests that are there for the purpose of testing some of the more interesting Open XML markup manipulation tests.
+
+Create a new unit test in this module.  This unit test takes a paragraph with paragraph properties (w:pPr) and two runs (w:r), and transforms it into a new paragraph that contains many runs, each with a single character in them.
+
+Use the spread operator on the strings retrieved from the w:t elements, and project to a new set of runs, each with their own copy of the run properties (w:rPr)
+
+After transforming the paragraph, validate that the paragraph when serialized (with indenting) is equal to the expected output.  You are going to have to do the transform first to determine the expected output.  The expected output should be a template literal.
+
+Here is the paragraph before the transformation.  Insert it as a template literal in the unit test.
+
+    <w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+      <w:pPr>
+        <w:pStyle w:val="ListParagraph"/>
+        <w:spacing w:before="60" w:after="100" w:line="240" w:lineRule="auto"/>
+        <w:contextualSpacing w:val="0"/>
+      </w:pPr>
+      <w:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+          <w:b/>
+          <w:bCs/>
+        </w:rPr>
+        <w:t>"Affiliate"</w:t>
+      </w:r>
+      <w:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+        </w:rPr>
+        <w:t xml:space="preserve"> means, with respect to any Person, any other Person that directly or indirectly, through one or more intermediaries, controls, is controlled by, or is under common control with, such Person.</w:t>
+      </w:r>
+    </w:p>
+
+Ask me questions to clarify the product requirements, technical requirements, engineering principles, and hard constraints.
