@@ -1,0 +1,38 @@
+make a new version of the 'Open XML paragraph transformation' test.
+
+This test will start with the same inputXml.  You can factor the inputXml into a const variable outside of the test function, so that it is only in the source file one time.
+
+It will then do the transform so that every run has only a single character in it.  Same code as in the previous test:
+
+    const para = XElement.parse(inputXml);
+    const pPr = para.element(w + 'pPr');
+
+    const newRuns: XElement[] = [];
+    for (const run of para.elements(w + 'r')) {
+      const rPr = run.element(w + 'rPr');
+      const text = run.element(w + 't')?.value ?? '';
+      for (const ch of [...text]) {
+        const tElement = ch === ' '
+          ? new XElement(w + 't', new XAttribute(xmlNs + 'space', 'preserve'), ch)
+          : new XElement(w + 't', ch);
+        const newRun = new XElement(w + 'r',
+          rPr ? new XElement(rPr) : undefined,
+          tElement
+        );
+        newRuns.push(newRun);
+      }
+    }
+
+    const newPara = new XElement(w + 'p',
+      new XAttribute(XNamespace.xmlns + 'w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'),
+      pPr ? new XElement(pPr) : undefined,
+      ...newRuns
+    );
+
+After doing the above transformation, validate that the results is the same as in the expected string.  Factor this string into a const variable outside of the test function.
+
+Next, use the groupAdjacent extension method to coalesce all runs that have the same run properties into a single run.
+
+If a run's text starts with a space, then be sure to put the xml:space='preserve' attribute on the w:t element.
+
+After this transformation, when the XML is serialized, it should match the inputXml.  Make sure that this is the case.

@@ -12,14 +12,12 @@
 // more interesting Open XML markup manipulation tests.
 
 import { describe, it, expect } from 'vitest';
-import { XElement, XAttribute, XNamespace } from 'ltxmlts';
+import { XElement, XAttribute, XNamespace, xseq } from 'ltxmlts';
 
-describe('Open XML paragraph transformation', () => {
-  it('splits a paragraph with two runs into character-level runs preserving run properties', () => {
-    const w = XNamespace.get('http://schemas.openxmlformats.org/wordprocessingml/2006/main');
-    const xmlNs = XNamespace.get('http://www.w3.org/XML/1998/namespace');
+const w = XNamespace.get('http://schemas.openxmlformats.org/wordprocessingml/2006/main');
+const xmlNs = XNamespace.get('http://www.w3.org/XML/1998/namespace');
 
-    const inputXml = `\
+const inputXml = `\
 <w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
   <w:pPr>
     <w:pStyle w:val="ListParagraph"/>
@@ -50,32 +48,7 @@ describe('Open XML paragraph transformation', () => {
   </w:r>
 </w:p>`;
 
-    const para = XElement.parse(inputXml);
-    const pPr = para.element(w + 'pPr');
-
-    const newRuns: XElement[] = [];
-    for (const run of para.elements(w + 'r')) {
-      const rPr = run.element(w + 'rPr');
-      const text = run.element(w + 't')?.value ?? '';
-      for (const ch of [...text]) {
-        const tElement = ch === ' '
-          ? new XElement(w + 't', new XAttribute(xmlNs + 'space', 'preserve'), ch)
-          : new XElement(w + 't', ch);
-        const newRun = new XElement(w + 'r',
-          rPr ? new XElement(rPr) : undefined,
-          tElement
-        );
-        newRuns.push(newRun);
-      }
-    }
-
-    const newPara = new XElement(w + 'p',
-      new XAttribute(XNamespace.xmlns + 'w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'),
-      pPr ? new XElement(pPr) : undefined,
-      ...newRuns
-    );
-
-    const expected = `<w:p xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
+const characterLevelExpected = `<w:p xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
   <w:pPr>
     <w:pStyle w:val='ListParagraph' />
     <w:spacing w:before='60' w:after='100' w:line='240' w:lineRule='auto' />
@@ -161,6 +134,79 @@ describe('Open XML paragraph transformation', () => {
   </w:r>
 </w:p>`;
 
-    expect(newPara.toStringWithIndentation()).toBe(expected);
+function coalesceRunsInParagraph(para: XElement): XElement {
+  const charRuns = para.elements(w + 'r');
+  const groups = xseq(charRuns).groupAdjacent(
+    run => run.element(w + 'rPr')?.toString() ?? ''
+  );
+
+  const coalescedRuns: XElement[] = groups.map(group => {
+    const runs = group.items.toArray() as XElement[];
+    const rPr = runs[0].element(w + 'rPr');
+    const text = runs.map(r => r.element(w + 't')!.value).join('');
+    const tElement = text.startsWith(' ') || text.endsWith(' ')
+      ? new XElement(w + 't', new XAttribute(xmlNs + 'space', 'preserve'), text)
+      : new XElement(w + 't', text);
+    return new XElement(w + 'r',
+      rPr ? new XElement(rPr) : undefined,
+      tElement
+    );
+  });
+
+  const pPr = para.element(w + 'pPr');
+  return new XElement(w + 'p',
+    new XAttribute(XNamespace.xmlns + 'w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'),
+    pPr ? new XElement(pPr) : undefined,
+    ...coalescedRuns
+  );
+}
+
+function atomizeRunsInParagraph(para: XElement): XElement {
+  const pPr = para.element(w + 'pPr');
+
+  const newRuns: XElement[] = [];
+  for (const run of para.elements(w + 'r')) {
+    const rPr = run.element(w + 'rPr');
+    const text = run.element(w + 't')?.value ?? '';
+    for (const ch of [...text]) {
+      const tElement = ch === ' '
+        ? new XElement(w + 't', new XAttribute(xmlNs + 'space', 'preserve'), ch)
+        : new XElement(w + 't', ch);
+      const newRun = new XElement(w + 'r',
+        rPr ? new XElement(rPr) : undefined,
+        tElement
+      );
+      newRuns.push(newRun);
+    }
+  }
+
+  return new XElement(w + 'p',
+    new XAttribute(XNamespace.xmlns + 'w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'),
+    pPr ? new XElement(pPr) : undefined,
+    ...newRuns
+  );
+}
+
+describe('Open XML paragraph transformation', () => {
+  it('splits a paragraph with two runs into character-level runs preserving run properties', () => {
+    const para = XElement.parse(inputXml);
+    const newPara = atomizeRunsInParagraph(para);
+
+    expect(newPara.toStringWithIndentation()).toBe(characterLevelExpected);
+  });
+
+  it('splits into character runs then coalesces back with groupAdjacent', () => {
+    const para = XElement.parse(inputXml);
+    const charPara = atomizeRunsInParagraph(para);
+
+    // Verify character-level split
+    expect(charPara.toStringWithIndentation()).toBe(characterLevelExpected);
+
+    // Coalesce and verify round-trip
+    const coalescedPara = coalesceRunsInParagraph(charPara);
+
+    expect(coalescedPara.toStringWithIndentation()).toBe(
+      XElement.parse(inputXml).toStringWithIndentation()
+    );
   });
 });
