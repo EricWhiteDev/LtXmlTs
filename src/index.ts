@@ -45,4 +45,5 @@ export {
   nodes,
   inDocumentOrder,
   remove,
+  groupBy,
 } from "./XSequence.js";

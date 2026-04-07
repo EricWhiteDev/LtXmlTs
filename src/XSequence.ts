@@ -286,6 +286,31 @@ export class XSequence<T extends XNode | XAttribute> {
       item.remove();
     }
   }
+
+  /**
+   * Groups the items in this sequence by a key derived from each item.
+   *
+   * @typeParam K - The type of the grouping key.
+   * @param keySelector - A function that returns the grouping key for each item.
+   * @returns A map from each key to an {@link XSequence} of its matching items.
+   */
+  public groupBy<K>(keySelector: (item: T) => K): Map<K, XSequence<T>> {
+    const map = new Map<K, T[]>();
+    for (const item of this.items) {
+      const key = keySelector(item);
+      const group = map.get(key);
+      if (group) {
+        group.push(item);
+      } else {
+        map.set(key, [item]);
+      }
+    }
+    const result = new Map<K, XSequence<T>>();
+    for (const [key, items] of map) {
+      result.set(key, new XSequence(items));
+    }
+    return result;
+  }
 }
 
 /**
@@ -449,4 +474,22 @@ export function inDocumentOrder<T extends XNode | XAttribute>(items: T[]): T[] {
  */
 export function remove(items: Array<XNode | XAttribute>): void {
   xseq(items).remove();
+}
+
+/**
+ * Groups the items by a key derived from each item.
+ *
+ * @typeParam T - The element type.
+ * @typeParam K - The type of the grouping key.
+ * @param items - The items to group.
+ * @param keySelector - A function that returns the grouping key for each item.
+ * @returns A map from each key to an {@link XSequence} of its matching items.
+ *
+ * @category Array Extension Methods
+ */
+export function groupBy<T extends XNode | XAttribute, K>(
+  items: T[],
+  keySelector: (item: T) => K
+): Map<K, XSequence<T>> {
+  return xseq(items).groupBy(keySelector);
 }

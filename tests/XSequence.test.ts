@@ -12,7 +12,7 @@ import {
   XElement, XAttribute, XText, XComment, XName,
   XSequence, xseq,
   ancestors, ancestorsAndSelf, attributes, descendants, descendantsAndSelf,
-  descendantNodes, elements, nodes, inDocumentOrder, remove,
+  descendantNodes, elements, nodes, inDocumentOrder, remove, groupBy,
 } from 'ltxmlts';
 
 // Helper to build a small tree:
@@ -354,5 +354,84 @@ describe('Standalone functions', () => {
     const { root, a1, a2 } = makeTree();
     remove([a1, a2]);
     expect(root.elements()).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('XSequence.groupBy', () => {
+  it('groups elements by element name', () => {
+    const { b, c, d } = makeTree();
+    const seq = xseq([b, c, d]);
+    const grouped = seq.groupBy(el => el.name.localName);
+    expect(grouped.size).toBe(3);
+    expect(grouped.get('b')!.toArray()).toEqual([b]);
+    expect(grouped.get('c')!.toArray()).toEqual([c]);
+    expect(grouped.get('d')!.toArray()).toEqual([d]);
+  });
+
+  it('groups elements with duplicate keys', () => {
+    const { a1, a2 } = makeTree();
+    const seq = xseq([a1, a2]);
+    const grouped = seq.groupBy(el => el.name.localName);
+    expect(grouped.size).toBe(1);
+    expect(grouped.get('a')!.toArray()).toEqual([a1, a2]);
+  });
+
+  it('groups by attribute value', () => {
+    const { a1, a2 } = makeTree();
+    const seq = xseq([a1, a2]);
+    const grouped = seq.groupBy(el => (el as XElement).attribute('id')!.value);
+    expect(grouped.size).toBe(2);
+    expect(grouped.get('1')!.toArray()).toEqual([a1]);
+    expect(grouped.get('2')!.toArray()).toEqual([a2]);
+  });
+
+  it('returns an empty map for an empty sequence', () => {
+    const seq = xseq<XElement>([]);
+    const grouped = seq.groupBy(el => el.name.localName);
+    expect(grouped.size).toBe(0);
+  });
+
+  it('map values are XSequence instances supporting chaining', () => {
+    const { root } = makeTree();
+    const seq = xseq(root.elements());
+    const grouped = seq.groupBy(el => el.name.localName);
+    const aGroup = grouped.get('a')!;
+    expect(aGroup).toBeInstanceOf(XSequence);
+    // chain into elements()
+    const children = aGroup.elements().toArray();
+    expect(children.length).toBe(3); // b, c from a1 + d from a2
+  });
+
+  it('works with XAttribute sequences', () => {
+    const { a1, a2 } = makeTree();
+    const attrs = [...a1.attributes(), ...a2.attributes()];
+    const seq = xseq(attrs);
+    const grouped = seq.groupBy(attr => attr.name.localName);
+    expect(grouped.size).toBe(1);
+    expect(grouped.get('id')!.toArray()).toEqual(attrs);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('Standalone groupBy', () => {
+  it('returns same grouping as the instance method', () => {
+    const { a1, a2 } = makeTree();
+    const items = [a1, a2];
+    const standalone = groupBy(items, el => el.name.localName);
+    const instance = xseq(items).groupBy(el => el.name.localName);
+    expect(standalone.size).toBe(instance.size);
+    for (const [key, seq] of standalone) {
+      expect(seq.toArray()).toEqual(instance.get(key)!.toArray());
+    }
+  });
+
+  it('works with XAttribute arrays', () => {
+    const { a1, a2 } = makeTree();
+    const attrs = [...a1.attributes(), ...a2.attributes()];
+    const grouped = groupBy(attrs, attr => attr.value);
+    expect(grouped.size).toBe(2);
+    expect(grouped.get('1')!.toArray()).toEqual([attrs[0]]);
+    expect(grouped.get('2')!.toArray()).toEqual([attrs[1]]);
   });
 });
