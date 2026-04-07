@@ -109,8 +109,7 @@ describe('Open XML paragraph transformation', () => {
     <w:rPr>
       <w:rFonts w:ascii='Times New Roman' w:eastAsia='Times New Roman' w:hAnsi='Times New Roman' w:cs='Times New Roman' />
     </w:rPr>
-    <w:t xml:space='preserve'>
-    </w:t>
+    <w:t xml:space='preserve'> </w:t>
   </w:r>
   <w:r>
     <w:rPr>
@@ -134,8 +133,7 @@ describe('Open XML paragraph transformation', () => {
     <w:rPr>
       <w:rFonts w:ascii='Times New Roman' w:eastAsia='Times New Roman' w:hAnsi='Times New Roman' w:cs='Times New Roman' />
     </w:rPr>
-    <w:t xml:space='preserve'>
-    </w:t>
+    <w:t xml:space='preserve'> </w:t>
   </w:r>
   <w:r>
     <w:rPr>

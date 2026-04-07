@@ -39,6 +39,12 @@ export function indentXml(xml: string): string {
     }
     return !t.startsWith("<") && t.trim().length > 0;
   }
+  function hasXmlSpacePreserve(tag: string): boolean {
+    return /xml:space\s*=\s*['"]preserve['"]/.test(tag);
+  }
+  function isAnyText(t: string): boolean {
+    return !t.startsWith("<") && t.length > 0;
+  }
 
   // Tokenize
   const tokens: string[] = [];
@@ -54,6 +60,7 @@ export function indentXml(xml: string): string {
     if (!isOpenTag(tokens[i])) {
       continue;
     }
+    const preserveSpace = hasXmlSpacePreserve(tokens[i]);
     let depth = 1;
     for (let j = i + 1; j < tokens.length; j++) {
       if (isOpenTag(tokens[j])) {
@@ -63,7 +70,7 @@ export function indentXml(xml: string): string {
         if (depth === 0) {
           break;
         }
-      } else if (isDirectText(tokens[j]) && depth === 1) {
+      } else if (depth === 1 && (isDirectText(tokens[j]) || (preserveSpace && isAnyText(tokens[j])))) {
         hasDirectText.add(i);
         break;
       }
