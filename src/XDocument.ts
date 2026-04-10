@@ -17,7 +17,7 @@ import { XProcessingInstruction } from "./XProcessingInstruction.js";
 import { XNode } from "./XNode.js";
 import { XAttribute } from "./XAttribute.js";
 import { indentXml } from "./XmlUtils.js";
-import { SaxParser } from "./SaxParser.js";
+import { SaxParser, type XmlParseOptions } from "./SaxParser.js";
 
 /**
  * Represents a complete XML document.
@@ -280,28 +280,32 @@ export class XDocument extends XContainer {
    * ```typescript
    * const doc = XDocument.parse("<?xml version='1.0'?><root/>");
    * ```
+   *
+   * @param options - Optional parse settings (e.g. {@link XmlParseOptions.preserveWhitespace}).
    */
-  public static parse(xml: string): XDocument {
-    return new SaxParser().parseDocument(xml);
+  public static parse(xml: string, options?: XmlParseOptions): XDocument {
+    return new SaxParser(options).parseDocument(xml);
   }
 
   /**
    * Loads an XML file synchronously and parses it into an {@link XDocument}.
    *
    * @param filePath - Path to the XML file.
+   * @param options - Optional parse settings (e.g. {@link XmlParseOptions.preserveWhitespace}).
    * @returns The parsed document.
    */
-  public static load(filePath: string): XDocument {
-    return new SaxParser().parseDocumentFromFile(filePath);
+  public static load(filePath: string, options?: XmlParseOptions): XDocument {
+    return new SaxParser(options).parseDocumentFromFile(filePath);
   }
 
   /**
    * Loads an XML file asynchronously and parses it into an {@link XDocument}.
    *
    * @param filePath - Path to the XML file.
+   * @param options - Optional parse settings (e.g. {@link XmlParseOptions.preserveWhitespace}).
    * @returns A promise that resolves to the parsed document.
    */
-  public static async loadAsync(filePath: string): Promise<XDocument> {
-    return new SaxParser().parseDocumentFromFileAsync(filePath);
+  public static async loadAsync(filePath: string, options?: XmlParseOptions): Promise<XDocument> {
+    return new SaxParser(options).parseDocumentFromFileAsync(filePath);
   }
 }
