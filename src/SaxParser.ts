@@ -44,6 +44,29 @@ import {
  *
  * @category Class and Type Reference
  */
+/**
+ * Options controlling XML parsing behaviour.
+ *
+ * @category Class and Type Reference
+ */
+export interface XmlParseOptions {
+  /**
+   * When `true`, whitespace-only text nodes that appear **inside elements**
+   * are preserved as {@link XText} nodes.
+   *
+   * @remarks
+   * The default (`false`) discards all whitespace-only text, including
+   * ignorable formatting space between child elements. That matches common
+   * expectations for hand-authored XML but can drop significant whitespace in
+   * some OOXML text runs (for example a single space in `w:t`).
+   *
+   * Whitespace-only text at the document level (outside the root element),
+   * such as a newline between the XML declaration and the root tag, is still
+   * discarded so document structure stays stable.
+   */
+  preserveWhitespace?: boolean;
+}
+
 export class XmlParseError extends Error {
   /** The 1-based line number where the error occurred, if available. */
   public readonly line?: number;
@@ -74,6 +97,11 @@ class SaxParser {
   private readonly docLevelNodes: XNode[] = [];
   private declaration: XDeclaration | null = null;
   private error: XmlParseError | null = null;
+  private readonly preserveWhitespaceInElements: boolean;
+
+  public constructor(options?: XmlParseOptions) {
+    this.preserveWhitespaceInElements = options?.preserveWhitespace === true;
+  }
 
   public parseDocument(xml: string): XDocument {
     this.runParser(xml);
@@ -186,8 +214,14 @@ class SaxParser {
       if (this.error !== null) {
         return;
       }
-      if (/^\s*$/.test(text)) {
-        return;
+      const whitespaceOnly = /^\s*$/.test(text);
+      if (whitespaceOnly) {
+        if (!this.preserveWhitespaceInElements) {
+          return;
+        }
+        if (this.elementStack.length === 0) {
+          return;
+        }
       }
       this.addNode(new XText(text));
     };

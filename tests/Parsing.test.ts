@@ -80,6 +80,61 @@ describe('XElement.parse — whitespace discarding', () => {
     expect(el.nodes().length).toBe(2);
     expect(el.nodes().every(n => n instanceof XElement)).toBe(true);
   });
+
+  it('still discards space-only text inside a single element by default (OOXML-style run)', () => {
+    const el = XElement.parse('<t xml:space="preserve"> </t>');
+    expect(el.isEmpty).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// XElement.parse — preserveWhitespace
+// ---------------------------------------------------------------------------
+
+describe('XElement.parse — preserveWhitespace', () => {
+  it('preserves whitespace-only text inside an element when enabled', () => {
+    const el = XElement.parse('<root>   </root>', { preserveWhitespace: true });
+    expect(el.nodes().length).toBe(1);
+    const text = el.nodes()[0];
+    expect(text).toBeInstanceOf(XText);
+    expect((text as XText).value).toBe('   ');
+  });
+
+  it('preserves single visible space in xml:space="preserve" text run when enabled', () => {
+    const el = XElement.parse('<t xml:space="preserve"> </t>', { preserveWhitespace: true });
+    expect(el.nodes().length).toBe(1);
+    expect((el.nodes()[0] as XText).value).toBe(' ');
+  });
+
+  it('default behaviour is unchanged when option is omitted or false', () => {
+    const formatted = XElement.parse('<root>\n  <child/>\n</root>');
+    expect(formatted.nodes().length).toBe(1);
+
+    const explicit = XElement.parse('<root>\n  <child/>\n</root>', { preserveWhitespace: false });
+    expect(explicit.nodes().length).toBe(1);
+  });
+
+  it('with preserveWhitespace, keeps whitespace between sibling elements', () => {
+    const el = XElement.parse('<root>\n  <a/>\n  <b/>\n</root>', { preserveWhitespace: true });
+    expect(el.nodes().length).toBe(5);
+    expect(el.nodes()[0]).toBeInstanceOf(XText);
+    expect(el.nodes()[1]).toBeInstanceOf(XElement);
+    expect((el.nodes()[1] as XElement).name.localName).toBe('a');
+    expect(el.nodes()[2]).toBeInstanceOf(XText);
+    expect(el.nodes()[3]).toBeInstanceOf(XElement);
+    expect((el.nodes()[3] as XElement).name.localName).toBe('b');
+    expect(el.nodes()[4]).toBeInstanceOf(XText);
+  });
+
+  it('round-trips mixed content spacing when enabled', () => {
+    const xml = '<root><a>x</a> <b>y</b></root>';
+    const el = XElement.parse(xml, { preserveWhitespace: true });
+    const texts = el.nodes().filter((n): n is XText => n instanceof XText);
+    expect(texts.some(t => t.value === ' ')).toBe(true);
+    const out = el.toString();
+    const again = XElement.parse(out, { preserveWhitespace: true });
+    expect(again.toString()).toBe(out);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -232,6 +287,15 @@ describe('XDocument.parse — no declaration', () => {
     const doc = XDocument.parse('<root/>');
     expect(doc.root).toBeInstanceOf(XElement);
     expect(doc.root!.name.toString()).toBe('root');
+  });
+});
+
+describe('XDocument.parse — preserveWhitespace', () => {
+  it('does not insert document-level whitespace nodes before the root', () => {
+    const doc = XDocument.parse("<?xml version='1.0'?>\n<root/>", { preserveWhitespace: true });
+    expect(doc.nodes().every(n => !(n instanceof XText))).toBe(true);
+    expect(doc.root).not.toBeNull();
+    expect(doc.root!.isEmpty).toBe(true);
   });
 });
 

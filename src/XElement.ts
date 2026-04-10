@@ -18,7 +18,7 @@ import { XCData } from "./XCData.js";
 import { XProcessingInstruction } from "./XProcessingInstruction.js";
 import { XNode } from "./XNode.js";
 import { indentXml } from "./XmlUtils.js";
-import { SaxParser } from "./SaxParser.js";
+import { SaxParser, type XmlParseOptions } from "./SaxParser.js";
 
 /**
  * Represents an XML element -- the primary class in LtXmlTs.
@@ -592,9 +592,11 @@ export class XElement extends XContainer {
    * ```typescript
    * const el = XElement.parse('<items><item id="1"/></items>');
    * ```
+   *
+   * @param options - Optional parse settings (e.g. {@link XmlParseOptions.preserveWhitespace}).
    */
-  public static parse(xml: string): XElement {
-    return new SaxParser().parseElement(xml);
+  public static parse(xml: string, options?: XmlParseOptions): XElement {
+    return new SaxParser(options).parseElement(xml);
   }
 
   /**
@@ -607,9 +609,11 @@ export class XElement extends XContainer {
    * ```typescript
    * const el = XElement.load('/path/to/data.xml');
    * ```
+   *
+   * @param options - Optional parse settings (e.g. {@link XmlParseOptions.preserveWhitespace}).
    */
-  public static load(filePath: string): XElement {
-    return new SaxParser().parseElementFromFile(filePath);
+  public static load(filePath: string, options?: XmlParseOptions): XElement {
+    return new SaxParser(options).parseElementFromFile(filePath);
   }
 
   /**
@@ -622,8 +626,10 @@ export class XElement extends XContainer {
    * ```typescript
    * const el = await XElement.loadAsync('/path/to/data.xml');
    * ```
+   *
+   * @param options - Optional parse settings (e.g. {@link XmlParseOptions.preserveWhitespace}).
    */
-  public static async loadAsync(filePath: string): Promise<XElement> {
-    return new SaxParser().parseElementFromFileAsync(filePath);
+  public static async loadAsync(filePath: string, options?: XmlParseOptions): Promise<XElement> {
+    return new SaxParser(options).parseElementFromFileAsync(filePath);
   }
 }

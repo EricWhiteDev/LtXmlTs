@@ -31,7 +31,7 @@ export { XDocument } from "./XDocument.js";
 export { XNamespace } from "./XNamespace.js";
 export { NamespacePrefixPair, NamespacePrefixInfo } from "./NamespacePrefixInfo.js";
 export { XName } from "./XName.js";
-export { XmlParseError } from "./SaxParser.js";
+export { XmlParseError, type XmlParseOptions } from "./SaxParser.js";
 export {
   XSequence,
   xseq,
