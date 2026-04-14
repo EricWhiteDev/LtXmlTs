@@ -1,0 +1,15 @@
+Findings:
+
+  1. High: parsing drops significant whitespace text nodes inside elements. In src/SaxParser.ts:185, ontext returns early for any /^\s*$/ text. That means XElement.parse('<root> <a/>
+     </root>') loses both space nodes and serializes back as <root><a /></root>, and xml:space="preserve" content like <root xml:space="preserve">  </root> becomes empty. This is data
+     loss, not just formatting loss.
+  2. High: inserting an XElement that already belongs to another parent breaks tree ownership invariants. In src/XContainer.ts:116, element content is always appended directly and its
+     parent is overwritten, with no clone and no detach from the old container. Repro: create p1 with child, then p2.add(child). p1 still serializes <child/>, but child.parent === p2,
+     so one node is now “owned” by two parents and document/ancestor navigation becomes inconsistent.
+  3. Medium: removing a foreign attribute corrupts the attribute list instead of doing nothing or throwing. In src/XElement.ts:190, indexOf is used without checking -1. Calling
+     removeAttribute() with an attribute that is not present duplicates existing attributes (['a','b'] becomes ['a','a','b']) because of the slice(0, -1) / slice(0) combination.
+  4. Medium: removing a foreign child node corrupts the child list the same way. In src/XContainer.ts:367, removeChild() also assumes the node exists. Calling it with a node that is
+     not in nodesArray duplicates the current children (['a','b'] becomes ['a','a','b']). The same missing--1 guard affects related positional mutation methods nearby.
+
+  I ran the test suite (vitest): all 1105 tests pass. These cases appear to be missing from coverage, especially whitespace-preservation and invalid-removal scenarios.
+
