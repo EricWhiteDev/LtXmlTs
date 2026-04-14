@@ -20,6 +20,7 @@ import {
   XNamespace,
   XmlParseError,
 } from 'ltxmlts';
+import { SaxParser } from '../src/SaxParser.js';
 
 // ---------------------------------------------------------------------------
 // XElement.parse — basics
@@ -259,6 +260,22 @@ describe('XDocument.parse — with declaration', () => {
     expect(doc.declaration!.version).toBe('1.0');
     expect(doc.declaration!.encoding).toBe('UTF-8');
     expect(doc.declaration!.standalone).toBe('no');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SaxParser instance reuse
+// ---------------------------------------------------------------------------
+
+describe('SaxParser', () => {
+  it('can parse two different elements sequentially with the same parser instance', () => {
+    const parser = new SaxParser();
+
+    const first = parser.parseElement('<first/>');
+    const second = parser.parseElement('<second/>');
+
+    expect(first.name.toString()).toBe('first');
+    expect(second.name.toString()).toBe('second');
   });
 });
 

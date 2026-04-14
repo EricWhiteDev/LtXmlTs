@@ -92,27 +92,22 @@ export class XDocument extends XContainer {
       const other = firstOrContent;
       this.declaration = other.declaration !== null ? new XDeclaration(other.declaration) : null;
       for (const node of other.nodesArray) {
-        if (node.parent === null) {
-          node.parent = this;
-          this.nodesArray.push(node);
+        let clonedNode: XNode;
+        if (node instanceof XElement) {
+          clonedNode = new XElement(node);
+        } else if (node instanceof XComment) {
+          clonedNode = new XComment(node);
+        } else if (node instanceof XText) {
+          clonedNode = new XText(node);
+        } else if (node instanceof XCData) {
+          clonedNode = new XCData(node);
+        } else if (node instanceof XProcessingInstruction) {
+          clonedNode = new XProcessingInstruction(node);
         } else {
-          let clonedNode: XNode;
-          if (node instanceof XElement) {
-            clonedNode = new XElement(node);
-          } else if (node instanceof XComment) {
-            clonedNode = new XComment(node);
-          } else if (node instanceof XText) {
-            clonedNode = new XText(node);
-          } else if (node instanceof XCData) {
-            clonedNode = new XCData(node);
-          } else if (node instanceof XProcessingInstruction) {
-            clonedNode = new XProcessingInstruction(node);
-          } else {
-            continue;
-          }
-          clonedNode.parent = this;
-          this.nodesArray.push(clonedNode);
+          continue;
         }
+        clonedNode.parent = this;
+        this.nodesArray.push(clonedNode);
       }
     } else if (firstOrContent instanceof XDeclaration) {
       this.declaration = firstOrContent;

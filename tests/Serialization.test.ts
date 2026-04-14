@@ -131,7 +131,7 @@ describe('Serialization', () => {
       )
     );
     expect(root.toString()).toBe(
-      "<w:root xmlns:w='urn:collision-test:parent'><child xmlns:w='urn:collision-test:child' /></w:root>"
+      "<w:root xmlns:w='urn:collision-test:parent'><child xmlns:w='urn:collision-test:child' xmlns:p0='urn:collision-test:parent' /></w:root>"
     );
   });
 

@@ -69,9 +69,9 @@ export class XmlParseError extends Error {
 
 /** @internal */
 class SaxParser {
-  private readonly saxParser: saxTypes.SAXParser = sax.parser(true, { xmlns: true });
-  private readonly elementStack: XElement[] = [];
-  private readonly docLevelNodes: XNode[] = [];
+  private saxParser: saxTypes.SAXParser = sax.parser(true, { xmlns: true });
+  private elementStack: XElement[] = [];
+  private docLevelNodes: XNode[] = [];
   private declaration: XDeclaration | null = null;
   private error: XmlParseError | null = null;
 
@@ -147,6 +147,12 @@ class SaxParser {
   }
 
   private runParser(xml: string): void {
+    this.saxParser = sax.parser(true, { xmlns: true });
+    this.elementStack = [];
+    this.docLevelNodes = [];
+    this.declaration = null;
+    this.error = null;
+
     this.saxParser.onopentag = (tag: saxTypes.Tag | saxTypes.QualifiedTag) => {
       if (this.error !== null) {
         return;

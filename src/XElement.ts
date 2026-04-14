@@ -62,7 +62,7 @@ export class XElement extends XContainer {
    */
   public get value(): string {
     return this.descendantNodes()
-      .filter((n): n is XText => n instanceof XText)
+      .filter((n): n is XText | XCData => n instanceof XText || n instanceof XCData)
       .map((n) => n.value)
       .join("");
   }
@@ -505,7 +505,14 @@ export class XElement extends XContainer {
         const newPrefix = attr.name.localName;
         const existing = info.namespacePrefixPairs.find((p) => p.prefix === newPrefix);
         if (existing !== undefined) {
-          existing.prefix = `p${NamespacePrefixInfo.pHashCount++}`;
+          const renamedPrefix = `p${NamespacePrefixInfo.pHashCount++}`;
+          existing.prefix = renamedPrefix;
+          const renamedDecl = new XAttribute(
+            XNamespace.xmlns + renamedPrefix,
+            existing.namespace.uri,
+          );
+          renamedDecl.pHashNamespace = true;
+          element.addAttributeContentObject(renamedDecl);
         }
         info.namespacePrefixPairs.push(new NamespacePrefixPair(ns, newPrefix));
       }

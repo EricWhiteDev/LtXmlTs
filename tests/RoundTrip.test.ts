@@ -56,7 +56,10 @@ describe('Round-trip — Serialization', () => {
   it('prefix collision in child does not corrupt parent element prefix', () => {
     const originalXml = `<w:root xmlns:w='urn:collision-test:parent'><child xmlns:w='urn:collision-test:child' /></w:root>`;
     const roundTrippedXml = XElement.parse(originalXml).toString();
-    expect(roundTrippedXml).toBe(originalXml);
+    // The renamed parent prefix gets an explicit xmlns declaration in the child
+    expect(roundTrippedXml).toBe(
+      `<w:root xmlns:w='urn:collision-test:parent'><child xmlns:w='urn:collision-test:child' xmlns:p0='urn:collision-test:parent' /></w:root>`
+    );
   });
 });
 
