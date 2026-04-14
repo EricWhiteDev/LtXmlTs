@@ -17,6 +17,12 @@ describe('Round-trip — Serialization', () => {
     expect(roundTrippedXml).toBe(originalXml);
   });
 
+  it('Mixed content with text and inline element', () => {
+    const originalXml = `<root>  Test  <b>foo</b>  More </root>`;
+    const roundTrippedXml = XElement.parse(originalXml).toString();
+    expect(roundTrippedXml).toBe(originalXml);
+  });
+
   it('Serialization with namespace and prefix', () => {
     const originalXml = `<w:root xmlns:w='urn:www' foo='bar'><w:child>hello</w:child></w:root>`;
     const roundTrippedXml = XElement.parse(originalXml).toString();
