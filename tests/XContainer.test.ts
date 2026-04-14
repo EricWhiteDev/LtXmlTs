@@ -115,12 +115,17 @@ describe('XContainer.addContentObject', () => {
     expect(child.parent).toBe(parent);
   });
 
-  it('re-parents XElement that already has a parent', () => {
+  it('clones XElement that already has a parent', () => {
     const child = new XElement(XName.get('child'));
     const e1 = new XElement(name(), child);
     const e2 = new XElement(name(), child);
-    expect(e2.nodes()[0]).toBe(child);
-    expect(child.parent).toBe(e2);
+    // child should remain with e1; e2 gets a clone
+    expect(e1.nodes()[0]).toBe(child);
+    expect(child.parent).toBe(e1);
+    const cloned = e2.nodes()[0] as XElement;
+    expect(cloned).not.toBe(child);
+    expect(cloned.name).toBe(child.name);
+    expect(cloned.parent).toBe(e2);
   });
 
   it('recurses into arrays', () => {
@@ -156,6 +161,105 @@ describe('XContainer.addContentObject', () => {
     expect((nodes[0] as XText).value).toBe('a');
     expect((nodes[1] as XComment).value).toBe('b');
     expect((nodes[2] as XText).value).toBe('c');
+  });
+});
+
+describe('XContainer.addContentObject — XElement clone-on-reparent (Bug 1)', () => {
+  it('clones XElement with children when already parented', () => {
+    const child = new XElement('child', new XElement('grandchild'));
+    const e1 = new XElement('parent1', child);
+    const e2 = new XElement('parent2', child);
+    const cloned = e2.nodes()[0] as XElement;
+    expect(cloned).not.toBe(child);
+    expect(cloned.name).toBe(child.name);
+    expect(cloned.elements()).toHaveLength(1);
+    expect(cloned.elements()[0].name.localName).toBe('grandchild');
+  });
+
+  it('clones XElement with attributes when already parented', () => {
+    const child = new XElement('child', new XAttribute('id', '1'));
+    const e1 = new XElement('parent1', child);
+    const e2 = new XElement('parent2', child);
+    const cloned = e2.nodes()[0] as XElement;
+    expect(cloned).not.toBe(child);
+    expect(cloned.attribute('id')!.value).toBe('1');
+  });
+
+  it('does not corrupt original parent when cloning', () => {
+    const child = new XElement('child', 'text');
+    const e1 = new XElement('parent1', child);
+    const e2 = new XElement('parent2', child);
+    // e1 should still have the original child
+    expect(e1.nodes()[0]).toBe(child);
+    expect(child.parent).toBe(e1);
+    expect(e1.elements()[0].value).toBe('text');
+  });
+
+  it('clones XElement added via add() when already parented', () => {
+    const child = new XElement('child');
+    const e1 = new XElement('parent1', child);
+    const e2 = new XElement('parent2');
+    e2.add(child);
+    const cloned = e2.nodes()[0] as XElement;
+    expect(cloned).not.toBe(child);
+    expect(cloned.name).toBe(child.name);
+    expect(child.parent).toBe(e1);
+  });
+});
+
+describe('XContainer.removeChild — indexOf guard (Bug 2)', () => {
+  it('does not corrupt array when removing a non-member node', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const orphan = new XElement('orphan');
+    // Directly call removeChild with a node that is not a child
+    (parent as any).removeChild(orphan);
+    expect(parent.elements()).toHaveLength(2);
+    expect(parent.elements()[0].name.localName).toBe('a');
+    expect(parent.elements()[1].name.localName).toBe('b');
+  });
+
+  it('does not remove last child when node not found', () => {
+    const parent = new XElement('root', new XElement('only'));
+    const orphan = new XElement('other');
+    (parent as any).removeChild(orphan);
+    expect(parent.elements()).toHaveLength(1);
+    expect(parent.elements()[0].name.localName).toBe('only');
+  });
+});
+
+describe('XContainer.insertBeforeChild — indexOf guard (Bug 10)', () => {
+  it('does not corrupt array when reference child not found', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const orphan = new XElement('orphan');
+    (parent as any).insertBeforeChild(orphan, new XElement('x'));
+    // Should be unchanged
+    expect(parent.elements()).toHaveLength(2);
+    expect(parent.elements()[0].name.localName).toBe('a');
+    expect(parent.elements()[1].name.localName).toBe('b');
+  });
+});
+
+describe('XContainer.replaceChild — indexOf guard (Bug 11)', () => {
+  it('does not corrupt array when reference child not found', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const orphan = new XElement('orphan');
+    (parent as any).replaceChild(orphan, new XElement('x'));
+    // Should be unchanged
+    expect(parent.elements()).toHaveLength(2);
+    expect(parent.elements()[0].name.localName).toBe('a');
+    expect(parent.elements()[1].name.localName).toBe('b');
+  });
+});
+
+describe('XContainer.insertAfterChild — indexOf guard (Bug 12)', () => {
+  it('does not corrupt array when reference child not found', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const orphan = new XElement('orphan');
+    (parent as any).insertAfterChild(orphan, new XElement('x'));
+    // Should be unchanged
+    expect(parent.elements()).toHaveLength(2);
+    expect(parent.elements()[0].name.localName).toBe('a');
+    expect(parent.elements()[1].name.localName).toBe('b');
   });
 });
 

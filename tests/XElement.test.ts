@@ -1105,6 +1105,25 @@ describe('XElement.removeAttribute', () => {
   });
 });
 
+describe('XElement.removeAttribute — indexOf guard (Bug 3)', () => {
+  it('does not corrupt attributes when removing a non-member attribute', () => {
+    const el = new XElement('root', new XAttribute('a', '1'), new XAttribute('b', '2'));
+    const foreign = new XAttribute('foreign', 'val');
+    el.removeAttribute(foreign);
+    expect(el.attributes()).toHaveLength(2);
+    expect(el.attributes()[0].name.localName).toBe('a');
+    expect(el.attributes()[1].name.localName).toBe('b');
+  });
+
+  it('does not remove last attribute when non-member attribute is passed', () => {
+    const el = new XElement('root', new XAttribute('only', '1'));
+    const foreign = new XAttribute('other', '2');
+    el.removeAttribute(foreign);
+    expect(el.attributes()).toHaveLength(1);
+    expect(el.attributes()[0].name.localName).toBe('only');
+  });
+});
+
 describe('XElement.removeAttributes', () => {
   it('no-op on element with no attributes', () => {
     const el = new XElement('root');

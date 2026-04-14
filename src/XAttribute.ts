@@ -183,7 +183,7 @@ export class XAttribute extends XObject {
     }
     const attrs = (this.parent as XElement).attributes();
     const idx = attrs.indexOf(this);
-    return idx < attrs.length - 1 ? attrs[idx + 1] : null;
+    return idx >= 0 && idx < attrs.length - 1 ? attrs[idx + 1] : null;
   }
 
   /**

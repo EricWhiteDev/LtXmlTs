@@ -908,3 +908,68 @@ describe('XNode.previousNode', () => {
     expect(root.previousNode).toBe(nodes[0]);
   });
 });
+
+describe('XNode.nextNode — indexOf guard (Bug 5)', () => {
+  it('returns null for a detached node with parent set manually', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'), new XElement('c'));
+    const detached = new XElement('x');
+    (detached as any).parent = parent;
+    // detached is not in parent's nodesArray, so indexOf returns -1
+    // should return null, not siblings[0]
+    expect(detached.nextNode).toBeNull();
+  });
+});
+
+describe('XNode.nodesAfterSelf — indexOf guard (Bug 6)', () => {
+  it('returns empty array for a detached node with parent set manually', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const detached = new XElement('x');
+    (detached as any).parent = parent;
+    // should return [], not all siblings
+    expect(detached.nodesAfterSelf()).toHaveLength(0);
+  });
+});
+
+describe('XNode.nodesBeforeSelf — indexOf guard (Bug 7)', () => {
+  it('returns empty array for a detached node with parent set manually', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const detached = new XElement('x');
+    (detached as any).parent = parent;
+    // should return [], not all-but-last siblings
+    expect(detached.nodesBeforeSelf()).toHaveLength(0);
+  });
+});
+
+describe('XNode.elementsAfterSelf — indexOf guard (Bug 8)', () => {
+  it('returns empty array for a detached node with parent set manually', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'), new XElement('c'));
+    const detached = new XElement('x');
+    (detached as any).parent = parent;
+    // should return [], not all sibling elements
+    expect(detached.elementsAfterSelf()).toHaveLength(0);
+  });
+
+  it('returns empty array with name filter for a detached node', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const detached = new XElement('x');
+    (detached as any).parent = parent;
+    expect(detached.elementsAfterSelf('a')).toHaveLength(0);
+  });
+});
+
+describe('XNode.elementsBeforeSelf — indexOf guard (Bug 9)', () => {
+  it('returns empty array for a detached node with parent set manually', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'), new XElement('c'));
+    const detached = new XElement('x');
+    (detached as any).parent = parent;
+    // should return [], not all-but-last sibling elements
+    expect(detached.elementsBeforeSelf()).toHaveLength(0);
+  });
+
+  it('returns empty array with name filter for a detached node', () => {
+    const parent = new XElement('root', new XElement('a'), new XElement('b'));
+    const detached = new XElement('x');
+    (detached as any).parent = parent;
+    expect(detached.elementsBeforeSelf('a')).toHaveLength(0);
+  });
+});

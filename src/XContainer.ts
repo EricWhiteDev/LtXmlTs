@@ -115,8 +115,16 @@ export class XContainer extends XNode {
     }
     if ((content as { nodeType?: string })?.nodeType === "Element") {
       const el = content as XNode;
-      el.parent = this;
-      this.nodesArray.push(el);
+      if (el.parent === null) {
+        el.parent = this;
+        this.nodesArray.push(el);
+      } else {
+        // Clone via the element's own constructor (XElement) to avoid circular import
+        const ElementCtor = el.constructor as new (other: unknown) => XNode;
+        const clone = new ElementCtor(el);
+        clone.parent = this;
+        this.nodesArray.push(clone);
+      }
       return;
     }
     const str = (content as { toString(): string }).toString();
@@ -143,8 +151,11 @@ export class XContainer extends XNode {
    */
   public insertAfterChild(child: XNode, ...content: unknown[]): void {
     const copy = [...this.nodesArray];
-    this.nodesArray = [];
     const idx = copy.indexOf(child);
+    if (idx === -1) {
+      return;
+    }
+    this.nodesArray = [];
     for (let i = 0; i <= idx; i++) {
       this.nodesArray.push(copy[i]);
     }
@@ -330,6 +341,9 @@ export class XContainer extends XNode {
   public insertBeforeChild(child: XNode, ...content: unknown[]): void {
     const copy = [...this.nodesArray];
     const idx = copy.indexOf(child);
+    if (idx === -1) {
+      return;
+    }
     // Pre-populate the suffix so insertContentItems can check existing nodes
     // (e.g. XDocument's single-root constraint).
     this.nodesArray = copy.slice(idx);
@@ -349,6 +363,9 @@ export class XContainer extends XNode {
   public replaceChild(child: XNode, ...content: unknown[]): void {
     const copy = [...this.nodesArray];
     const idx = copy.indexOf(child);
+    if (idx === -1) {
+      return;
+    }
     // Pre-populate suffix so insertContentItems can check existing nodes
     // (e.g. XDocument's single-root constraint).
     this.nodesArray = copy.slice(idx + 1);
@@ -366,6 +383,9 @@ export class XContainer extends XNode {
    */
   public removeChild(child: XNode): void {
     const idx = this.nodesArray.indexOf(child);
+    if (idx === -1) {
+      return;
+    }
     this.nodesArray = [...this.nodesArray.slice(0, idx), ...this.nodesArray.slice(idx + 1)];
   }
 

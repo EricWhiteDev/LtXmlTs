@@ -189,6 +189,9 @@ export class XElement extends XContainer {
    */
   public removeAttribute(attr: XAttribute): void {
     const idx = this.attributesArray.indexOf(attr);
+    if (idx === -1) {
+      return;
+    }
     this.attributesArray = [
       ...this.attributesArray.slice(0, idx),
       ...this.attributesArray.slice(idx + 1),

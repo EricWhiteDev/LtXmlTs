@@ -13,3 +13,231 @@ Findings:
 
   I ran the test suite (vitest): all 1105 tests pass. These cases appear to be missing from coverage, especially whitespace-preservation and invalid-removal scenarios.
 
+Here are the bugs found by Claude
+
+Bug Report: LtXmlTs Codebase Review
+
+ Context
+
+ Full review of the LtXmlTs (LINQ to XML for TypeScript) library source code to identify
+ bugs. All 1105 tests currently pass, so these bugs are in code paths not fully covered by
+  tests.
+
+ ---
+ Bug 1: XElement nodes not cloned when they already have a parent (CRITICAL)
+
+ File: src/XContainer.ts:116-121
+
+ if ((content as { nodeType?: string })?.nodeType === "Element") {
+   const el = content as XNode;
+   el.parent = this;
+   this.nodesArray.push(el);
+   return;
+ }
+
+ Problem: Unlike XComment, XText, XCData, and XProcessingInstruction (handled at lines
+ 91-115), XElement nodes are NOT cloned when they already have a parent. This silently
+ corrupts the tree: the old parent still references the node in its nodesArray, but the
+ node's parent now points to the new container. In .NET LINQ to XML, adding a node that
+ already has a parent creates a deep clone.
+
+ Fix: Add a parent check and clone XElement like the other node types:
+ if ((content as { nodeType?: string })?.nodeType === "Element") {
+   const el = content as XNode;
+   if (el.parent === null) {
+     el.parent = this;
+     this.nodesArray.push(el);
+   } else {
+     const clone = new XElement(el as unknown as XElement);
+     clone.parent = this;
+     this.nodesArray.push(clone);
+   }
+   return;
+ }
+
+ ---
+ Bug 2: removeChild corrupts array when child not found
+
+ File: src/XContainer.ts:367-370
+
+ public removeChild(child: XNode): void {
+   const idx = this.nodesArray.indexOf(child);
+   this.nodesArray = [...this.nodesArray.slice(0, idx), ...this.nodesArray.slice(idx +
+ 1)];
+ }
+
+ Problem: When indexOf returns -1, slice(0, -1) removes the last element and slice(0)
+ returns everything — silently deleting the wrong node.
+
+ Fix: Guard against -1:
+ public removeChild(child: XNode): void {
+   const idx = this.nodesArray.indexOf(child);
+   if (idx === -1) {
+     return;
+   }
+   this.nodesArray = [...this.nodesArray.slice(0, idx), ...this.nodesArray.slice(idx +
+ 1)];
+ }
+
+ ---
+ Bug 3: removeAttribute corrupts array when attribute not found
+
+ File: src/XElement.ts:190-197
+
+ Same pattern as Bug 2 — indexOf returning -1 silently removes the last attribute.
+
+ Fix: Guard against -1:
+ public removeAttribute(attr: XAttribute): void {
+   const idx = this.attributesArray.indexOf(attr);
+   if (idx === -1) {
+     return;
+   }
+   this.attributesArray = [
+     ...this.attributesArray.slice(0, idx),
+     ...this.attributesArray.slice(idx + 1),
+   ];
+   attr.parent = null;
+ }
+
+ ---
+ Bug 4: nextAttribute returns wrong attribute when indexOf returns -1
+
+ File: src/XAttribute.ts:180-187
+
+ public get nextAttribute(): XAttribute | null {
+   // ...
+   const idx = attrs.indexOf(this);
+   return idx < attrs.length - 1 ? attrs[idx + 1] : null;
+ }
+
+ Problem: If indexOf returns -1, then -1 < attrs.length - 1 is true (for arrays with 2+
+ elements), so attrs[-1 + 1] returns attrs[0] — the wrong attribute.
+
+ Fix: Add idx >= 0 check:
+ return idx >= 0 && idx < attrs.length - 1 ? attrs[idx + 1] : null;
+
+ ---
+ Bug 5: nextNode returns wrong node when indexOf returns -1
+
+ File: src/XNode.ts:240-248
+
+ Same pattern as Bug 4 — returns siblings[0] instead of null.
+
+ Fix:
+ return idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
+
+ ---
+ Bug 6: nodesAfterSelf returns all siblings when indexOf returns -1
+
+ File: src/XNode.ts:214-222
+
+ When indexOf returns -1, slice(-1 + 1) = slice(0) returns ALL siblings.
+
+ Fix:
+ public nodesAfterSelf(): XNode[] {
+   const container = this.parentContainer;
+   if (container === null) {
+     return [];
+   }
+   const siblings = container.nodes();
+   const idx = siblings.indexOf(this);
+   if (idx === -1) {
+     return [];
+   }
+   return siblings.slice(idx + 1);
+ }
+
+ ---
+ Bug 7: nodesBeforeSelf returns wrong result when indexOf returns -1
+
+ File: src/XNode.ts:199-207
+
+ When indexOf returns -1, slice(0, -1) returns all siblings except the last.
+
+ Fix: Same pattern — guard with if (idx === -1) return [];
+
+ ---
+ Bug 8: elementsAfterSelf returns all elements when indexOf returns -1
+
+ File: src/XNode.ts:148-163
+
+ When indexOf returns -1, slice(0) returns all siblings, so all sibling elements are
+ returned.
+
+ Fix: Guard with if (idx === -1) return [];
+
+ ---
+ Bug 9: elementsBeforeSelf returns wrong result when indexOf returns -1
+
+ File: src/XNode.ts:177-192
+
+ When indexOf returns -1, slice(0, -1) returns all but last sibling.
+
+ Fix: Guard with if (idx === -1) return [];
+
+ ---
+ Bug 10: insertBeforeChild corrupts array when child not found
+
+ File: src/XContainer.ts:330-341
+
+ When indexOf returns -1, copy.slice(-1) returns only the last element as the suffix, and
+ copy.slice(0, -1) drops the last element — corrupting the node array.
+
+ Fix: Guard with early return or throw when idx === -1.
+
+ ---
+ Bug 11: replaceChild corrupts array when child not found
+
+ File: src/XContainer.ts:349-360
+
+ Same corruption pattern as Bug 10.
+
+ Fix: Guard with early return or throw when idx === -1.
+
+ ---
+ Bug 12: insertAfterChild corrupts array when child not found
+
+ File: src/XContainer.ts:144-155
+
+ When indexOf returns -1, the first loop doesn't execute (0 <= -1 is false) and the second
+  loop starts at 0, so content is prepended then all original nodes are appended — wrong
+ insertion point.
+
+ Fix: Guard with early return or throw when idx === -1.
+
+ ---
+ Summary
+
+ ┌───────┬──────────┬───────────────┬──────────────────┬───────────────────────────────┐
+ │   #   │ Severity │     File      │      Method      │             Issue             │
+ ├───────┼──────────┼───────────────┼──────────────────┼───────────────────────────────┤
+ │ 1     │ Critical │ XContainer.ts │ addContentObject │ XElement not cloned when      │
+ │       │          │               │                  │ re-parented — tree corruption │
+ ├───────┼──────────┼───────────────┼──────────────────┼───────────────────────────────┤
+ │ 2     │ Medium   │ XContainer.ts │ removeChild      │ Removes wrong node on indexOf │
+ │       │          │               │                  │  miss                         │
+ ├───────┼──────────┼───────────────┼──────────────────┼───────────────────────────────┤
+ │ 3     │ Medium   │ XElement.ts   │ removeAttribute  │ Removes wrong attr on indexOf │
+ │       │          │               │                  │  miss                         │
+ ├───────┼──────────┼───────────────┼──────────────────┼───────────────────────────────┤
+ │ 4     │ Medium   │ XAttribute.ts │ nextAttribute    │ Returns wrong attribute on    │
+ │       │          │               │                  │ indexOf miss                  │
+ ├───────┼──────────┼───────────────┼──────────────────┼───────────────────────────────┤
+ │ 5     │ Medium   │ XNode.ts      │ nextNode         │ Returns wrong node on indexOf │
+ │       │          │               │                  │  miss                         │
+ ├───────┼──────────┼───────────────┼──────────────────┼───────────────────────────────┤
+ │ 6-9   │ Low      │ XNode.ts      │ sibling methods  │ Return wrong results on       │
+ │       │          │               │                  │ indexOf miss                  │
+ ├───────┼──────────┼───────────────┼──────────────────┼───────────────────────────────┤
+ │ 10-12 │ Low      │ XContainer.ts │ insert/replace   │ Corrupt array on indexOf miss │
+ └───────┴──────────┴───────────────┴──────────────────┴───────────────────────────────┘
+
+ Verification
+
+ After fixes, run npm test — all 1105 existing tests should still pass. New tests should
+ be added for:
+ - Adding an XElement that already has a parent (Bug 1)
+ - Calling removeChild/removeAttribute with a non-member node (Bugs 2-3)
+ - nextAttribute/nextNode edge cases (Bugs 4-5)
+
+ 

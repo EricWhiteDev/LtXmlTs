@@ -152,6 +152,9 @@ export class XNode extends XObject {
     }
     const siblings = container.nodes();
     const idx = siblings.indexOf(this);
+    if (idx === -1) {
+      return [];
+    }
     const result = siblings
       .slice(idx + 1)
       .filter((n): n is XElement => n.nodeType === "Element") as XElement[];
@@ -181,6 +184,9 @@ export class XNode extends XObject {
     }
     const siblings = container.nodes();
     const idx = siblings.indexOf(this);
+    if (idx === -1) {
+      return [];
+    }
     const result = siblings
       .slice(0, idx)
       .filter((n): n is XElement => n.nodeType === "Element") as XElement[];
@@ -203,6 +209,9 @@ export class XNode extends XObject {
     }
     const siblings = container.nodes();
     const idx = siblings.indexOf(this);
+    if (idx === -1) {
+      return [];
+    }
     return siblings.slice(0, idx);
   }
 
@@ -218,6 +227,9 @@ export class XNode extends XObject {
     }
     const siblings = container.nodes();
     const idx = siblings.indexOf(this);
+    if (idx === -1) {
+      return [];
+    }
     return siblings.slice(idx + 1);
   }
 
@@ -244,7 +256,7 @@ export class XNode extends XObject {
     }
     const siblings = container.nodes();
     const idx = siblings.indexOf(this);
-    return idx < siblings.length - 1 ? siblings[idx + 1] : null;
+    return idx >= 0 && idx < siblings.length - 1 ? siblings[idx + 1] : null;
   }
 
   /**

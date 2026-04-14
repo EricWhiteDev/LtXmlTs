@@ -332,6 +332,22 @@ describe('XAttribute.nextAttribute and previousAttribute', () => {
   });
 });
 
+describe('XAttribute.nextAttribute — indexOf guard (Bug 4)', () => {
+  it('returns null for a detached attribute even when parent has attributes', () => {
+    const el = new XElement('root',
+      new XAttribute('a', '1'),
+      new XAttribute('b', '2'),
+      new XAttribute('c', '3'),
+    );
+    // Create a detached attribute that is not in the element's attribute list
+    // but has its parent manually set to simulate an inconsistent state
+    const detached = new XAttribute('x', '0');
+    (detached as any).parent = el;
+    // Should return null, not attrs[0]
+    expect(detached.nextAttribute).toBeNull();
+  });
+});
+
 describe('XAttribute value escaping', () => {
   it('escapes ampersand in attribute value', () => {
     expect(new XAttribute('attr', 'a & b').toString()).toBe("attr='a &amp; b'");
