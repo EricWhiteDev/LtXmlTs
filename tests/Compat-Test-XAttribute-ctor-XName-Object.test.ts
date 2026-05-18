@@ -15,18 +15,11 @@ import { XAttribute, XElement } from 'ltxmlts';
 import { createConsole, expectMatches } from './Compat-Test-_helpers.js';
 
 describe('XAttribute(XName, Object) constructor', () => {
-  // COMPAT (1): The .NET docs example passes a `DateTime` and a `double` directly
+  // COMPAT: The .NET docs example passes a `DateTime` and a `double` directly
   // to the XAttribute constructor; .NET converts these to W3C-formatted strings.
   // The TS port does not perform W3C typed-value formatting — we substitute
   // pre-formatted strings.
-  // COMPAT (2): .NET's `params Object[]` unpacks a passed-in `XAttribute[]`
-  // recursively into the element's attribute list. The TS port's
-  // `addAttributeContentObject` (src/XElement.ts:301) does NOT recurse into
-  // arrays — only `addContentObject` (for nodes) does. As a result, passing
-  // `attArray` positionally drops Att4/Att5/Att6. Spreading with `...attArray`
-  // is a valid TS workaround but is no longer a faithful translation of the
-  // C# example; skipped pending port fix.
-  it.skip('creates attributes of mixed origin (string, number, date, array) and adds them to an element', () => {
+  it('creates attributes of mixed origin (string, number, date, array) and adds them to an element', () => {
     const con = createConsole();
 
     // ---- C# original (typed values pre-stringified for TS port) ----

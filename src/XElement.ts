@@ -43,8 +43,19 @@ import { SaxParser } from "./SaxParser.js";
 export class XElement extends XContainer {
   /**
    * The qualified name of this element.
+   *
+   * Assigning a new XName (or a string in Clark notation) rebrands the
+   * element in place — used by the .NET pattern
+   * `el.Name = ns.GetName(el.Name.LocalName)` to move an element into a
+   * different namespace without rebuilding the tree.
    */
-  public readonly name: XName;
+  private _name!: XName;
+  public get name(): XName {
+    return this._name;
+  }
+  public set name(value: XName | string) {
+    this._name = typeof value === "string" ? new XName(value) : value;
+  }
   private attributesArray: XAttribute[] = [];
 
   /**
@@ -183,6 +194,18 @@ export class XElement extends XContainer {
   }
 
   /**
+   * Routes content through both the node-insertion path and the
+   * attribute-insertion path so that `add()`, `addFirst()`, `replaceNodes()`
+   * etc. accept XAttribute content (matching .NET, where XContainer.Add
+   * dispatches XAttribute to the parent element's attribute collection).
+   * @internal
+   */
+  protected override insertContentItems(...items: unknown[]): void {
+    super.insertContentItems(...items);
+    this.addAttributeContentList(...items);
+  }
+
+  /**
    * Removes a specific attribute from this element.
    *
    * @param attr - The attribute instance to remove.
@@ -300,6 +323,12 @@ export class XElement extends XContainer {
    */
   protected addAttributeContentObject(content: unknown): void {
     if (content === null || content === undefined) {
+      return;
+    }
+    if (Array.isArray(content)) {
+      for (const item of content) {
+        this.addAttributeContentObject(item);
+      }
       return;
     }
     if (!(content instanceof XAttribute)) {

@@ -15,14 +15,7 @@ import { XAttribute, XElement, XNamespace } from 'ltxmlts';
 import { createConsole, expectMatches } from './Compat-Test-_helpers.js';
 
 describe('XAttribute.Name', () => {
-  // COMPAT: The .NET example's second half passes the result of a LINQ select
-  // (an IEnumerable<XAttribute>) positionally to XElement, which .NET recursively
-  // unpacks into the new element's attribute list. The TS port's
-  // `addAttributeContentObject` (src/XElement.ts:301) does NOT recurse into
-  // arrays — only `addContentObject` (for nodes) does. As a result the projected
-  // attribute array is silently dropped from `newRoot`, so the last two output
-  // lines never appear. Same gap as Compat-Test-XAttribute-ctor-XName-Object.
-  it.skip('iterates attribute names (Clark notation for namespaced names) and copies a name into a new attribute', () => {
+  it('iterates attribute names (Clark notation for namespaced names) and copies a name into a new attribute', () => {
     const con = createConsole();
 
     // ---- C# original ----
