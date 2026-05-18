@@ -1,0 +1,24 @@
+This project is based on the C# dotnet implementation of LINQ to XML.
+
+You can find the reference documentation for the dotnet implementation at https://learn.microsoft.com/en-us/dotnet/api/system.xml.linq?view=netframework-4.8.1
+
+In most of the topics in the reference documentation, there are working C# examples. For example, in the XAttribute.Name property, there is C# code to exercise the property.  Most of the code examples consist of the working C# example, followed by another code block preceded by "This example produces the following output:"
+
+I want to create TypeScript unit tests that correspond to most of the C# examples in the documentation.  However, instead of outputting to the console, you will need to 'output' to a string, and then the unit test will need to compare the actual output from the code to the text in the code block in the C# documentation.  The test should fail if it doesn't match.
+
+Some of the tests are associated with parts of the LINQ to XML API that are not implemented in the TypeScript project.  For example, the XStreamingElement is not implemented in the TypeScript module.
+
+Note that there are some differences in name casing between the C# implementation and the TypeScript implementation.  For example, in C#, the property XAttribute.Name is, in TypeScript, XAttribute.name.
+
+The first task is to follow all the links to the various C# dotnet documentation reference topics, and make a list of every C# documentation topic where there is code that can be converted to a TypeScript unit test.  Make this list, and also make a list of every API that cannot be converted.
+
+Then create a plan to go through all topics and generate TypeScript unit tests.  Don't actually create the unit tests yet - just create the plan.  Include a table with columns such as:
+- C# api
+- TypeScript api
+- URI of the topic
+
+And separately, create a table of the topics that can't be converted:
+- C# api
+- Reason why it can't be converted.
+
+Note that we want to keep these unit tests separate from the other unit tests.  Name these unit test files something like Compat-Test-xxxxxxxx.text.TypeScript
