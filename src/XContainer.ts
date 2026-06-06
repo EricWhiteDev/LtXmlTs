@@ -173,9 +173,10 @@ export class XContainer extends XNode {
    * - {@link XElement} and other {@link XNode} subclasses are added as child nodes.
    * - Strings are wrapped in {@link XText}.
    * - Arrays are recursively unpacked.
-   * - {@link XAttribute} objects passed here are silently ignored; pass
-   *   attributes to the {@link XElement} constructor or use
-   *   {@link XElement.setAttributeValue} instead.
+   * - {@link XAttribute} objects are dispatched to this element's attribute
+   *   collection (matching .NET `XContainer.Add`). On a bare {@link XContainer}
+   *   that is not an {@link XElement} (e.g. {@link XDocument}), attributes are
+   *   ignored.
    * - If a node already has a parent, it is cloned before being added.
    *
    * @param content - Nodes, strings, or arrays to add.
