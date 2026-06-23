@@ -2188,3 +2188,38 @@ describe('Round-trip — Open XML: test10', () => {
     expect(XElement.parse(originalXml).toString()).toEqual(originalXml);
   });
 });
+
+describe('Round-trip — xml:space="preserve" whitespace-only text', () => {
+  const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+
+  it('retains a whitespace-only text node when xml:space="preserve" is set', () => {
+    const el = XElement.parse(`<w:t xmlns:w='${W}' xml:space='preserve'> </w:t>`);
+    expect(el.value).toBe(' ');
+  });
+
+  it('still drops a whitespace-only text node without xml:space (default)', () => {
+    const el = XElement.parse(`<w:t xmlns:w='${W}'> </w:t>`);
+    expect(el.value).toBe('');
+  });
+
+  it('drops whitespace-only text when xml:space="default" overrides an ancestor', () => {
+    const el = XElement.parse(`<w:p xmlns:w='${W}' xml:space='preserve'><w:t xml:space='default'> </w:t></w:p>`);
+    expect(el.value).toBe('');
+  });
+
+  it('inherits xml:space="preserve" from an ancestor element', () => {
+    const el = XElement.parse(`<w:p xmlns:w='${W}' xml:space='preserve'><w:t> </w:t></w:p>`);
+    expect(el.value).toBe(' ');
+  });
+
+  it('keeps a dedicated space run between two words (OOXML run boundary)', () => {
+    const para = XElement.parse(
+      `<w:p xmlns:w='${W}'>` +
+        `<w:r><w:t>Exhibit</w:t></w:r>` +
+        `<w:r><w:t xml:space='preserve'> </w:t></w:r>` +
+        `<w:r><w:t>10.2</w:t></w:r>` +
+        `</w:p>`
+    );
+    expect(para.value).toBe('Exhibit 10.2');
+  });
+});

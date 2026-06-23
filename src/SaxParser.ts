@@ -192,7 +192,7 @@ class SaxParser {
       if (this.error !== null) {
         return;
       }
-      if (/^\s*$/.test(text)) {
+      if (/^\s*$/.test(text) && !this.isWhitespacePreserved()) {
         return;
       }
       this.addNode(new XText(text));
@@ -250,6 +250,31 @@ class SaxParser {
     } else {
       this.docLevelNodes.push(node);
     }
+  }
+
+  /**
+   * True when the innermost enclosing element opts into whitespace
+   * preservation via `xml:space="preserve"`.
+   *
+   * `xml:space` is inherited (XML 1.0 §2.10): the nearest ancestor that
+   * declares it wins, so we walk the open-element stack from the top and
+   * honor the first declaration we find (`preserve` keeps whitespace-only
+   * text nodes; `default` — or no declaration — drops them). Without this,
+   * all-whitespace text such as a single space between two runs is
+   * discarded even when the source explicitly marked it significant.
+   */
+  private isWhitespacePreserved(): boolean {
+    const xmlSpace = XNamespace.xml.getName("space");
+    for (let i = this.elementStack.length - 1; i >= 0; i--) {
+      const value = this.elementStack[i].attribute(xmlSpace)?.value;
+      if (value === "preserve") {
+        return true;
+      }
+      if (value === "default") {
+        return false;
+      }
+    }
+    return false;
   }
 }
 
